@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
   lcf_set_language("EN-US");
@@ -31,10 +32,10 @@ int main(int argc, char *argv[]) {
 }
 
 int(timer_test_read_config)(uint8_t UNUSED(timer), enum timer_status_field UNUSED(field)) {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
-
-  return 1;
+  uint8_t st;
+ // timer_get_conf(timer, &st);
+//  timer_display_conf(timer, st, enum timer_status_field UNUSED(field));
+  return 0;
 }
 
 int(timer_test_time_base)(uint8_t UNUSED(timer), uint32_t UNUSED(freq)) {
