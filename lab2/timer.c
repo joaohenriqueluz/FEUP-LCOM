@@ -41,20 +41,20 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
     perror("Error");
     return 1;
   }
-  check= sys_inb(timer + TIMER_0, st);
-  sys_inb(timer + TIMER_0, st);
 
- if(check == 1){
-    perror("Error");
-    return 1;
-  }
+  check = sys_inb(timer + TIMER_0, st);
+
   return 0;
 }
 
-int (timer_display_conf)(uint8_t UNUSED(timer), uint8_t UNUSED(st),
-                        enum timer_status_field UNUSED(field)) {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
+int (timer_display_conf)(uint8_t timer, uint8_t st,
+                       enum timer_status_field field) {
 
-  return 1;
+  union timer_status_field_val conf = st;
+
+  timer_print_config(timer, field, conf);
+
+
+  return 0;
 }
+
