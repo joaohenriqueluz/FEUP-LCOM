@@ -41,8 +41,9 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
     perror("Error");
     return 1;
   }
+  uint32_t adress = (uint32_t) *st;
 
-  check = sys_inb(timer + TIMER_0, st);
+  check = sys_inb(timer + TIMER_0, &adress);
 
   return 0;
 }
@@ -50,7 +51,8 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
 int (timer_display_conf)(uint8_t timer, uint8_t st,
                        enum timer_status_field field) {
 
-  union timer_status_field_val conf = st;
+  union timer_status_field_val conf;
+  conf.byte = st;
 
   timer_print_config(timer, field, conf);
 
