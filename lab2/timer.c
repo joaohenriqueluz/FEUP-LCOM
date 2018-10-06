@@ -5,11 +5,17 @@
 
 #include "i8254.h"
 
-int (timer_set_frequency)(uint8_t UNUSED(timer), uint32_t UNUSED(freq)) {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
+int (timer_set_frequency)(uint8_t timer, uint32_t UNUSED(freq)) {
 
-  return 1;
+  uint8_t st, lsb, msb;
+  timer_get_conf(timer, &st);
+  util_get_LSB(st, &lsb);
+  util_get_MSB(st, &msb);
+
+  //sys_outb(TIMER_CTRL, )
+
+
+  return 0;
 }
 
 int (timer_subscribe_int)(uint8_t *UNUSED(bit_no)) {
