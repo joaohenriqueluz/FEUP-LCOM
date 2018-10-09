@@ -14,7 +14,7 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   st = (st & 0x0F);
 
-  uint8_t command = st | TIMER_SQR_WAVE; //TIMER_LSB_MSB | (TIMER_RB_SEL(timer));
+  uint8_t command = st | TIMER_LSB_MSB | (TIMER_0 + timer +1);
 
   printf("%x\n", command);
 
