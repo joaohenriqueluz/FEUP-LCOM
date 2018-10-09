@@ -11,22 +11,27 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
   
   uint8_t st, lsb, msb;
   timer_get_conf(timer, &st);
-  util_get_LSB(st, &lsb);
-  util_get_MSB(st, &msb);
 
-  uint8_t command = lsb | TIMER_LSB_MSB | (TIMER_SEL0 + timer);
+  st = (st & 0x0F);
 
-  int timerFrq = 1193181;
+  uint8_t command = st | TIMER_SQR_WAVE; //TIMER_LSB_MSB | (TIMER_RB_SEL(timer));
 
-  int div = timerFrq/freq;
+  printf("%x\n", command);
+
+  uint16_t div = TIMER_FREQ/freq;
+
+  util_get_LSB(div, &lsb);
+  util_get_MSB(div, &msb);
+
 
   sys_outb(TIMER_CTRL, command);
-  sys_outb((timer + TIMER_0), div);
+  sys_outb((timer + TIMER_0), lsb);
+  sys_outb((timer + TIMER_0), msb);
 
   return 0;
 }
 
-int (timer_subscribe_int)(uint8_t *mUNUSED(bit_no)) {
+int (timer_subscribe_int)(uint8_t *UNUSED(bit_no)) {
   
   //sys_irqsetpolicy(TIMER_IRQ, IRQ_REEANABLE, bit_no);
 
@@ -61,7 +66,22 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
   uint32_t adress = (uint32_t) *st;
   int check1=0;
 
-  check1 = sys_inb((TIMER_0 + timer), &adress);
+  switch(timer){
+    case 0:
+    check1 = sys_inb((TIMER_0), &adress);
+    break;
+
+    case 1:
+    check1 = sys_inb((TIMER_1), &adress);
+    break;
+    
+    case 2:
+    check1 = sys_inb((TIMER_2), &adress);
+    break;
+    
+  }
+
+  
 
   if(check1 == 1)
   {
