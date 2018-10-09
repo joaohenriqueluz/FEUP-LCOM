@@ -5,29 +5,37 @@
 
 #include "i8254.h"
 
-int (timer_set_frequency)(uint8_t timer, uint32_t UNUSED(freq)) {
+int globalCounter = 0;
+
+int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
   
   uint8_t st, lsb, msb;
   timer_get_conf(timer, &st);
   util_get_LSB(st, &lsb);
   util_get_MSB(st, &msb);
 
-  //sys_outb(TIMER_CTRL, )
+  uint8_t command = lsb | TIMER_LSB_MSB | (TIMER_SEL0 + timer);
 
+  int timerFrq = 1193181;
+
+  int div = timerFrq/freq;
+
+  sys_outb(TIMER_CTRL, command);
+  sys_outb((timer + TIMER_0), div);
 
   return 0;
 }
 
-int (timer_subscribe_int)(uint8_t *UNUSED(bit_no)) {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
+int (timer_subscribe_int)(uint8_t *mUNUSED(bit_no)) {
+  
+  //sys_irqsetpolicy(TIMER_IRQ, IRQ_REEANABLE, bit_no);
 
-  return 1;
+  return 0;
 }
 
 int (timer_unsubscribe_int)() {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
+  
+  //sys_irqrmpolicy(*hook_id);
 
   return 1;
 }
@@ -52,23 +60,8 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
 
   uint32_t adress = (uint32_t) *st;
   int check1=0;
-  switch(timer)
- {case 0:
-    {
-     check1 = sys_inb(TIMER_0, &adress);
-     break;
-    }
-case 1:
-    {
-     check1 = sys_inb(TIMER_1, &adress);
-     break;
-    }
-case 2:
-    {
-     check1 = sys_inb(TIMER_2, &adress);
-     break;
-    }
- }
+
+  check1 = sys_inb((TIMER_0 + timer), &adress);
 
   if(check1 == 1)
   {
@@ -76,7 +69,6 @@ case 2:
     return 1;
   }
 
-  //*st = (uint8_t)newst;
   return 0;
 }
 
@@ -111,6 +103,7 @@ int (timer_display_conf)(uint8_t timer, uint8_t st,
     case base:
     {
       conf.bcd = (st & TIMER_BCD);
+      break;
     }
 
   }
