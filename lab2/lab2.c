@@ -63,7 +63,7 @@ int(util_get_LSB)(uint16_t val, uint8_t *lsb) {
 
 int(util_get_MSB)(uint16_t val, uint8_t *msb) {
 
-  *msb = val & 0xFF00;
+  *msb = (val & 0xFF00) >> 8;
 
   return 0;
 }
