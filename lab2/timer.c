@@ -6,6 +6,7 @@
 #include "i8254.h"
 
 int globalCounter = 0;
+int globalHookId;
 
 int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
   
@@ -14,9 +15,7 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   st = (st & 0x0F);
 
-  uint8_t command = st | TIMER_LSB_MSB | (TIMER_0 + timer +1);
-
-  printf("%x\n", command);
+  uint8_t command = st | TIMER_LSB_MSB | (TIMER_0 + timer + 1);
 
   uint16_t div = TIMER_FREQ/freq;
 
@@ -31,23 +30,28 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
   return 0;
 }
 
-int (timer_subscribe_int)(uint8_t *UNUSED(bit_no)) {
+int (timer_subscribe_int)(uint8_t *bit_no) {
+
+  int temp_hook = TEMP_HOOK;
   
-  //sys_irqsetpolicy(TIMER_IRQ, IRQ_REEANABLE, bit_no);
+  sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &temp_hook);
+
+  globalHookId = temp_hook;
+
+ *bit_no = BIT(temp_hook);
 
   return 0;
 }
 
 int (timer_unsubscribe_int)() {
   
-  //sys_irqrmpolicy(*hook_id);
+  sys_irqrmpolicy(&globalHookId);
 
-  return 1;
+  return 0;
 }
 
 void (timer_int_handler)() {
-  /* To be completed by the students */
-  printf("%s is not yet implemented!\n", __func__);
+  ++globalCounter;
 }
 
 int (timer_get_conf)(uint8_t timer, uint8_t *st) {
