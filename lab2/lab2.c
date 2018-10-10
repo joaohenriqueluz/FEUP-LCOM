@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+int globalCounter = 0;
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -49,39 +50,42 @@ int(timer_test_time_base)(uint8_t timer, uint32_t freq) {
   return 0;
 }
 
-int(timer_test_int)(uint8_t UNUSED(time)) {
+int(timer_test_int)(uint8_t time) {
 
-unsigned int r;
+  int ipc_status;
+  message msg;
+  unsigned int r;
+  uint8_t irq_set;
 
-timer_subscribe_int(*bit_no);
+  timer_subscribe_int(&irq_set);
 
-while(globalCounter/60 < time) { /* You may want to use a different condition */
-  /* Get a request message. */
-    if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
-        printf("driver_receive failed with: %d", r);
-        continue;
-    }
-    if (is_ipc_notify(ipc_status)) { /* received notification */
-       switch (_ENDPOINT_P(msg.m_source)) {
-           case HARDWARE: /* hardware interrupt notification */       
-                if (msg.m_notify.interrupts & irq_set) {
-                  time_int_handler();
-                  if(counter%60 == 0)
-                    printf("1 sec\n");
+  while(globalCounter/60 < time) { /* You may want to use a different condition */
+    /* Get a request message. */
+     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
+          printf("driver_receive failed with: %d", r);
+         continue;
+     } 
+     if (is_ipc_notify(ipc_status)) { /* received notification */
+         switch (_ENDPOINT_P(msg.m_source)) {
+             case HARDWARE: /* hardware interrupt notification */       
+                 if (msg.m_notify.interrupts & irq_set) {
+                    timer_int_handler();
+                    if(globalCounter%60 == 0)
+                      printf("1 sec\n");
 
-                }
-                break;
-            default:
-                break; /* no other notifications expected: do nothing */ 
-        }
-    } else { /* received a standard message, not a notification */
-        /* no standard messages expected: do nothing */
-    }
+                  }
+                 break;
+              default:
+                  break; /* no other notifications expected: do nothing */ 
+         }
+     } else { /* received a standard message, not a notification */
+         /* no standard messages expected: do nothing */
+     }
  }
 
-timer_unsubscribe_int();
+  timer_unsubscribe_int();
 
-printf("%d seconds \n", globalCounter);
+  printf("%d seconds \n", globalCounter);
 
   return 0;
 }
