@@ -5,7 +5,7 @@
 
 #include "i8254.h"
 
-int globalCounter = 0;
+extern int globalCounter;
 int globalHookId;
 
 int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
