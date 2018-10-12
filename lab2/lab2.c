@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "i8254.h"
+
+
 int globalCounter = 0;
 
 int main(int argc, char *argv[]) {
@@ -55,9 +58,11 @@ int(timer_test_int)(uint8_t time) {
   int ipc_status;
   message msg;
   unsigned int r;
-  uint8_t irq_set;
+  uint8_t bit_no;
 
-  timer_subscribe_int(&irq_set);
+  timer_subscribe_int(&bit_no);
+
+ uint32_t irq_set = BIT(bit_no);
 
   while(globalCounter/60 < time) { /* You may want to use a different condition */
     /* Get a request message. */
