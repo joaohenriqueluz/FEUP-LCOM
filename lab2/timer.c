@@ -17,18 +17,47 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   uint8_t command = st | TIMER_LSB_MSB;
 
-  uint16_t div = TIMER_FREQ/freq;
-
+ uint16_t div = TIMER_FREQ/freq;
   util_get_LSB(div, &lsb);
   util_get_MSB(div, &msb);
 
 
-  sys_outb(TIMER_CTRL, command);
-  //sys_outb((timer + TIMER_0), lsb);
-  //sys_outb((timer + TIMER_0), msb);
+switch(timer)
+{
+case 0:
+ {
+ command |= TIMER_SEL0;
 
-  return 0;
+  sys_outb(TIMER_CTRL, command);
+  sys_outb(TIMER_0, lsb);
+  sys_outb(TIMER_0, msb);
+  break;
 }
+
+case 1:
+ {
+ command |= TIMER_SEL1;
+
+  sys_outb(TIMER_CTRL, command);
+  sys_outb(TIMER_1, lsb);
+  sys_outb(TIMER_1, msb);
+  break;
+}
+
+  case 2:
+  {
+   command |= TIMER_SEL2;
+
+   sys_outb(TIMER_CTRL, command);
+   sys_outb(TIMER_2, lsb);
+   sys_outb(TIMER_2, msb);
+   break;
+  }
+  default:
+    break;
+  }
+  return 0;
+  }
 
 int (timer_subscribe_int)(uint8_t *bit_no) {
 
@@ -56,9 +85,8 @@ void (timer_int_handler)() {
 
 int (timer_get_conf)(uint8_t timer, uint8_t *st) {
   
-  uint8_t RB_command = TIMER_RB_CMD | TIMER_RB_SEL(timer);
+  uint8_t RB_command = TIMER_RB_CMD | TIMER_RB_COUNT_ | TIMER_RB_SEL(timer);
 
-  timer = TIMER_0 + timer;
 
   int check = sys_outb(TIMER_CTRL,RB_command);
 
@@ -67,7 +95,7 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
     return 1;
   }
 
-  uint32_t adress = (uint32_t) *st;
+  uint32_t adress;
   int check1=0;
 
   switch(timer){
@@ -92,6 +120,8 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
     perror("Error");
     return 1;
   }
+
+  *st=(uint8_t) adress;
 
   return 0;
 }
