@@ -15,7 +15,7 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   st = (st & 0x0F);
 
-  uint8_t command = st | TIMER_LSB_MSB | (TIMER_0 + timer + 1);
+  uint8_t command = st | TIMER_LSB_MSB;
 
   uint16_t div = TIMER_FREQ/freq;
 
@@ -24,8 +24,8 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
 
   sys_outb(TIMER_CTRL, command);
-  sys_outb((timer + TIMER_0), lsb);
-  sys_outb((timer + TIMER_0), msb);
+  //sys_outb((timer + TIMER_0), lsb);
+  //sys_outb((timer + TIMER_0), msb);
 
   return 0;
 }
@@ -38,7 +38,7 @@ int (timer_subscribe_int)(uint8_t *bit_no) {
 
   globalHookId = temp_hook;
 
- *bit_no = BIT(temp_hook);
+ *bit_no = TEMP_HOOK;
 
   return 0;
 }
