@@ -71,7 +71,7 @@ int(timer_test_int)(uint8_t time) {
                  if (msg.m_notify.interrupts & irq_set) {
                     timer_int_handler();
                     if(globalCounter%60 == 0)
-                      printf("1 sec\n");
+                      timer_print_elapsed_time();
 
                   }
                  break;
