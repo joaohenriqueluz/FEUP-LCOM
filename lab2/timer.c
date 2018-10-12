@@ -10,6 +10,8 @@ int globalHookId;
 
 int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
   
+  if(freq < 19 || freq > TIMER_FREQ)
+    return 1;
   uint8_t st, lsb, msb;
   timer_get_conf(timer, &st);
 
