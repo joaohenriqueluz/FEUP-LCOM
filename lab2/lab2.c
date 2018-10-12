@@ -62,9 +62,11 @@ int(timer_test_int)(uint8_t time) {
 
   timer_subscribe_int(&bit_no);
 
+  int freq = sys_hz();
+
  uint32_t irq_set = BIT(bit_no);
 
-  while(globalCounter/60 < time) { /* You may want to use a different condition */
+  while(globalCounter/freq < time) { /* You may want to use a different condition */
     /* Get a request message. */
      if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
           printf("driver_receive failed with: %d", r);
@@ -75,7 +77,7 @@ int(timer_test_int)(uint8_t time) {
              case HARDWARE: /* hardware interrupt notification */       
                  if (msg.m_notify.interrupts & irq_set) {
                     timer_int_handler();
-                    if(globalCounter%60 == 0)
+                    if(globalCounter%freq == 0)
                       timer_print_elapsed_time();
 
                   }
@@ -90,7 +92,7 @@ int(timer_test_int)(uint8_t time) {
 
   timer_unsubscribe_int();
 
-  printf("%d seconds \n", globalCounter);
+  printf("%d seconds \n", globalCounter/freq);
 
   return 0;
 }
