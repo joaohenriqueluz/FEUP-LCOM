@@ -9,9 +9,9 @@ extern int globalCounter;
 int globalHookId;
 
 int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
-  
-  if(freq < 19 || freq > TIMER_FREQ)
+  if(freq < 19 || freq > TIMER_FREQ || timer < 0 || timer > 2)
     return 1;
+  
   uint8_t st, lsb, msb;
   timer_get_conf(timer, &st);
 
@@ -19,14 +19,14 @@ int (timer_set_frequency)(uint8_t timer, uint32_t freq) {
 
   uint8_t command = st | TIMER_LSB_MSB;
 
- uint16_t div = TIMER_FREQ/freq;
+  uint16_t div = TIMER_FREQ/freq;
   util_get_LSB(div, &lsb);
   util_get_MSB(div, &msb);
 
 
 switch(timer)
 {
-case 0:
+  case 0:
  {
  command |= TIMER_SEL0;
 
@@ -34,17 +34,17 @@ case 0:
   sys_outb(TIMER_0, lsb);
   sys_outb(TIMER_0, msb);
   break;
-}
+  }
 
-case 1:
- {
- command |= TIMER_SEL1;
+  case 1:
+  {
+  command |= TIMER_SEL1;
 
   sys_outb(TIMER_CTRL, command);
   sys_outb(TIMER_1, lsb);
   sys_outb(TIMER_1, msb);
   break;
-}
+  }
 
   case 2:
   {
@@ -85,8 +85,11 @@ void (timer_int_handler)() {
   ++globalCounter;
 }
 
+
+
+
 int (timer_get_conf)(uint8_t timer, uint8_t *st) {
-  
+
   uint8_t RB_command = TIMER_RB_CMD | TIMER_RB_COUNT_ | TIMER_RB_SEL(timer);
 
 
@@ -102,17 +105,20 @@ int (timer_get_conf)(uint8_t timer, uint8_t *st) {
 
   switch(timer){
     case 0:
-    check1 = sys_inb((TIMER_0), &adress);
-    break;
+     check1 = sys_inb((TIMER_0), &adress);
+     break;
 
     case 1:
-    check1 = sys_inb((TIMER_1), &adress);
-    break;
+     check1 = sys_inb((TIMER_1), &adress);
+     break;
     
     case 2:
-    check1 = sys_inb((TIMER_2), &adress);
-    break;
-    
+     check1 = sys_inb((TIMER_2), &adress);
+     break;
+
+    default: 
+      check1=1;
+      break;
   }
 
   
@@ -161,6 +167,10 @@ int (timer_display_conf)(uint8_t timer, uint8_t st,
       conf.bcd = (st & TIMER_BCD);
       break;
     }
+
+    default:
+
+      break;
 
   }
 

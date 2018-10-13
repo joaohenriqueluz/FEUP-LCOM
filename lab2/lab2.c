@@ -47,10 +47,11 @@ int(timer_test_read_config)(uint8_t timer, enum timer_status_field field) {
 }
 
 int(timer_test_time_base)(uint8_t timer, uint32_t freq) {
+   
+ int check =  timer_set_frequency(timer, freq);
+ if(check == 1)
+  return 1;
   
-  int check = timer_set_frequency(timer, freq);
-  if(check == 1)
-    return 1;
   return 0;
 }
 
@@ -67,8 +68,8 @@ int(timer_test_int)(uint8_t time) {
 
  uint32_t irq_set = BIT(bit_no);
 
-  while(globalCounter/freq < time) { /* You may want to use a different condition */
-    /* Get a request message. */
+  while(globalCounter/freq < time) {
+
      if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
           printf("driver_receive failed with: %d", r);
          continue;
