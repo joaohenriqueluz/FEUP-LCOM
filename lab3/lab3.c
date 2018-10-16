@@ -1,4 +1,8 @@
-#include <lcom/timer.h>
+#include <lcom/lcf.h>
+
+#include <lcom/lab3.h>
+#include "keyboard.h"
+#include "i8042.h"
 
 #include <stdbool.h>
 #include <stdint.h>
