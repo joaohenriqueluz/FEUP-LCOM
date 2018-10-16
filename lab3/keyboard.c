@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "i8042.h"
+#include "keyboard.h"
 
 extern int byteCount;
 
