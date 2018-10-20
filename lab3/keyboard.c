@@ -34,19 +34,16 @@ uint8_t (kb_scan_byte)(){
 	while( 1 ){
 	 sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
         /* loop while 8042 output buffer is empty */
-        if( stat & OBF ) {
+        if( stat & OBF ) 
+        	{
             sys_inb(OUT_BUF, &data); /* assuming it returns OK */
             if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
                 return data;
             else
                 return -1;
-        }
+        	}
         tickdelay(micros_to_ticks(DELAY_US));
+		}
+
 }
-
-
-
-
-
-
 

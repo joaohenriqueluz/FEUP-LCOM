@@ -45,7 +45,7 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
   uint8_t fst_byte;
   uint8_t sd_byte;
   bool make = true;
-
+  uint8_t scancode[2];
   kb_subscribe(&bit_no);
 
  uint32_t irq_set = BIT(bit_no);
@@ -71,6 +71,11 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
                       case ESC_BREAK:
                       {
                         is_over= true;
+                        scancode[0]=fst_byte;
+                        if((byte & BIT(7)) >> 7 == 0)
+                          make=true;
+                        else
+                          make= false;
 
                         continue;
                       }
@@ -82,14 +87,14 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
                       }
                       default:
                       {
-                        if(byte > 0x7f)
-                          make=false;
+                        if((byte & BIT(7)) >> 7 == 0)
+                          make=true;
+                        else
+                          make= false;
 
                         if(size == 2)
                         {
                           sd_byte= byte;
-
-                          uint8_t *scancode[size];
                           scancode[0]=fst_byte;
                           scancode[1]=sd_byte;
                          continue;
@@ -97,7 +102,6 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
                         else
                         {
                           fst_byte = byte;
-                          uint8_t *scancode[size];
                           scancode[0]=fst_byte;
                           continue;
                         }
@@ -112,6 +116,7 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
  
 
   kbd_print_scancode(make, size, scancode);
+  make=false;
 
  }
 
@@ -121,8 +126,11 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
 }
 int (kbd_test_poll)() {
     /* To be completed */
+  return 1;
 }
 int (kbd_test_timed_scan)(uint8_t UNUSED(n)) {
     /* To be completed */
     /* When you use argument n for the first time, delete the UNUSED macro */
+    return 1;
+
 }
