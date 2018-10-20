@@ -16,6 +16,12 @@
 
 #define DELAY_US      20000
 
+#define TEMP_HOOK 1
+
+#define	OBF 		BIT(0)
+#define PAR_ERR 	BIT(7)
+#define TO_ERR 		BIT(6)
+
 
 
 #endif /* _LCOM_I8042_H */
