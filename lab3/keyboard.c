@@ -17,7 +17,7 @@ int (kb_subscribe)(uint8_t *bit_no){
 
   	globalHookId = temp_hook;
 
- 	*bit_no = TEMP_HOOK;
+ 	  *bit_no = TEMP_HOOK;
 
 	return 0;
 }
@@ -45,5 +45,50 @@ uint8_t (kb_scan_byte)(){
         tickdelay(micros_to_ticks(DELAY_US));
 		}
 
+}
+
+int (kb_handler)(uint8_t *byte){
+  *byte = kb_scan_byte();
+  bool make = true;
+  uint8_t tam;
+
+  if (*byte == ESC_BREAK)
+  {
+      make = false;
+      uint8_t scancode[1];
+      scancode [0] = *byte;
+      tam = 1;
+      //*size = 1;
+      kbd_print_scancode(make, tam, scancode);
+      return 1;
+  }
+ if (*byte == TWO_BYTE_SCAN)
+ {
+    uint8_t scancode[2];
+    scancode [0] = *byte;
+    scancode[1]  = kb_scan_byte();
+    tam = 2;
+    kbd_print_scancode(make, tam, scancode);
+    return 0;
+  }
+  else{
+  if (*byte & 0x80)
+  {
+      make = false;
+      uint8_t scancode[1];
+      scancode [0] = *byte;
+      tam = 1;
+      //*size = 1;
+      kbd_print_scancode(make, tam, scancode);
+      return 0;
+   }
+   else{
+    uint8_t scancode[1];
+    scancode[0] = *byte;
+    tam = 1;
+    kbd_print_scancode(make, tam, scancode);
+   }
+ }
+   return 0;
 }
 

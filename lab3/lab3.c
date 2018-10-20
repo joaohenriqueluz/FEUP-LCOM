@@ -1,6 +1,5 @@
 #include <lcom/lcf.h>
 
-#include <lcom/lab3.h>
 #include "keyboard.h"
 #include "i8042.h"
 
@@ -35,22 +34,20 @@ int main(int argc, char *argv[]) {
 
 int (kbd_test_scan)(bool UNUSED(assembly)) {
 
-  int ipc_status;
+  int ipc_status; //ind = 1;
   message msg;
   unsigned int r;
   uint8_t bit_no;
-  uint8_t size=1;
-  bool is_over = false;
-  uint8_t byte;
-  uint8_t fst_byte;
-  uint8_t sd_byte;
-  bool make = true;
-  uint8_t scancode[2];
+  int is_over = 0;
+  //bool make = true;
+  uint8_t byte;// size = 1;
+  //uint8_t scancode[2];
+
   kb_subscribe(&bit_no);
 
  uint32_t irq_set = BIT(bit_no);
 
-  while(!is_over) {
+  while(is_over == 0) {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
       { 
@@ -64,59 +61,21 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
           case HARDWARE: /* hardware interrupt notification */       
             if (msg.m_notify.interrupts & irq_set)
               {
-                  byte = kb_scan_byte();
+                  is_over = kb_handler(&byte);
+                  // scancode[ind-1] = byte;
+                  // ind++;
 
-                    switch(byte)
-                    {
-                      case ESC_BREAK:
-                      {
-                        is_over= true;
-                        scancode[0]=fst_byte;
-                        if((byte & BIT(7)) >> 7 == 0)
-                          make=true;
-                        else
-                          make= false;
-
-                        continue;
-                      }
-                      case TWO_BYTE_SCAN:
-                      {
-                        size=2;
-                        fst_byte= byte;
-                        break;
-                      }
-                      default:
-                      {
-                        if((byte & BIT(7)) >> 7 == 0)
-                          make=true;
-                        else
-                          make= false;
-
-                        if(size == 2)
-                        {
-                          sd_byte= byte;
-                          scancode[0]=fst_byte;
-                          scancode[1]=sd_byte;
-                         continue;
-                        }
-                        else
-                        {
-                          fst_byte = byte;
-                          scancode[0]=fst_byte;
-                          continue;
-                        }
-                      }
-                    }
-
-                }
+              }
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
-  
- 
 
-  kbd_print_scancode(make, size, scancode);
-  make=false;
+    // if (ind == size)
+    //   {
+    //     kbd_print_scancode(make, size, scancode);
+    //     make=true;
+    //     ind = 1;
+    //   }
 
  }
 
