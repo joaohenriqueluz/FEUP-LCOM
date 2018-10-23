@@ -8,4 +8,6 @@ uint8_t (kb_scan_byte)();
 
 int (kb_handler)(uint8_t *fst_byte);
 
+int (kb_read_poll)();
+
 #endif
