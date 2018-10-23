@@ -10,4 +10,6 @@ int (kb_handler)(uint8_t *fst_byte);
 
 int (kb_read_poll)();
 
+int (kbc_write_cmd)(uint8_t cmd);
+
 #endif

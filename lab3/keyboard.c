@@ -47,20 +47,20 @@ uint8_t (kb_scan_byte)(){
 
 }
 
-int (kbc_write_cmd)(uint8_t cmd){
-  uint32_t stat;
+// int (kbc_write_cmd)(uint8_t cmd){
+//   uint32_t stat;
 
-  while( 1 ) {
-    sys_inb(STAT_REG, &stat); /* assuming it returns OK */
-    /* loop while 8042 input buffer is not empty */
-    if( (stat & IBF) == 0 ) {
-        sys_outb(KBC_CMD_REG, cmd); /* no args command */
-        return 0; 
-      }
-    tickdelay(micros_to_ticks(DELAY_US));
-  }
-  return 0;
-}
+//   while( 1 ) {
+//     sys_inb(STAT_REG, &stat); /* assuming it returns OK */
+//      loop while 8042 input buffer is not empty 
+//     if( (stat & IBF) == 0 ) {
+//         sys_outb(KBC_CMD_REG, cmd); /* no args command */
+//         return 0; 
+//       }
+//     tickdelay(micros_to_ticks(DELAY_US));
+//   }
+//   return 0;
+// }
 
 int (kb_handler)(uint8_t *byte){
   *byte = kb_scan_byte();
@@ -113,9 +113,13 @@ int (kb_read_poll)(){
   uint32_t stat;
   bool make = true;
 
+  printf("Teste\n\n");
+
   while(make)
     sys_inb(KB_STATUS_REG, &stat);
-    if ((stat & OBF) && !(stat & AUX))
+    printf("OBF %d\n", stat & OBF);
+    printf("AUX %d\n\n", stat & AUX);
+    if (make )//(stat & OBF) /*&& !(stat & AUX)*/)
 
     {
       byte = kb_scan_byte();
