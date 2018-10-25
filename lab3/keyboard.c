@@ -59,17 +59,26 @@ uint8_t (kb_scan_byte)(bool poll){
 }
 
 
-int (kbc_write_cmd)(uint8_t cmd){
-  uint32_t stat;
+int (kbc_write_cmd)(){
+  uint32_t cmd=0;
+  /*
 
   while( 1 ) {
-    sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
+    sys_inb(KB_STATUS_REG, &stat); assuming it returns OK 
     if( (stat & IBF) == 0 ) {
-        sys_outb(KB_STATUS_REG, cmd); /* no args command */
+        sys_outb(KB_STATUS_REG, cmd);  no args command 
         return 0; 
       }
     tickdelay(micros_to_ticks(DELAY_US));
-  }
+  }*/
+sys_outb(KB_STATUS_REG,KBC_READ);
+sys_inb(OUT_BUF,&cmd);
+//sys_inb_cnt(out....)?????
+
+cmd = cmd| KB_ENABLE;
+
+sys_outb(KB_STATUS_REG,OUT_BUF);
+sys_outb(OUT_BUF,cmd);
   return 0;
 }
 
