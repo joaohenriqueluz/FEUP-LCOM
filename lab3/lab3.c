@@ -50,6 +50,8 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
 
  uint32_t irq_set = BIT(bit_no);
 
+ // printf("%d\n", irq_set );
+
   while(is_over == 0) {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
@@ -80,12 +82,19 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
     //     ind = 1;
     //   }
 
+
+
+
+
  }
 
   kb_unsubscribe();
 
+  kbd_print_no_sysinb(counter);
+
   return 0;
 }
+
 int (kbd_test_poll)() {
   kb_read_poll();
   kbc_write_cmd(0x20);
@@ -148,3 +157,5 @@ int (kbd_test_timed_scan)(uint8_t n) {
   return 0;
 
 }
+
+

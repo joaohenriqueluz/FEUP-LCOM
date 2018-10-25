@@ -2,8 +2,14 @@
 #define _LCOM_I8042_H_
 
 /* Keyboard control */
-
+extern int counter;
 #define BIT(n) (0x01<<(n))
+
+#ifdef LAB3
+int sys_inb_cnt(port_t port, uint32_t *byte);
+#else
+#define sys_inb_cnt(p,q) sys_inb(p,q)
+#endif
 
 #define KB_IRQ   1
 
