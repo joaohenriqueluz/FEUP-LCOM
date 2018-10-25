@@ -15,19 +15,22 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 
 #define KB_STATUS_REG      0x64
 #define KBC_CM_REG         0x64
-#define OUT_BUF       0x60
+#define KBC_READ           0x20
+#define KB_ENABLE 		   BIT(0)
 
-#define ESC_BREAK         0x81
-#define TWO_BYTE_SCAN     0xe0
+#define OUT_BUF      	   0x60 // PODIAMOS ALTERAR ESTE PARA FICAR IGUAL AOS OUTROS
 
-#define DELAY_US      20000
-#define TEMP_HOOK_KB  2
+#define ESC_BREAK          0x81
+#define TWO_BYTE_SCAN      0xe0
 
-#define	OBF 		BIT(0)
-#define IBF 		BIT(1)
-#define AUX         BIT(5)
-#define PAR_ERR 	BIT(7)
-#define TO_ERR 		BIT(6)
+#define DELAY_US      	   20000
+#define TEMP_HOOK_KB 	   2
+
+#define	OBF 		       BIT(0)
+#define IBF 		       BIT(1)
+#define AUX                BIT(5)
+#define PAR_ERR 	       BIT(7)
+#define TO_ERR 		       BIT(6)
 
 
 
