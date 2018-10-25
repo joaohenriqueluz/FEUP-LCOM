@@ -15,9 +15,7 @@
 #define TWO_BYTE_SCAN     0xe0
 
 #define DELAY_US      20000
-#define TEMP_HOOK     1
-
-#define TEMP_HOOK 1
+#define TEMP_HOOK_KB  2
 
 #define	OBF 		BIT(0)
 #define IBF 		BIT(1)
