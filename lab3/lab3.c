@@ -85,7 +85,7 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
 }
 int (kbd_test_poll)() {
   kb_read_poll();
-  //kbc_write_cmd(OUT_BUF);
+  kbc_write_cmd(0x20);
   return 0;
 }
 int (kbd_test_timed_scan)(uint8_t UNUSED(n)) {
