@@ -1,5 +1,4 @@
 #include <lcom/lcf.h>
-#include <lcom/timer.h>
 
 #include <stdint.h>
 
@@ -11,13 +10,13 @@ extern int byteCount;
 int globalHookId;
 
 int (kb_subscribe)(uint8_t *bit_no){
-	int temp_hook = TEMP_HOOK;
+	int temp_hook = TEMP_HOOK_KB;
   
   	sys_irqsetpolicy(KB_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook);
 
   	globalHookId = temp_hook;
 
- 	  *bit_no = TEMP_HOOK;
+ 	  *bit_no = TEMP_HOOK_KB;
 
 	return 0;
 }
