@@ -7,14 +7,15 @@
 
 extern int byteCount;
 
-int globalHookId;
+int globalHookId, counter = 0;
 
 int (kb_subscribe)(uint8_t *bit_no){
 	int temp_hook = TEMP_HOOK_KB;
-  
+
   	sys_irqsetpolicy(KB_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook);
 
   	globalHookId = temp_hook;
+ 
 
  	  *bit_no = TEMP_HOOK_KB;
 
@@ -29,13 +30,14 @@ int (kb_unsubscribe)(){
 }
 
 uint8_t (kb_scan_byte)(bool poll){
+
 	uint32_t stat, data;
 	while( 1 ){
-	 sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
+	 sys_inb_cnt(KB_STATUS_REG, &stat); /* assuming it returns OK */
         /* loop while 8042 output buffer is empty */
         if( stat & OBF ) 
         	{
-            sys_inb(OUT_BUF, &data);
+            sys_inb_cnt(OUT_BUF, &data);
             if(!poll) 
             {/* assuming it returns OK */
             if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
@@ -170,6 +172,12 @@ int (kb_read_poll)(){
     }
 
     return 0;
+}
+
+int sys_inb_cnt(port_t port, uint32_t *byte)
+{
+  counter++;
+  return sys_inb(port,byte);
 }
 
 
