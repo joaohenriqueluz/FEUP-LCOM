@@ -29,41 +29,51 @@ int (kb_unsubscribe)(){
   return 0;
 }
 
-uint8_t (kb_scan_byte)(){
+uint8_t (kb_scan_byte)(bool poll){
 	uint32_t stat, data;
 	while( 1 ){
 	 sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
         /* loop while 8042 output buffer is empty */
         if( stat & OBF ) 
         	{
-            sys_inb(OUT_BUF, &data); /* assuming it returns OK */
+            sys_inb(OUT_BUF, &data);
+            if(!poll) 
+            {/* assuming it returns OK */
             if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
                 return data;
             else
                 return -1;
         	}
+        	else{
+ 			 if ( (stat &(PAR_ERR | TO_ERR | AUX)) == 0 )
+                return data;
+            else
+                return -1;
+
+        	}
+        }
         tickdelay(micros_to_ticks(DELAY_US));
 		}
 
 }
 
-// int (kbc_write_cmd)(uint8_t cmd){
-//   uint32_t stat;
 
-//   while( 1 ) {
-//     sys_inb(STAT_REG, &stat); /* assuming it returns OK */
-//      loop while 8042 input buffer is not empty 
-//     if( (stat & IBF) == 0 ) {
-//         sys_outb(KBC_CMD_REG, cmd); /* no args command */
-//         return 0; 
-//       }
-//     tickdelay(micros_to_ticks(DELAY_US));
-//   }
-//   return 0;
-// }
+int (kbc_write_cmd)(uint8_t cmd){
+  uint32_t stat;
+
+  while( 1 ) {
+    sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
+    if( (stat & IBF) == 0 ) {
+        sys_outb(KB_STATUS_REG, cmd); /* no args command */
+        return 0; 
+      }
+    tickdelay(micros_to_ticks(DELAY_US));
+  }
+  return 0;
+}
 
 int (kb_handler)(uint8_t *byte){
-  *byte = kb_scan_byte();
+  *byte = kb_scan_byte(false);
   bool make = true;
   uint8_t tam;
 
@@ -81,7 +91,7 @@ int (kb_handler)(uint8_t *byte){
  {
     uint8_t scancode[2];
     scancode [0] = *byte;
-    scancode[1]  = kb_scan_byte();
+    scancode[1]  = kb_scan_byte(false);
     tam = 2;
     kbd_print_scancode(make, tam, scancode);
     return 0;
@@ -109,23 +119,20 @@ int (kb_handler)(uint8_t *byte){
 
 
 int (kb_read_poll)(){
+
   uint8_t byte, tam;
-  uint32_t stat;
-  bool make = true;
+  bool make = true,goOn=true;
 
   printf("Teste\n\n");
 
-  while(make)
-    sys_inb(KB_STATUS_REG, &stat);
-    printf("OBF %d\n", stat & OBF);
-    printf("AUX %d\n\n", stat & AUX);
-    if (make )//(stat & OBF) /*&& !(stat & AUX)*/)
-
+  while(goOn)
+    
     {
-      byte = kb_scan_byte();
+      byte = kb_scan_byte(true);
       if (byte == ESC_BREAK)
       {
         make = false;
+        goOn=false;
         uint8_t scancode[1];
         scancode [0] = byte;
         tam = 1;
@@ -137,18 +144,32 @@ int (kb_read_poll)(){
       {
        uint8_t scancode[2];
        scancode [0] = byte;
-       scancode[1]  = kb_scan_byte();
+       scancode[1]  = kb_scan_byte(true);
        tam = 2;
        kbd_print_scancode(make, tam, scancode);
        return 0;
       }
+
+
+      if (byte & 0x80)
+      {
+      make = false;
+      uint8_t scancode[1];
+      scancode [0] = byte;
+      tam = 1;
+      //*size = 1;
+      kbd_print_scancode(make, tam, scancode);
+  	  }
       else{
         uint8_t scancode[1];
+        make = true;
         scancode[0] = byte;
         tam = 1;
         kbd_print_scancode(make, tam, scancode);
       }
+
     }
+
     return 0;
 }
 

@@ -20,6 +20,7 @@
 #define TEMP_HOOK 1
 
 #define	OBF 		BIT(0)
+#define IBF 		BIT(1)
 #define AUX         BIT(5)
 #define PAR_ERR 	BIT(7)
 #define TO_ERR 		BIT(6)
