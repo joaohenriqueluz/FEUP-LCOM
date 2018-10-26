@@ -5,11 +5,15 @@
 #include "i8042.h"
 #include "i8254.h"
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 int byteCount = 0;
 int globalCounter = 0;
+int size = 1;
+bool is_over = false, make = true;
+uint8_t byte;
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -37,14 +41,10 @@ int main(int argc, char *argv[]) {
 
 int (kbd_test_scan)(bool UNUSED(assembly)) {
 
-  int ipc_status; //ind = 1;
+  int ipc_status, ind = 0;
   message msg;
   unsigned int r;
-  uint8_t bit_no;
-  int is_over = 0;
-  //bool make = true;
-  uint8_t byte;// size = 1;
-  //uint8_t scancode[2];
+  uint8_t bit_no, scancode1[1], scancode2[2];
 
   kb_subscribe(&bit_no);
 
@@ -52,7 +52,7 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
 
  // printf("%d\n", irq_set );
 
-  while(is_over == 0) {
+  while(!is_over) {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
       { 
@@ -66,21 +66,33 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
           case HARDWARE: /* hardware interrupt notification */       
             if (msg.m_notify.interrupts & irq_set)
               {
-                  is_over = kb_handler(&byte);
-                  // scancode[ind-1] = byte;
-                  // ind++;
+                  kbc_ih();
+                  if (size == 2)
+                  {
+                    scancode2[ind] = byte;
+                  }
+                  else{
+                    scancode1[ind] = byte;
+                  }
+                  ind++;
 
               }
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
 
-    // if (ind == size)
-    //   {
-    //     kbd_print_scancode(make, size, scancode);
-    //     make=true;
-    //     ind = 1;
-    //   }
+    if (ind >= size)
+      {
+        if(size == 1){
+          kbd_print_scancode(make, size, scancode1);
+        }
+        else{
+          kbd_print_scancode(make, size, scancode2);
+        }
+        make = true;
+        size = 1;
+        ind = 0;
+      }
 
 
 
@@ -102,13 +114,11 @@ int (kbd_test_poll)() {
   return 0;
 }
 int (kbd_test_timed_scan)(uint8_t n) {
-  int ipc_status;
+  int ipc_status, ind = 0;
   message msg;
   unsigned int r;
-  uint8_t bit_no_timer, bit_no_kb;
-  int is_over = 0;
-  int seconds = 0;
-  uint8_t byte;
+  uint8_t bit_no_timer, bit_no_kb, scancode1[1], scancode2[2];
+  uint8_t seconds = 0;
 
   kb_subscribe(&bit_no_kb);
   timer_subscribe_int(&bit_no_timer);
@@ -132,8 +142,16 @@ int (kbd_test_timed_scan)(uint8_t n) {
           case HARDWARE: /* hardware interrupt notification */       
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                  is_over = kb_handler(&byte);
                   seconds = 0;
+                  kbc_ih();
+                  if (size == 2)
+                  {
+                    scancode2[ind] = byte;
+                  }
+                  else{
+                    scancode1[ind] = byte;
+                  }
+                  ind++;
               }
             if (msg.m_notify.interrupts & irq_set_timer)
             {
@@ -141,14 +159,28 @@ int (kbd_test_timed_scan)(uint8_t n) {
               if(globalCounter%freq == 0){
                   ++seconds;
               }
-              if (seconds == n)
+              if (seconds >= n)
               {
-                is_over = 1;
+                is_over = true;
               }
+              //printf("sec = %d\n", seconds);
             }
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
+
+     if (ind >= size)
+      {
+        if(size == 1){
+          kbd_print_scancode(make, size, scancode1);
+        }
+        else{
+          kbd_print_scancode(make, size, scancode2);
+        }
+        make = true;
+        size = 1;
+        ind = 0;
+      }
 
 
  }
