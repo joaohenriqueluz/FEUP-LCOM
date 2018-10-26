@@ -6,7 +6,7 @@
 #include "timer.h"
 
 extern int globalCounter;
-int globalHookId;
+int globalHookIdTemp;
 
 int (timer_subscribe_int)(uint8_t *bit_no) {
 
@@ -14,7 +14,7 @@ int (timer_subscribe_int)(uint8_t *bit_no) {
   
   sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &temp_hook);
 
-  globalHookId = temp_hook;
+  globalHookIdTemp = temp_hook;
 
  *bit_no = TEMP_HOOK;
 
@@ -23,7 +23,7 @@ int (timer_subscribe_int)(uint8_t *bit_no) {
 
 int (timer_unsubscribe_int)() {
   
-  sys_irqrmpolicy(&globalHookId);
+  sys_irqrmpolicy(&globalHookIdTemp);
 
   return 0;
 }
