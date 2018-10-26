@@ -80,6 +80,7 @@ cmd = cmd| KB_ENABLE;
 
 sys_outb(KB_STATUS_REG,OUT_BUF);
 sys_outb(OUT_BUF,cmd);
+
   return 0;
 }
 
