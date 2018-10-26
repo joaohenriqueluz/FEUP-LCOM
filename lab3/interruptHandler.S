@@ -5,21 +5,21 @@
 .global _C_LABEL(erro)
 .global _C_LABEL(kbc_asm_ih)
 
-.data
-_C_LABEL(byte):
-	.byte 0
+# .data
+# _C_LABEL(byte):
+# 	byte 0
 
-_C_LABEL(erro):
-	.long 1
+# _C_LABEL(erro):
+# 	long 1
 
 .text
 _C_LABEL(kbc_asm_ih):
 	
 	inb $KB_STATUS_REG, %al
-	andl %al, $OBF
+	andw %al, $OBF
 	jz .erro
 
-	inb $OUT_BUF, %edx
+	inb $OUT_BUF, %ax
 	movb $(PAR_ERR | TO_ERR), %ecx
 	andl %ecx, %edx
 	jz .fim
@@ -27,7 +27,7 @@ _C_LABEL(kbc_asm_ih):
 
 
 .fim:
-	movb %edx, _C_LABEL(byte)
+	movw %edx, _C_LABEL(byte)
 	leave
 	ret
 

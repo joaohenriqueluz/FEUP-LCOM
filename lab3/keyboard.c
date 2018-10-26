@@ -6,7 +6,9 @@
 #include "keyboard.h"
 #include "timer.h"
 
-extern int byteCount;
+extern int byteCount, size;
+extern bool is_over, make;
+extern uint8_t byte;
 
 int globalHookId, counter = 0;
 
@@ -84,58 +86,37 @@ sys_outb(OUT_BUF,cmd);
   return 0;
 }
 
-int (kb_handler)(uint8_t *byte){
-  *byte = kb_scan_byte(false);
-  bool make = true;
-  uint8_t tam;
+void (kbc_ih)(){
+  byte = kb_scan_byte(false);
 
-  if (*byte == ESC_BREAK)
+  if (byte == ESC_BREAK)
   {
+      is_over = true;
       make = false;
-      uint8_t scancode[1];
-      scancode [0] = *byte;
-      tam = 1;
-      //*size = 1;
-      kbd_print_scancode(make, tam, scancode);
-      return 1;
+      return;
   }
- if (*byte == TWO_BYTE_SCAN)
+ if (byte == TWO_BYTE_SCAN)
  {
-    uint8_t scancode[2];
-    scancode [0] = *byte;
-    scancode[1]  = kb_scan_byte(false);
-    tam = 2;
-    kbd_print_scancode(make, tam, scancode);
-    return 0;
+    size = 2;
+    return;
   }
   else{
-  if (*byte & 0x80)
+  if (byte & 0x80)
   {
       make = false;
-      uint8_t scancode[1];
-      scancode [0] = *byte;
-      tam = 1;
-      //*size = 1;
-      kbd_print_scancode(make, tam, scancode);
-      return 0;
+      return;
    }
    else{
-    uint8_t scancode[1];
-    scancode[0] = *byte;
-    tam = 1;
-    kbd_print_scancode(make, tam, scancode);
+    make = true;
    }
  }
-   return 0;
+   return;
 }
-
 
 int (kb_read_poll)(){
 
   uint8_t byte, tam;
   bool make = true,goOn=true;
-
-  printf("Teste\n\n");
 
   while(goOn)
     
