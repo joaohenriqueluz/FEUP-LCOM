@@ -68,7 +68,6 @@ int (kbd_test_scan)(bool assembly) {
               {
                 if (assembly)
                 {
-                  printf("Inicio da função em assembly\n");
                   assembly_ih_caller();
                   if (erro)
                   {
