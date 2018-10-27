@@ -46,7 +46,8 @@ int (kbd_test_scan)(bool assembly) {
   unsigned int r;
   uint8_t bit_no, scancode1[1], scancode2[2];
 
-  kb_subscribe(&bit_no);
+  if(kb_subscribe(&bit_no) != 0)
+    printf("Erro na funcao kb_subscribe\n");
 
  uint32_t irq_set = BIT(bit_no);
 
@@ -120,7 +121,8 @@ int (kbd_test_scan)(bool assembly) {
 
  }
 
-  kb_unsubscribe();
+  if(kb_unsubscribe() != 0)
+    printf("Erro na funcao kb_unsubscribe\n");
 
   kbd_print_no_sysinb(counter);
 
@@ -142,8 +144,11 @@ int (kbd_test_timed_scan)(uint8_t n) {
   uint8_t bit_no_timer, bit_no_kb, scancode1[1], scancode2[2];
   //uint8_t seconds = 0;
 
-  kb_subscribe(&bit_no_kb);
-  timer_subscribe_int(&bit_no_timer);
+  if(kb_subscribe(&bit_no_kb) != 0)
+    printf("Erro na funcao kb_subscribe\n");
+
+  if(timer_subscribe_int(&bit_no_timer) != 0)
+    printf("Erro na funcao timer_subscribe_int\n");
 
   int freq = sys_hz();
 
@@ -205,8 +210,10 @@ int (kbd_test_timed_scan)(uint8_t n) {
         ind = 0;
       }
  }
-  timer_unsubscribe_int();
-  kb_unsubscribe();
+  if(timer_unsubscribe_int() != 0)
+    printf("Erro na funcao timer_unsubscribe_int\n");
+  if(kb_unsubscribe() != 0)
+    printf("Erro na funcao kb_unsubscribe\n");
   kbd_print_no_sysinb(counter);
 
   return 0;
