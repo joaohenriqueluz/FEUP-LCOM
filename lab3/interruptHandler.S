@@ -1,37 +1,30 @@
 #include <machine/asm.h>
-#include "i8042.h"
 
 .global _C_LABEL(byte)
 .global _C_LABEL(erro)
 .global _C_LABEL(kbc_asm_ih)
 
-# .data
-# _C_LABEL(byte):
-# 	byte 0
-
-# _C_LABEL(erro):
-# 	long 1
-
 .text
 _C_LABEL(kbc_asm_ih):
 	
-	inb $KB_STATUS_REG, %al
-	andw %al, $OBF
-	jz .erro
+	inb $0x64, %al  //é lido o satus_register
+	test $0x01, %al //teste para verificar se o output_buffer está cheio
+	jz ERRO
 
-	inb $OUT_BUF, %ax
-	movb $(PAR_ERR | TO_ERR), %ecx
-	andl %ecx, %edx
-	jz .fim
-
-
-
-.fim:
-	movw %edx, _C_LABEL(byte)
+	inb $0x60, %al //é lido o output_buffer
+	and $0xc0, %al //corresponde ao comando em c stat &(PAR_ERR | TO_ERR)
+	jz FIM
+	movb $1, _C_LABEL(erro)
 	leave
 	ret
 
-.erro:
+FIM:
+	movb %al, _C_LABEL(byte) //o valor que foi lido do output_buffer é guardado na variavel global byte
 	movb $0, _C_LABEL(erro)
+	leave
+	ret
+
+ERRO:
+	movb $1, _C_LABEL(erro) //a variavel global erro passa a ser 1 pois o programa não correu como esperado
 	leave
 	ret

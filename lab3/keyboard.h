@@ -12,4 +12,6 @@ int (kb_read_poll)();
 
 int (kbc_write_cmd)();
 
+void (assembly_ih_caller)();
+
 #endif

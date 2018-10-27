@@ -11,7 +11,7 @@
 
 int byteCount = 0;
 int globalCounter = 0;
-int size = 1;
+int size = 1, erro = 0;
 bool is_over = false, make = true;
 uint8_t byte;
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int (kbd_test_scan)(bool UNUSED(assembly)) {
+int (kbd_test_scan)(bool assembly) {
 
   int ipc_status, ind = 0;
   message msg;
@@ -66,6 +66,26 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
           case HARDWARE: /* hardware interrupt notification */       
             if (msg.m_notify.interrupts & irq_set)
               {
+                if (assembly)
+                {
+                  printf("Inicio da função em assembly\n");
+                  assembly_ih_caller();
+                  if (erro)
+                  {
+                    printf("Erro no assembly\n");
+                  }
+                  else{
+                    if (size == 2)
+                    {
+                      scancode2[ind] = byte;
+                    }
+                    else{
+                      scancode1[ind] = byte;
+                    }
+                    ind++;
+                  }
+                }
+                else{
                   kbc_ih();
                   if (size == 2)
                   {
@@ -75,6 +95,7 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
                     scancode1[ind] = byte;
                   }
                   ind++;
+                }
 
               }
          }
