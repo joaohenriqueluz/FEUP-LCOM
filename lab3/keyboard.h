@@ -10,7 +10,7 @@ int (kb_handler)(uint8_t *fst_byte);
 
 int (kb_read_poll)();
 
-int (kbc_write_cmd)();
+int (kbc_reenable)();
 
 void (assembly_ih_caller)();
 

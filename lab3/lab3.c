@@ -129,7 +129,7 @@ int (kbd_test_scan)(bool assembly) {
 
 int (kbd_test_poll)() {
   kb_read_poll();
-  kbc_write_cmd(); //CHANGE NAME MAYBE?
+  kbc_reenable();
   kbd_print_no_sysinb(counter);
 
 
