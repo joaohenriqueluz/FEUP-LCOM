@@ -6,7 +6,9 @@
 #include "keyboard.h"
 #include "timer.h"
 
-extern int byteCount, size;
+extern int byteCount;
+extern int size;
+extern int erro;
 extern bool is_over, make;
 extern uint8_t byte;
 
@@ -87,6 +89,37 @@ sys_outb(KB_STATUS_REG,OUT_BUF);
 sys_outb(OUT_BUF,cmd);
 
   return 0;
+}
+
+void (assembly_ih_caller)(){
+  kbc_asm_ih();
+  if (erro)
+  {
+    printf("Erro ao correr o assembly!\n");
+    return;
+  }
+   if (byte == ESC_BREAK)
+  {
+      is_over = true;
+      make = false;
+      return;
+  }
+ if (byte == TWO_BYTE_SCAN)
+ {
+    size = 2;
+    return;
+  }
+  else{
+  if (byte & 0x80)
+  {
+      make = false;
+      return;
+   }
+   else{
+    make = true;
+   }
+ }
+   return;
 }
 
 void (kbc_ih)(){
