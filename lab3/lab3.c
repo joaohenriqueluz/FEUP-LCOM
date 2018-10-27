@@ -110,6 +110,8 @@ int (kbd_test_scan)(bool UNUSED(assembly)) {
 int (kbd_test_poll)() {
   kb_read_poll();
   kbc_write_cmd(); //CHANGE NAME MAYBE?
+  kbd_print_no_sysinb(counter);
+
 
   return 0;
 }
@@ -118,7 +120,7 @@ int (kbd_test_timed_scan)(uint8_t n) {
   message msg;
   unsigned int r;
   uint8_t bit_no_timer, bit_no_kb, scancode1[1], scancode2[2];
-  uint8_t seconds = 0;
+  //uint8_t seconds = 0;
 
   kb_subscribe(&bit_no_kb);
   timer_subscribe_int(&bit_no_timer);
@@ -139,10 +141,22 @@ int (kbd_test_timed_scan)(uint8_t n) {
       { /* received notification */
         switch (_ENDPOINT_P(msg.m_source))
         {
-          case HARDWARE: /* hardware interrupt notification */       
+          case HARDWARE: /* hardware interrupt notification */      
+
+          if (msg.m_notify.interrupts & irq_set_timer)
+            {
+              timer_int_handler();
+              if(globalCounter >= (n*freq))
+              {
+                is_over = true;
+              }
+              //printf("sec = %d\n", seconds);
+            }
+
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                  seconds = 0;
+                  globalCounter = 0;
+
                   kbc_ih();
                   if (size == 2)
                   {
@@ -153,18 +167,7 @@ int (kbd_test_timed_scan)(uint8_t n) {
                   }
                   ind++;
               }
-            if (msg.m_notify.interrupts & irq_set_timer)
-            {
-              timer_int_handler();
-              if(globalCounter%freq == 0){
-                  ++seconds;
-              }
-              if (seconds >= n)
-              {
-                is_over = true;
-              }
-              //printf("sec = %d\n", seconds);
-            }
+            
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
@@ -181,12 +184,11 @@ int (kbd_test_timed_scan)(uint8_t n) {
         size = 1;
         ind = 0;
       }
-
-
  }
   timer_unsubscribe_int();
   kb_unsubscribe();
-  
+  kbd_print_no_sysinb(counter);
+
   return 0;
 
 }
