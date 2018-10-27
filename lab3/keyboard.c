@@ -63,24 +63,27 @@ uint8_t (kb_scan_byte)(bool poll){
 
 
 int (kbc_write_cmd)(){
-  uint32_t cmd=0;
-  /*
+    uint32_t cmd=0;
+   /*
 
-  while( 1 ) {
+    while( 1 ) {
     sys_inb(KB_STATUS_REG, &stat); assuming it returns OK 
     if( (stat & IBF) == 0 ) {
         sys_outb(KB_STATUS_REG, cmd);  no args command 
         return 0; 
       }
     tickdelay(micros_to_ticks(DELAY_US));
-  }*/
-sys_outb(KB_STATUS_REG,KBC_READ);
-sys_inb(OUT_BUF,&cmd);
+   }*/
+    sys_outb(KB_STATUS_REG,KBC_READ);
+
+
+    sys_inb(OUT_BUF,&cmd);
 //sys_inb_cnt(out....)?????
 
-cmd = cmd| KB_ENABLE;
+  cmd = cmd| KB_ENABLE;
 
 sys_outb(KB_STATUS_REG,OUT_BUF);
+
 sys_outb(OUT_BUF,cmd);
 
   return 0;
@@ -140,7 +143,7 @@ int (kb_read_poll)(){
        scancode[1]  = kb_scan_byte(true);
        tam = 2;
        kbd_print_scancode(make, tam, scancode);
-       return 0;
+      
       }
 
 
