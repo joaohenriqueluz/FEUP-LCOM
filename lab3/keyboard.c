@@ -17,7 +17,8 @@ int globalHookId, counter = 0;
 int (kb_subscribe)(uint8_t *bit_no){
 	int temp_hook = TEMP_HOOK_KB;
 
-  	sys_irqsetpolicy(KB_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook);
+  	if(sys_irqsetpolicy(KB_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook) != OK)
+      return 1;
 
   	globalHookId = temp_hook;
  
@@ -29,7 +30,8 @@ int (kb_subscribe)(uint8_t *bit_no){
 
 int (kb_unsubscribe)(){
   
-  sys_irqrmpolicy(&globalHookId);
+  if(sys_irqrmpolicy(&globalHookId) != OK)
+    return 1;
 
   return 0;
 }
@@ -136,6 +138,7 @@ void (kbc_ih)(){
     make = true;
    }
  }
+ 
    return;
 }
 
@@ -195,7 +198,10 @@ int (kb_read_poll)(){
 int sys_inb_cnt(port_t port, uint32_t *byte)
 {
   counter++;
-  return sys_inb(port,byte);
+  int i = sys_inb(port,byte);
+  if(i != OK)
+    printf("Erro sys_inb\n");
+  return i;
 }
 
 

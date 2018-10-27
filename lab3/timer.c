@@ -12,7 +12,8 @@ int (timer_subscribe_int)(uint8_t *bit_no) {
 
   int temp_hook = TEMP_HOOK;
   
-  sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &temp_hook);
+  if(sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &temp_hook) != OK)
+  	return 1;
 
   globalHookIdTemp = temp_hook;
 
@@ -23,7 +24,8 @@ int (timer_subscribe_int)(uint8_t *bit_no) {
 
 int (timer_unsubscribe_int)() {
   
-  sys_irqrmpolicy(&globalHookIdTemp);
+  if(sys_irqrmpolicy(&globalHookIdTemp) != OK)
+  	return 1;
 
   return 0;
 }
