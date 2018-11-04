@@ -34,7 +34,7 @@ uint8_t (mouse_scan_byte)(){
 
 	uint32_t stat, data;
 	while( 1 ){
-	 sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
+	 sys_inb(KB_STATUS_REG, &stat); /*cd2 assuming it returns OK */
         /* loop while 8042 output buffer is empty */
         if( stat & OBF ) 
         	{/* assuming it returns OK */
@@ -54,6 +54,27 @@ void (mouse_ih)(){
 	{
 		byteCounter = 0;
 	}
+}
+
+int mouse_enable_stream(){
+	uint32_t stat;
+	
+	while(1){
+		sys_inb(KB_STATUS_REG, &stat);
+		if (stat & OBF)
+		{
+			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
+			sys_inb(OUT_BUF, &stat);
+			
+			if (stat == ACK)
+			{
+				sys_outb(KBC_CM_REG,STREAM_MODE);
+				return 0;
+			}
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+	return 1;
 }
 
 
