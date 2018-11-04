@@ -12,12 +12,12 @@ extern int byteCounter;
 int (mouse_subscribe)(uint8_t *bit_no){
 	int temp_hook = TEMP_HOOK_MOUSE;
 
-  	if(sys_irqsetpolicy(KB_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook) != OK)
+  	if(sys_irqsetpolicy(MOUSE_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook) != OK)
       return 1;
 
   	globalHookId = temp_hook;
  
- 	*bit_no = TEMP_HOOK_KB;
+ 	*bit_no = TEMP_HOOK_MOUSE;
 
 	return 0;
 }
@@ -61,12 +61,12 @@ int mouse_enable_stream(){
 	
 	while(1){
 		sys_inb(KB_STATUS_REG, &stat);
-		if (stat & OBF)
+		if ((stat & IBF) == 0)
 		{
 			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
 			sys_inb(OUT_BUF, &stat);
 			
-			if (stat == ACK)
+			if (stat & ACK)
 			{
 				sys_outb(KBC_CM_REG,STREAM_MODE);
 				return 0;

@@ -12,6 +12,7 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #endif
 
 #define KB_IRQ   1
+#define MOUSE_IRQ  12
 
 #define KB_STATUS_REG      0x64
 #define KBC_CM_REG         0x64
