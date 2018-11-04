@@ -1,7 +1,7 @@
 #ifndef _LCOM_I8042_H_
 #define _LCOM_I8042_H_
 
-/* Keyboard control */
+/* Keyboard and Mouse control */
 extern int counter;
 #define BIT(n) (0x01<<(n))
 
@@ -33,6 +33,8 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define PAR_ERR 	       BIT(7)
 #define TO_ERR 		       BIT(6)
 
+#define WRITE_TO_MOUSE     0xd4
+#define STREAM_MODE        0xea
 #define ACK     0xfa
 #define NACK    0xfe
 #define ERROR   0xfc

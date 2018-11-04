@@ -8,4 +8,6 @@ uint8_t (mouse_scan_byte)();
 
 void (mouse_ih)();
 
+int mouse_enable_stream();
+
 #endif

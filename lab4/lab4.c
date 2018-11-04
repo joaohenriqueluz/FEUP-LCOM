@@ -42,6 +42,8 @@ int (mouse_test_packet)(uint32_t cnt) {
   unsigned int r;
   uint8_t bit_no, count = 0, packet[3];
 
+  mouse_enable_stream();
+
   if(mouse_subscribe(&bit_no) != 0)
     printf("Erro na funcao kb_subscribe\n");
 
@@ -77,6 +79,7 @@ int (mouse_test_packet)(uint32_t cnt) {
         pp->bytes[i] = packet[i];
       }
       mouse_print_packet(pp);
+      byteCounter = 0;
       count++;
     }
  }
