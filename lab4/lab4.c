@@ -42,10 +42,17 @@ int (mouse_test_packet)(uint32_t cnt) {
   unsigned int r;
   uint8_t bit_no, count = 0, packet[3];
 
-  mouse_enable_stream();
-
   if(mouse_subscribe(&bit_no) != 0)
-    printf("Erro na funcao kb_subscribe\n");
+    printf("Erro na funcao mouse_subscribe\n");
+
+  if(write_comand_mouse() != 0){
+    printf("Problema ao enviar o 1º comando\n");
+  }
+  if(mouse_enable_stream() != 0){
+    printf("Problema ao enviar o comando ENABLE STREAM MODE\n");
+  }
+
+  mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
 
  uint32_t irq_set = BIT(bit_no);
 
@@ -63,9 +70,8 @@ int (mouse_test_packet)(uint32_t cnt) {
           case HARDWARE: /* hardware interrupt notification */       
             if (msg.m_notify.interrupts & irq_set)
               {
-                mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
                 mouse_ih();
-                packet[byteCounter] = byte;
+                packet[byteCounter++] = byte;
               }
          }
      } else { /* received a standard message, not a notification */
@@ -102,8 +108,8 @@ int (mouse_test_async)(uint8_t idle_time) {
     return 1;
 }
 
-int (mouse_test_gesture)() {
-    /* To be completed */
-    printf("%s: under construction\n", __func__);
-    return 1;
-}
+// int (mouse_test_gesture)(UNUSED(uint8_t x_len), UNUSED(uint8_t tolerance) {
+//     To be completed 
+//     printf("%s: under construction\n", __func__);
+//     return 1;
+// }
