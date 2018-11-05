@@ -44,31 +44,44 @@ uint8_t (mouse_scan_byte)(){
             	else
                 	return -1;
         	}
-        tickdelay(micros_to_ticks(DELAY_US));
+        //tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
 
 void (mouse_ih)(){
 	byte = mouse_scan_byte();
-	if (byte & 0x80)
+	if (byte & BIT(3))
 	{
 		byteCounter = 0;
 	}
 }
 
-int mouse_enable_stream(){
+int write_comand_mouse(){
 	uint32_t stat;
-	
+
 	while(1){
 		sys_inb(KB_STATUS_REG, &stat);
 		if ((stat & IBF) == 0)
 		{
 			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
-			sys_inb(OUT_BUF, &stat);
+			return 0;
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+}
+
+int mouse_enable_stream(){
+	uint32_t stat, data;
+	
+	while(1){
+		sys_inb(KB_STATUS_REG, &stat);
+		if ((stat & IBF) == 0)
+		{
+			sys_inb(OUT_BUF, &data);
 			
-			if (stat & ACK)
+			if (data == ACK)
 			{
-				sys_outb(KBC_CM_REG,STREAM_MODE);
+				sys_outb(OUT_BUF,STREAM_MODE);
 				return 0;
 			}
 		}
