@@ -36,6 +36,7 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 
 #define WRITE_TO_MOUSE     0xd4
 #define STREAM_MODE        0xea
+#define MOUSE_RESET        0xff
 #define ACK     0xfa
 #define NACK    0xfe
 #define ERROR   0xfc
