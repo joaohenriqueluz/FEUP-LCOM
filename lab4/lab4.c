@@ -41,6 +41,7 @@ int (mouse_test_packet)(uint32_t cnt) {
   message msg;
   unsigned int r;
   uint8_t bit_no, count = 0, packet[3];
+  struct packet *pp = malloc(sizeof(struct packet));
 
   if(mouse_subscribe(&bit_no) != 0)
     printf("Erro na funcao mouse_subscribe\n");
@@ -79,11 +80,18 @@ int (mouse_test_packet)(uint32_t cnt) {
 
     if (byteCounter >= 2)
     {
-      struct packet *pp = malloc(sizeof(struct packet));
-      for (int i = 0; i < 3; ++i)
+      for (int i = 0; i < 3; i++)
       {
         pp->bytes[i] = packet[i];
       }
+      pp->rb = (pp->bytes[0] & BIT(1) >> 1);
+      pp->mb = (pp->bytes[0] & BIT(2) >> 2);
+      pp->lb = (pp->bytes[0] & BIT(0));
+      pp->x_ov = (pp->bytes[0] & BIT(6) >> 6);
+      pp->y_ov = (pp->bytes[0] & BIT(7) >> 7);
+      pp->delta_x = pp->bytes[1] | (pp->bytes[0] & BIT(4) << 12);
+      pp->delta_y = pp->bytes[2] | (pp->bytes[0] & BIT(5) << 11);
+
       mouse_print_packet(pp);
       byteCounter = 0;
       count++;
