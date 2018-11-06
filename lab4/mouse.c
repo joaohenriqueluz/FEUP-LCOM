@@ -44,12 +44,39 @@ uint8_t (mouse_scan_byte)(){
             	else
                 	return -1;
         	}
-        //tickdelay(micros_to_ticks(DELAY_US));
+        tickdelay(micros_to_ticks(DELAY_US));
+	}
+}
+
+uint8_t (mouse_scan_byte_remote)(uint16_t period){
+
+	uint32_t stat, data;
+	while( 1 ){
+	 sys_inb(KB_STATUS_REG, &stat); /*cd2 assuming it returns OK */
+        /* loop while 8042 output buffer is empty */
+        if( stat & OBF ) 
+        	{/* assuming it returns OK */
+        		sys_inb(OUT_BUF, &data);
+            	if ( ((stat &(PAR_ERR | TO_ERR| AUX)) >> 5) == 1 )
+                	return data;
+            	else
+                	return -1;
+        	}
+        tickdelay(micros_to_ticks(period));
 	}
 }
 
 void (mouse_ih)(){
 	byte = mouse_scan_byte();
+	if (byte & BIT(3))
+	{
+		byteCounter = 0;
+	}
+}
+
+
+void (mouse_remote)(uint16_t period){
+	byte = mouse_scan_byte_remote(period);
 	if (byte & BIT(3))
 	{
 		byteCounter = 0;
@@ -90,13 +117,32 @@ int mouse_enable_stream(){
 	return 1;
 }
 
-void disable_mouse(){
-	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
-	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
+
+
+int mouse_enable_remote(){
+	uint32_t stat, data;
+	
+	while(1){
+		sys_inb(KB_STATUS_REG, &stat);
+		if ((stat & IBF) == 0)
+		{
+			sys_inb(OUT_BUF, &data);
+			
+			if (data == ACK)
+			{
+				sys_outb(OUT_BUF,STREAM_MODE);
+				return 0;
+			}
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+	return 1;
 }
 
 
-
-
+void disable_mouse (){
+	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
+	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
+}
 
 
