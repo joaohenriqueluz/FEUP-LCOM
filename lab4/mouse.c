@@ -90,6 +90,10 @@ int mouse_enable_stream(){
 	return 1;
 }
 
+void disable_mouse(){
+	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
+	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
+}
 
 
 

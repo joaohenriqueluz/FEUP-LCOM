@@ -53,7 +53,7 @@ int (mouse_test_packet)(uint32_t cnt) {
     printf("Problema ao enviar o comando ENABLE STREAM MODE\n");
   }
 
-  mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
+  //mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
 
  uint32_t irq_set = BIT(bit_no);
 
@@ -97,6 +97,9 @@ int (mouse_test_packet)(uint32_t cnt) {
       count++;
     }
  }
+
+disable_mouse();
+
 
   if(mouse_unsubscribe() != 0)
     printf("Erro na funcao kb_unsubscribe\n");
