@@ -25,7 +25,6 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define TWO_BYTE_SCAN      0xe0
 
 #define DELAY_US      	   20000
-#define TEMP_HOOK_KB 	   2
 #define TEMP_HOOK_MOUSE    3
 
 #define	OBF 		       BIT(0)
@@ -37,8 +36,11 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define WRITE_TO_MOUSE     0xd4
 #define DISABLE_MOUSE      0xf5
 #define STREAM_MODE        0xea
+#define MOUSE_DEFAULT      0xf6
 #define REMOTE_MODE        0xf0
 #define MOUSE_RESET        0xff
+//#define DISABLE_MOUSE      0xa7
+#define DISABLE_DATA_REPORTING   0xf5
 #define ACK     0xfa
 #define NACK    0xfe
 #define ERROR   0xfc

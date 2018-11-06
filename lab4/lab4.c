@@ -6,6 +6,7 @@
 #include "i8042.h"
 #include "mouse.h"
 
+int globalCounter = 0;
 int byteCounter = 0;
 uint8_t byte;
 
@@ -43,9 +44,6 @@ int (mouse_test_packet)(uint32_t cnt) {
   uint8_t bit_no, count = 0, packet[3];
   struct packet *pp = malloc(sizeof(struct packet));
 
-  if(mouse_subscribe(&bit_no) != 0)
-    printf("Erro na funcao mouse_subscribe\n");
-
   if(write_comand_mouse() != 0){
     printf("Problema ao enviar o 1º comando\n");
   }
@@ -54,6 +52,9 @@ int (mouse_test_packet)(uint32_t cnt) {
   }
 
   //mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
+
+  if(mouse_subscribe(&bit_no) != 0)
+    printf("Erro na funcao mouse_subscribe\n");
 
  uint32_t irq_set = BIT(bit_no);
 
@@ -98,11 +99,20 @@ int (mouse_test_packet)(uint32_t cnt) {
     }
  }
 
-disable_mouse();
-
+  disable_mouse();
 
   if(mouse_unsubscribe() != 0)
-    printf("Erro na funcao kb_unsubscribe\n");
+    printf("Erro na funcao mouse_unsubscribe\n");
+
+  // write_comand_mouse();
+  // mouse_disable_data_reporting();
+
+  // write_comand_mouse();
+  // mouse_default();
+
+  // write_comand_mouse();
+  // mouse_reset();
+
 
   return 0;
 }
@@ -156,9 +166,102 @@ return 0;
 }
 
 int (mouse_test_async)(uint8_t idle_time) {
-    /* To be completed */
-    printf("%s(%u): under construction\n", __func__, idle_time);
-    return 1;
+  int ipc_status;
+  message msg;
+  unsigned int r;
+  bool is_over = false;
+  uint8_t bit_no_mouse, bit_no_timer, packet[3];
+  int freq = sys_hz();
+  struct packet *pp = malloc(sizeof(struct packet));
+
+  if(write_comand_mouse() != 0){
+    printf("Problema ao enviar o 1º comando\n");
+  }
+  if(mouse_enable_stream() != 0){
+    printf("Problema ao enviar o comando ENABLE STREAM MODE\n");
+  }
+
+  mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
+
+  if(mouse_subscribe(&bit_no_mouse) != 0)
+    printf("Erro na funcao mouse_subscribe\n");
+
+  if(timer_subscribe_int(&bit_no_timer) != 0)
+    printf("Erro na funcao timer_subscribe_int\n");
+
+  uint32_t irq_set_mouse = BIT(bit_no_mouse);
+  uint32_t irq_set_timer = BIT(bit_no_timer);
+
+  while(!is_over) {
+
+    if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
+      { 
+        printf("driver_receive failed with: %d", r);
+        continue;
+      } 
+    if (is_ipc_notify(ipc_status))
+      { /* received notification */
+        switch (_ENDPOINT_P(msg.m_source))
+        {
+          case HARDWARE: /* hardware interrupt notification */ 
+
+            if (msg.m_notify.interrupts & irq_set_timer)
+            {
+              timer_int_handler();
+              if(globalCounter >= (idle_time*freq))
+              {
+                is_over = true;
+              }
+            }
+
+            if (msg.m_notify.interrupts & irq_set_mouse)
+              {
+                globalCounter = 0;
+                mouse_ih();
+                packet[byteCounter++] = byte;
+              }
+         }
+     } else { /* received a standard message, not a notification */
+         /* no standard messages expected: do nothing */}
+
+    if (byteCounter >= 2)
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        pp->bytes[i] = packet[i];
+      }
+      pp->rb = (pp->bytes[0] & BIT(1) >> 1);
+      pp->mb = (pp->bytes[0] & BIT(2) >> 2);
+      pp->lb = (pp->bytes[0] & BIT(0));
+      pp->x_ov = (pp->bytes[0] & BIT(6) >> 6);
+      pp->y_ov = (pp->bytes[0] & BIT(7) >> 7);
+      pp->delta_x = pp->bytes[1] | (pp->bytes[0] & BIT(4) << 12);
+      pp->delta_y = pp->bytes[2] | (pp->bytes[0] & BIT(5) << 11);
+
+      mouse_print_packet(pp);
+      byteCounter = 0;
+    }
+ }
+
+disable_mouse();
+
+  if(timer_unsubscribe_int() != 0)
+    printf("Erro na funcao timer_unsubscribe_int\n");
+
+  if(mouse_unsubscribe() != 0)
+    printf("Erro na funcao mouse_unsubscribe\n");
+
+  // write_comand_mouse();
+  // mouse_disable_data_reporting();
+
+  // write_comand_mouse();
+  // mouse_default();
+
+  // write_comand_mouse();
+  // mouse_reset();
+
+
+  return 0;
 }
 
 // int (mouse_test_gesture)(UNUSED(uint8_t x_len), UNUSED(uint8_t tolerance) {

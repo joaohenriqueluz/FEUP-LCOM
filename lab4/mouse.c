@@ -118,6 +118,45 @@ int mouse_enable_stream(){
 }
 
 
+int mouse_default(){
+	uint32_t stat, data;
+	
+	while(1){
+		sys_inb(KB_STATUS_REG, &stat);
+		if ((stat & IBF) == 0)
+		{
+			sys_inb(OUT_BUF, &data);
+			
+			if (data == ACK)
+			{
+				sys_outb(OUT_BUF,MOUSE_DEFAULT);
+				return 0;
+			}
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+	return 1;
+}
+
+int mouse_reset(){
+	uint32_t stat, data;
+	
+	while(1){
+		sys_inb(KB_STATUS_REG, &stat);
+		if ((stat & IBF) == 0)
+		{
+			sys_inb(OUT_BUF, &data);
+			
+			if (data == ACK)
+			{
+				sys_outb(OUT_BUF,MOUSE_RESET);
+				return 0;
+			}
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+	return 1;
+}
 
 int mouse_enable_remote(){
 	uint32_t stat, data;
@@ -139,10 +178,12 @@ int mouse_enable_remote(){
 	return 1;
 }
 
-
 void disable_mouse (){
 	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
 	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
 }
+
+
+
 
 
