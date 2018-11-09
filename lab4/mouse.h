@@ -8,18 +8,26 @@ uint8_t (mouse_scan_byte)();
 
 void (mouse_ih)();
 
-void (mouse_remote)(uint16_t period);
+void (mouse_remote)();
 
-int fst_command_mouse();
+int (kbc_write_cmd)();
 
-int write_commad(uint32_t cmd);
+//int fst_command_mouse();
 
-int check_command(uint32_t cmd);
+void write_command(uint32_t cmd);
+
+//int check_command(uint32_t cmd);
 
 void printPacket();
 
 void clearPacket();
 
-void disable_mouse();
+//void disable_mouse();
+
+void enable_cmd_int();
+
+void disable_cmd_int();
+
+void disable_cmd_remote();
 
 #endif
