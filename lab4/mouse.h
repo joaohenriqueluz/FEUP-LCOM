@@ -20,6 +20,6 @@ int mouse_disable_data_reporting();
 
 int mouse_default();
 
-int mouse_reset();
+int mouse_remote_default(uint8_t cmd);
 
 #endif

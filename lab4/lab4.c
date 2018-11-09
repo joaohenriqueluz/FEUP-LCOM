@@ -51,7 +51,7 @@ int (mouse_test_packet)(uint32_t cnt) {
     printf("Problema ao enviar o comando ENABLE STREAM MODE\n");
   }
 
-  //mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
+  mouse_enable_data_reporting();  // tem de ser feita por nós para ganhar pontos
 
   if(mouse_subscribe(&bit_no) != 0)
     printf("Erro na funcao mouse_subscribe\n");
@@ -160,8 +160,8 @@ while(count < cnt)
     }
   }
 uint8_t default_cmd= minix_get_dflt_kbc_cmd_byte();
-  sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
-  sys_outb(KB_STATUS_REG, default_cmd);
+  write_comand_mouse();
+  mouse_remote_default(default_cmd);
 return 0;
 }
 

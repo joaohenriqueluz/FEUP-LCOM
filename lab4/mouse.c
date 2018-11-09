@@ -129,7 +129,7 @@ int mouse_default(){
 			
 			if (data == ACK)
 			{
-				sys_outb(OUT_BUF,MOUSE_DEFAULT);
+				sys_outb(OUT_BUF,DISABLE_MOUSE);
 				return 0;
 			}
 		}
@@ -138,7 +138,7 @@ int mouse_default(){
 	return 1;
 }
 
-int mouse_reset(){
+int mouse_remote_default(uint8_t cmd){
 	uint32_t stat, data;
 	
 	while(1){
@@ -149,7 +149,7 @@ int mouse_reset(){
 			
 			if (data == ACK)
 			{
-				sys_outb(OUT_BUF,MOUSE_RESET);
+				sys_outb(OUT_BUF,cmd);
 				return 0;
 			}
 		}
