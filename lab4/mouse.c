@@ -109,14 +109,14 @@ int fst_command_mouse(){
 }
 
 int write_command(uint32_t cmd){
-	uint32_t stat, temp;
+	uint32_t stat;
 
 	while(1){
 		sys_inb(KB_STATUS_REG, &stat);
-		if (stat & OBF)
-		{
-			sys_inb(OUT_BUF, &temp);
-		}
+		// if (stat & OBF)
+		// {
+		// 	sys_inb(OUT_BUF, &temp);
+		// }
 		if ((stat & IBF) == 0)
 		{
 			sys_outb(OUT_BUF,cmd);
