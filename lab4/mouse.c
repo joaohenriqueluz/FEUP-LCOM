@@ -37,34 +37,32 @@ uint8_t (mouse_scan_byte)(){
 	while( 1 ){
 	 sys_inb(KB_STATUS_REG, &stat); /*cd2 assuming it returns OK */
         /* loop while 8042 output buffer is empty */
+        sys_inb(OUT_BUF, &data);
         if( stat & OBF ) 
-        	{/* assuming it returns OK */
-        		sys_inb(OUT_BUF, &data);
+        	{/* assuming it returns OK */		
             	if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
                 	return data;
             	else
                 	return -1;
         	}
-        tickdelay(micros_to_ticks(DELAY_US));
+      //  tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
 
-uint8_t (mouse_scan_byte_remote)(uint16_t period){
+uint8_t (mouse_scan_byte_remote)(){
 
 	uint32_t stat, data;
-	printf("check read\n");
+	
 	while( 1 ){
-	 sys_inb(KB_STATUS_REG, &stat); /*cd2 assuming it returns OK */
-        /* loop while 8042 output buffer is empty */
+	 sys_inb(KB_STATUS_REG, &stat); 
         if( stat & OBF ) 
         	{/* assuming it returns OK */
         		sys_inb(OUT_BUF, &data);
-            	if ( ((stat &(PAR_ERR | TO_ERR| AUX)) >> 5) == 1 )
+            	if ( (stat &(PAR_ERR | TO_ERR| AUX)>> 5) == 1 )
                 	return data;
             	else
                 	return -1;
         	}
-        tickdelay(micros_to_ticks(period));
 	}
 }
 
@@ -86,47 +84,89 @@ void (mouse_ih)(){
 }
 
 
-void (mouse_remote)(uint16_t period){
-	byte = mouse_scan_byte_remote(period);
-	if (byte & BIT(3))
+void (mouse_remote)(){
+
+	write_command(READ_DATA);
+
+for(unsigned int i=0;i<3;)
+{
+	byte = mouse_scan_byte();
+
+	packet[byteCounter] = byte;
+
+	if ((packet[0] & BIT(3)) == 0)
 	{
 		byteCounter = 0;
+		i=0;
+		continue;
 	}
+	
+	byteCounter++;
+	i++;
 }
 
-int fst_command_mouse(){
-	uint32_t stat;
-
-	while(1){
-		sys_inb(KB_STATUS_REG, &stat);
-		if ((stat & IBF) == 0)
-		{
-			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
-			return 0;
-		}
-		tickdelay(micros_to_ticks(DELAY_US));
-	}
+	printPacket();
+		
 }
 
-int write_command(uint32_t cmd){
-	uint32_t stat;
+// int fst_command_mouse(){
+// 	uint32_t stat;
 
-	while(1){
+// 	while(1){
+// 		sys_inb(KB_STATUS_REG, &stat);
+// 		if ((stat & IBF) == 0)
+// 		{
+// 			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
+// 			return 0;
+// 		}
+// 		tickdelay(micros_to_ticks(DELAY_US));
+// 	}
+// }
+
+void write_command(uint32_t cmd)
+{
+	uint32_t stat, data=0;
+
+	while(data != ACK){
+		sys_outb(KB_STATUS_REG, WRITE_TO_MOUSE);
 		sys_inb(KB_STATUS_REG, &stat);
 		if ((stat & IBF) == 0)
 		{
 			sys_outb(OUT_BUF,cmd);
-			return 0;
+			sys_inb(OUT_BUF,&data);
+			return;
 		}
-		tickdelay(micros_to_ticks(DELAY_US));
+
+		//tickdelay(micros_to_ticks(DELAY_US));
 	}
 }
 
-int check_command(uint32_t cmd){
-	uint32_t byte;
-	write_command(cmd);
-	byte = mouse_scan_byte();
-	return 0;
+void enable_cmd_int()
+{
+	//write_command(WRITE_TO_MOUSE);
+	write_command(STREAM_MODE);
+	//write_command(WRITE_TO_MOUSE);
+	write_command(ENABLE_DR);
+
+}
+
+void disable_cmd_int()
+{
+	//write_command(WRITE_TO_MOUSE);
+	write_command(DISABLE_MOUSE);
+}
+
+// int check_command(uint32_t cmd){
+// 	uint32_t byte;
+// 	write_command(cmd);
+// 	byte = mouse_scan_byte();
+// 	return 0;
+// }
+void disable_cmd_remote()
+{
+	write_command(STREAM_MODE);
+	write_command(DISABLE_MOUSE);
+
 }
 
 void printPacket(){
@@ -164,12 +204,27 @@ void clearPacket(){
 	}
 }
 
-void disable_mouse (){
-	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
-	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
+
+// void disable_mouse (){
+// 	uint32_t status;
+// 	sys_inb(KB_STATUS_REG,&status);
+// 	sys_outb(KB_STATUS_REG,WRITE_TO_MOUSE);
+// 	sys_inb(KB_STATUS_REG,&status);
+// 	sys_outb(KB_STATUS_REG, DISABLE_MOUSE);
+// }
+
+
+int (kbc_write_cmd)()
+{
+  uint32_t cmd=0;
+  sys_outb(KB_STATUS_REG,KBC_READ);
+  sys_inb(OUT_BUF,&cmd);
+
+  cmd = cmd| KB_ENABLE;
+
+sys_outb(KB_STATUS_REG,WRITE_BYTE);
+
+sys_outb(OUT_BUF,minix_get_dflt_kbc_cmd_byte());
+
+  return 0;
 }
-
-
-
-
-

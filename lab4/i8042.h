@@ -2,7 +2,7 @@
 #define _LCOM_I8042_H_
 
 /* Keyboard and Mouse control */
-extern int counter;
+
 #define BIT(n) (0x01<<(n))
 
 #ifdef LAB3
@@ -17,9 +17,10 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define KB_STATUS_REG      0x64
 #define KBC_CM_REG         0x64
 #define KBC_READ           0x20
+#define WRITE_BYTE         0x60
 #define KB_ENABLE 		   BIT(0)
 
-#define OUT_BUF      	   0x60 // PODIAMOS ALTERAR ESTE PARA FICAR IGUAL AOS OUTROS
+#define OUT_BUF      	   0x60
 
 #define ESC_BREAK          0x81
 #define TWO_BYTE_SCAN      0xe0
@@ -34,10 +35,12 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define TO_ERR 		       BIT(6)
 
 #define WRITE_TO_MOUSE     0xd4
+#define READ_DATA 		   0xeb
 #define DISABLE_MOUSE      0xf5
 #define STREAM_MODE        0xea
 #define MOUSE_DEFAULT      0xf6
 #define REMOTE_MODE        0xf0
+#define ENABLE_DR          0xF4
 #define MOUSE_RESET        0xff
 //#define DISABLE_MOUSE      0xa7
 #define DISABLE_DATA_REPORTING   0xf5
