@@ -180,6 +180,7 @@ int (mouse_test_async)(uint8_t idle_time) {
 
             if (msg.m_notify.interrupts & irq_set_mouse)
               {
+                globalCounter = 0;
                 mouse_ih();
               }
          }
