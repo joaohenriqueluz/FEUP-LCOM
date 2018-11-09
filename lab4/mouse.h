@@ -7,19 +7,19 @@ int (mouse_unsubscribe)();
 uint8_t (mouse_scan_byte)();
 
 void (mouse_ih)();
+
 void (mouse_remote)(uint16_t period);
 
-int write_comand_mouse();
+int fst_command_mouse();
+
+int write_commad(uint32_t cmd);
+
+int check_command(uint32_t cmd);
+
+void printPacket();
+
+void clearPacket();
 
 void disable_mouse();
-
-int mouse_enable_stream();
-int mouse_enable_remote();
-
-int mouse_disable_data_reporting();
-
-int mouse_default();
-
-int mouse_remote_default(uint8_t cmd);
 
 #endif
