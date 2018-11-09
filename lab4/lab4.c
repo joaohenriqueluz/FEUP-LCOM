@@ -41,7 +41,8 @@ int (mouse_test_packet)(uint32_t cnt) {
   int ipc_status;
   message msg;
   unsigned int r;
-  uint8_t bit_no, count = 0, packet[3];
+  uint8_t bit_no, packet[3];
+  uint32_t count = 0;
   struct packet *pp = malloc(sizeof(struct packet));
 
   if(write_comand_mouse() != 0){
@@ -73,7 +74,7 @@ int (mouse_test_packet)(uint32_t cnt) {
             if (msg.m_notify.interrupts & irq_set)
               {
                 mouse_ih();
-                packet[byteCounter++] = byte;
+                packet[byteCounter] = byte; 
               }
          }
      } else { /* received a standard message, not a notification */
@@ -85,17 +86,33 @@ int (mouse_test_packet)(uint32_t cnt) {
       {
         pp->bytes[i] = packet[i];
       }
-      pp->rb = (pp->bytes[0] & BIT(1) >> 1);
-      pp->mb = (pp->bytes[0] & BIT(2) >> 2);
+      pp->rb = (pp->bytes[0] & BIT(1)) >> 1;
+      pp->mb = (pp->bytes[0] & BIT(2)) >> 2;
       pp->lb = (pp->bytes[0] & BIT(0));
-      pp->x_ov = (pp->bytes[0] & BIT(6) >> 6);
-      pp->y_ov = (pp->bytes[0] & BIT(7) >> 7);
-      pp->delta_x = pp->bytes[1] | (pp->bytes[0] & BIT(4) << 12);
-      pp->delta_y = pp->bytes[2] | (pp->bytes[0] & BIT(5) << 11);
+      pp->x_ov = (pp->bytes[0] & BIT(6)) >> 6;
+      pp->y_ov = (pp->bytes[0] & BIT(7)) >> 7;
+      
+      if(((packet[0] & BIT(4)) >> 4)==0)
+        pp->delta_x = (packet[1] & 0x00ff);
+      else
+         pp->delta_x = (packet[1] & 0x0100);
+
+      if(((packet[0] & BIT(5)) >> 5)==0)
+         pp->delta_y = (packet[2] & 0x00ff);
+      else
+        pp->delta_y = (packet[2] & 0x0100);
 
       mouse_print_packet(pp);
       byteCounter = 0;
       count++;
+
+      for (int i = 0; i < 3; i++)
+      {
+        packet[i] = 0;
+      }
+    }
+    else{
+      byteCounter++;
     }
  }
 
