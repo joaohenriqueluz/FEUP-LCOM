@@ -33,4 +33,19 @@ void disable_cmd_remote();
 void check_line(struct mouse_ev evt);
 
 void set_mouse_events();
+
+bool check_length();
+
+bool pause_tolerence();
+
+bool R_tolerence();
+
+bool L_tolerence();
+
+bool slope_down();
+
+bool slope_up();
+
+
+
 #endif
