@@ -10,7 +10,8 @@ int globalCounter = 0;
 int byteCounter = 0;
 uint8_t byte, packet[3];
 uint32_t count = 0;
-bool gest=false;
+bool gest=false, terminate = false;
+uint8_t global_x_len, global_tolerence;
 
 // Any header files included below this line should have been created by you
 
@@ -165,13 +166,13 @@ int (mouse_test_async)(uint8_t idle_time) {
 }
 
 
-int (mouse_test_gesture)( uint8_t UNUSED (x_len), uint8_t UNUSED(tolerance)) {
+int (mouse_test_gesture)( uint8_t x_len, uint8_t tolerance) {
   int ipc_status;
    message msg;
    unsigned int r;
    uint8_t bit_no;
-   bool done=false;
-
+  global_x_len=x_len;
+  global_tolerence=tolerance;
 
  enable_cmd_int();
 
@@ -180,7 +181,7 @@ int (mouse_test_gesture)( uint8_t UNUSED (x_len), uint8_t UNUSED(tolerance)) {
 
  uint32_t irq_set = BIT(bit_no);
 
-  while(done) {
+  while(!terminate) {
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
       { 
         printf("driver_receive failed with: %d", r);
