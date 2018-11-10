@@ -5,6 +5,7 @@
 #include "i8042.h"
 #include "mouse.h"
 
+
 int globalHookId;
 extern uint8_t byte, packet[3];
 extern int byteCounter;
@@ -15,8 +16,8 @@ uint8_t Xdelta=0, Ydelta=0,old_Xdelta=0, old_Ydelta=0;
 struct packet pp;
 struct packet old_pp;
 extern uint8_t global_x_len;
-extern uint8_t global_tolerence;
-
+extern uint8_t global_tolerance;
+state_t state = INIT; //
 
 
 int (mouse_subscribe)(uint8_t *bit_no){
@@ -192,9 +193,7 @@ void printPacket(){
 	
       if(gest)
       {
-      	Xdelta += pp.delta_x;
-      	Ydelta += pp.delta_y;
-      
+    
       set_mouse_events();
       check_line(gesture); 
 
@@ -237,148 +236,184 @@ sys_outb(OUT_BUF,minix_get_dflt_kbc_cmd_byte());
 
   return 0;
 }
-typedef enum {INIT, LUP, PAUSE, RDOWN , COMP} state_t;
-
-
 
 
 void check_line(struct mouse_ev evt) 
 {
-	static state_t state = INIT; // initial state; keep state
+	 // initial state; keep state
 
 	switch (state) 
 	{
 	case INIT:
 		
-		Xdelta=0;
-		old_Xdelta=0;
-		Ydelta=0;
-		old_Ydelta=0;
-		printf("INIT\n");
+	
+	
 		if( evt.type == LB_PRESSED)
 		{
+			Xdelta=0;
+			old_Xdelta=0;
+			Ydelta=0;
+			old_Ydelta=0;
 			state = LUP;
 			
 		}
-		break;
-	case LUP:
-		
-		if( evt.type == LB_RELEASED ) 
-		{	
-			//if(L_tolerence() && check_length() && slope_up())
-				state = PAUSE;
-			
-			{
-				
-				state = INIT;
-			}
-		} 
-
-		else
-		{
-			state = INIT;
-		}
-
-
-		old_Xdelta= Xdelta;
-		old_Ydelta= Ydelta;
-		printf("LUP\n");
 		break;
 
 	case PAUSE:
 		
-		//if(pause_tolerence())
-		//{
-
-			 if( evt.type == RB_PRESSED) 
-			 {
-			 	state = RDOWN;
-			
-			 }
-
-
-		//}
-
-		else if( evt.type == LB_PRESSED) 
-		{   
-
-			Xdelta=0;
-			old_Xdelta=0;
-			Ydelta=0;
-			old_Ydelta=0;
-
-			state = LUP;
-		}
-
-		else
-		{
-			state =INIT;
-		}
-
-		old_Xdelta= Xdelta;
-		old_Ydelta= Ydelta;
-		printf("pause\n");
-		break;
-		
-	case RDOWN:
-	
-		if( evt.type == RB_RELEASED) 
-		{ printf("released\n");
-			//if(R_tolerence() && check_length() && slope_down())
-			//	{
-					printf("rdow -> comp\n");
-					state = COMP;
-			//	}
+		 if( evt.type == RB_PRESSED) 
+		 {
+		 state = RDOWN;
+		 break;
 		}
 
 		else if(evt.type == LB_PRESSED)
-		{
-			Xdelta=0;
-			old_Xdelta=0;
-			Ydelta=0;
-			old_Ydelta=0;
-			state = LUP;
-		}
-		else
-		{
-			state =INIT;
-		}
-		old_Xdelta= Xdelta;
-		old_Ydelta= Ydelta;
+		 	state = LUP;
 
-		break;
+		 else if(evt.type == MOUSE_MOV)
+		 	state = PAUSE;
+		 else
+		 	state = INIT;
+		 break;
+	
+	case LUP:
+		
+		 if(evt.type == MOUSE_MOV)
+		 {
+		 	
+		 	state = LUP;
+		 }
+
+			else  if(evt.type == LB_RELEASED)
+			 {
+		 		if(check_length())
+		 		{
+		 			state = PAUSE;
+		 			break;
+		 		}
+
+			 }
+
+     	  else 
+     	  	state =INIT;
+     	  break;
+
+	case RDOWN:
+	
+			
+		 if(evt.type == MOUSE_MOV)
+		 {
+		
+		 	state = RDOWN;
+		 }
+
+			 else if(evt.type == RB_RELEASED)
+			 {
+		 		if(check_length())
+		 		{
+		 			state = COMP;
+		 			break;
+		 		}
+
+			 }
+			 else if(evt.type == LB_PRESSED) //
+			 	state =LUP;
+
+     	  else 
+     	  	state =INIT;
+     	  break;
 
 	case COMP:
-	printf("comp1\n");
+	
 	if(evt.type == MOUSE_MOV)
-		printf("terminate\n");
+	
 		terminate = true;
 		break;	
 	default:
 		break;
 	}	
+
+
 }
 
 void set_mouse_events()
 {
-	if(pp.lb == 1 && pp.rb == 0) //left button pressed
-		{gesture.type = LB_PRESSED;
-		printf("LB_PRESSED\n");}
+	if(pp.lb == 1 && pp.rb == 0 && pp.mb ==0) //left button pressed
+	{
+		if(pp.delta_x != 0 && pp.delta_y != 0)
+		{
+			if(L_tolerence())
+			{
+
+			Xdelta += pp.delta_x;
+      		Ydelta += pp.delta_y;
+      		gesture.delta_x = Xdelta;
+      		gesture.delta_y = Ydelta;
+			gesture.type = MOUSE_MOV;
+
+			}
+			else
+			gesture.type = BUTTON_EV;
+		return;
+
+		}
+		
+		gesture.type = LB_PRESSED;
+		return;
+	}
 
 	else if(pp.rb == 1 && pp.lb == 0) // right button pressed
-		{gesture.type = RB_PRESSED;
-		printf("RB_PRESSED\n");
-	}
-	else if(pp.lb == 0 && old_pp.lb == 1) //left button released
-		{gesture.type = LB_RELEASED;
-			printf("LB_RELEASED\n");}
-	else if(pp.rb == 0 && old_pp.rb == 1) // right button pressed
-		{gesture.type = RB_RELEASED;
-			printf("RB_RELEASED\n");
+		{	
+			if(pp.delta_x != 0 && pp.delta_y != 0)
+			{
+				 
+				if(R_tolerence())
+				{
+					
+				Xdelta += pp.delta_x;
+      			Ydelta += pp.delta_y;
+      			pp.delta_x = Xdelta;
+      			pp.delta_y = Ydelta;
+				gesture.type = MOUSE_MOV;
+
+				}
+				else
+				gesture.type = BUTTON_EV;
+			return;
+			}
+			gesture.type = RB_PRESSED;
+			return;
 		}
-	else if(pp.lb == 0 && pp.rb == 0) // no button pressed but mouse is moving
-		{gesture.type = MOUSE_MOV;
-printf("MOUSE_MOV\n");
+		
+	
+	else if(pp.lb == 0 && pp.rb == 0 && pp.mb == 0) //left button released
+		{
+			 
+			if(state == LUP)
+			{
+				gesture.type = LB_RELEASED;
+			}
+
+				else if(state == PAUSE)
+				{
+				 
+					if(pause_tolerence() && (pp.delta_x !=0 || pp.delta_y) !=0)
+					{
+
+						
+					gesture.type = MOUSE_MOV;
+					}
+					else
+						gesture.type = BUTTON_EV;
+				}
+		       
+
+		       else if(state == RDOWN)
+		       	gesture.type = RB_RELEASED;
+
+		       else
+		       	gesture.type = BUTTON_EV;
+		       return;
 		}
 
 	else
@@ -406,25 +441,27 @@ bool slope_down()
 
 bool L_tolerence()
 {
-	if((((Xdelta - old_Xdelta) < 0) && (abs(Xdelta - old_Xdelta) > global_tolerence)) ||
-		(((Ydelta - old_Ydelta) < 0) && ((abs(Ydelta - old_Ydelta) > global_tolerence))))
+		if( ( (pp.delta_x + global_tolerance) < 0) || ((pp.delta_y + global_tolerance) < 0))
 		return false;
-	
+
 	return true;
 }
 
 bool R_tolerence()
 {
-	if((((Xdelta - old_Xdelta) < 0) && (abs(Xdelta - old_Xdelta) > global_tolerence)) ||
-		(((Ydelta - old_Ydelta) > 0) && ((abs(Ydelta - old_Ydelta) > global_tolerence))))
-		return false;
-	
-	return true;
+	if(pp.delta_y <= global_tolerance)
+		{
+		return true;
+		}
+		else
+		{
+			return false;
+		}
+
 }
 bool pause_tolerence()
 {
-	if((abs(Xdelta - old_Xdelta) > global_tolerence) ||
-		((abs(Ydelta - old_Ydelta) > global_tolerence)))
+	if(abs(pp.delta_y) > global_tolerance || abs(pp.delta_x)> global_tolerance)
 		return false;
 	
 	return true;
@@ -432,7 +469,7 @@ bool pause_tolerence()
 
 bool check_length()
 {
-	if(Xdelta >= global_x_len)
+	if(gesture.delta_x >= global_x_len)
 		return true;
 	return false;
 }
