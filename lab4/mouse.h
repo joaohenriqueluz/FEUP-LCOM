@@ -1,5 +1,8 @@
 #ifndef ___MOUSE_H___
 #define ___MOUSE_H___
+
+typedef enum {INIT, LUP, PAUSE, RDOWN , COMP} state_t;
+extern state_t state;
 int (mouse_subscribe)(uint8_t *bit_no);
 
 int (mouse_unsubscribe)();
