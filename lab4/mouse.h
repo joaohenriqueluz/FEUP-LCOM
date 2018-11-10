@@ -30,4 +30,7 @@ void disable_cmd_int();
 
 void disable_cmd_remote();
 
+void check_line(struct mouse_ev evt);
+
+void set_mouse_events();
 #endif

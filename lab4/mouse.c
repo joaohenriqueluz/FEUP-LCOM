@@ -9,6 +9,13 @@ int globalHookId;
 extern uint8_t byte, packet[3];
 extern int byteCounter;
 extern uint32_t count;
+extern bool gest;
+struct mouse_ev gesture;
+uint8_t Xdelta=0;
+struct packet *pp = malloc(sizeof(struct packet));
+struct packet *old_pp=malloc(sizeof(struct packet));
+
+
 
 int (mouse_subscribe)(uint8_t *bit_no){
 	int temp_hook = TEMP_HOOK_MOUSE;
@@ -88,40 +95,27 @@ void (mouse_remote)(){
 
 	write_command(READ_DATA);
 
-for(unsigned int i=0;i<3;)
-{
-	byte = mouse_scan_byte();
-
-	packet[byteCounter] = byte;
-
-	if ((packet[0] & BIT(3)) == 0)
+	for(unsigned int i=0;i<3;)
 	{
-		byteCounter = 0;
-		i=0;
-		continue;
-	}
+		byte = mouse_scan_byte();
 	
-	byteCounter++;
-	i++;
-}
+		packet[byteCounter] = byte;
+	
+		if ((packet[0] & BIT(3)) == 0)
+		{
+			byteCounter = 0;
+			i=0;
+			continue;
+		}
+		
+		byteCounter++;
+		i++;
+	}
 
 	printPacket();
-		
 }
 
-// int fst_command_mouse(){
-// 	uint32_t stat;
 
-// 	while(1){
-// 		sys_inb(KB_STATUS_REG, &stat);
-// 		if ((stat & IBF) == 0)
-// 		{
-// 			sys_outb(KBC_CM_REG,WRITE_TO_MOUSE);
-// 			return 0;
-// 		}
-// 		tickdelay(micros_to_ticks(DELAY_US));
-// 	}
-// }
 
 void write_command(uint32_t cmd)
 {
@@ -170,7 +164,7 @@ void disable_cmd_remote()
 }
 
 void printPacket(){
-	struct packet *pp = malloc(sizeof(struct packet));
+	
 	for (int i = 0; i < 3; ++i)
 	{
 		pp->bytes[i] = packet[i];
@@ -192,9 +186,18 @@ void printPacket(){
         pp->delta_y = (packet[2] | 0xff00);
 
       mouse_print_packet(pp);
+      if(gest)
+      {
+      old_pp = pp;
+      set_mouse_events();
+      void check_line(gesture); 
+
+      }
+
       clearPacket();
       byteCounter = 0;
       count++;
+
 }
 
 void clearPacket(){
@@ -227,4 +230,81 @@ sys_outb(KB_STATUS_REG,WRITE_BYTE);
 sys_outb(OUT_BUF,minix_get_dflt_kbc_cmd_byte());
 
   return 0;
+}
+typedef enum {INIT, LUP, PAUSE, RDOWN , COMP} state_t;
+
+void check_line(struct mouse_ev evt) 
+{
+	static state_t state = INIT; // initial state; keep state
+
+	switch (state) 
+	{
+	case INIT:
+		if( evt.type == LB_PRESSED)
+		{
+			state = LUP;
+			break;
+		}
+	case LUP:
+		if( evt.type == LB_RELEASED ) 
+		{
+				state = PAUSE;
+			break;
+		} 
+
+	case PAUSE:
+	
+		if( evt.type == RB_PRESSED) 
+		{
+			state = RDOWN;
+			
+		}
+		else if( evt.type == LB_PRESSED) 
+		{
+				state = LUP;
+		}
+		else
+		{
+			state =INIT;
+		}
+
+		break;
+		
+	case RDOWN:
+	
+		if( evt.type == RB_RELEASED) 
+		{
+			state = COMP;
+		}
+		else if(evt.type == LB_PRESSED)
+		{
+			state = LUP;
+		}
+		else
+		{
+			state =INIT;
+		}
+		break;
+	
+	default:
+		break;
+	}	
+}
+
+void set_mouse_events()
+{
+	if(pp->lb == 1) //left button pressed
+		gesture.type = LB_PRESSED;
+
+	else if(pp->rb == 1) // right button pressed
+		gesture.type = RB_PRESSED;
+
+	else if(pp->lb == 0 && pp->rb == 0 && ((pp->delta_y != 0) || (pp->delta_x != 0))) // no button pressed but mouse is moving
+		gesture.type = MOUSE_MOV;
+	else if(pp->lb == 0 && old_pp->lb == 1)
+		gesture.type = LB_RELEASED;
+	else if(pp->rb == 0 && old_pp->rb == 1)
+		gesture.type = RB_RELEASED;
+	else
+		gesture.type = BUTTON_EV;
 }
