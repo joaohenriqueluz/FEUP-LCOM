@@ -247,7 +247,7 @@ void check_line(struct mouse_ev evt)
 	case INIT:
 		
 	
-	
+		printf("INIT\n");
 		if( evt.type == LB_PRESSED)
 		{
 			Xdelta=0;
@@ -306,6 +306,8 @@ void check_line(struct mouse_ev evt)
 		
 		 	state = RDOWN;
 		 }
+		  else if(evt.type == LB_PRESSED) //
+			 	state =LUP;
 
 			 else if(evt.type == RB_RELEASED)
 			 {
@@ -316,8 +318,7 @@ void check_line(struct mouse_ev evt)
 		 		}
 
 			 }
-			 else if(evt.type == LB_PRESSED) //
-			 	state =LUP;
+			
 
      	  else 
      	  	state =INIT;
