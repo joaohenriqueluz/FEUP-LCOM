@@ -7,4 +7,10 @@
 #define LINEAR   BIT(14) | 0x105
 #define INIT      0x10
 
+#define INDEXED   0x105
+#define DIRECT_COLOR_15    0x110
+#define DIRECT_COLOR_24    0x115
+#define DIRECT_COLOR_16    0x11a
+#define DIRECT_COLOR_32    0x14c
+
 #endif
