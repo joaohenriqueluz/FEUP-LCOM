@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 }
 
 int (video_test_init)(uint16_t mode, uint8_t delay) {
-  if(vg_enter(mode) != 0){
+  if(vg_init(mode) == NULL){
     printf("Erro na função vg_enter\n");
     return 1;
   }
@@ -60,33 +60,21 @@ int (video_test_init)(uint16_t mode, uint8_t delay) {
 int (video_test_rectangle)(uint16_t mode, uint16_t x, uint16_t y,
                        uint16_t width, uint16_t height, uint32_t color) {
 
-  if (vg_enter(mode) != 0){
+  if (vg_init(mode) == NULL){
     printf("Erro na função vg_enter\n");
     return 1;
   }
 
   mode_global = mode;
 
-  y = 0;
-  x = 0;
-  width = 0;
-  height = 0;
-  color = 0;
-
-  vbe_mode_info_t *vmi_p = malloc(sizeof(vbe_mode_info_t));
-
-  if(vbe_get_mode_info(mode, vmi_p) != 0){
-    printf("Erro na função vbe_get_mode_info\n");
+  if (vg_draw_rect(x,y,width,height,color) != 0)
+  {
+    printf("Erro a imprimir o retangulo!\n");
     return 1;
   }
 
   if(program_exit() != 0){
     printf("Erro na função program_exit\n");
-    return 1;
-  }
-
-  if(map_vram(mode,vmi_p) != 0){
-    printf("Erro na função map_vram\n");
     return 1;
   }
 
