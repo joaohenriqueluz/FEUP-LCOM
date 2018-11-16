@@ -13,24 +13,41 @@
 int globalCounter = 0, size = 0;
 bool is_over = false, make;
 uint8_t byte;
-void *video_mem;
 extern uint16_t mode_global;
-extern *vmi_p;
 
-int vg_enter(uint16_t mode){
+static char *video_mem;		/* Process (virtual) address to which VRAM is mapped */
+
+static unsigned h_res;	        /* Horizontal resolution in pixels */
+static unsigned v_res;	        /* Vertical resolution in pixels */
+//static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+
+void* (vg_init)(uint16_t mode){
 	struct reg86u reg86;
 
 	memset(&reg86, 0, sizeof(reg86));	/* zero the structure */
 
-	reg86.u.w.ax = mode;
-	reg86.u.w.bx = LINEAR;
+	reg86.u.w.ax = VBE_MODE;
+	reg86.u.w.bx = LINEAR | mode;
 	reg86.u.b.intno = INIT;
 
 	if(sys_int86(&reg86) != OK) {
   		printf("vg_enter(): sys_int86() failed \n");
-  		return 1;
+  		return NULL;
   	}
-  	return 0;
+
+  	vbe_mode_info_t *vmi_p = malloc(sizeof(vbe_mode_info_t));
+
+  if(vbe_get_mode_info(mode, vmi_p) != 0){
+    printf("Erro na função vbe_get_mode_info\n");
+    return NULL;
+  }
+
+  if(map_vram(mode,vmi_p) != 0){
+    printf("Erro na função map_vram\n");
+    return NULL;
+  }
+
+  return video_mem;
 }
 
 int wait(uint8_t time){
@@ -138,10 +155,13 @@ int program_exit() {
 
 int map_vram(uint16_t mode, vbe_mode_info_t *vmi_p){
 
+	h_res = vmi_p->XResolution;
+	v_res = vmi_p->YResolution;
+
 	int r;
 	struct minix_mem_range mr;
 	unsigned int vram_base = vmi_p->PhysBasePtr;  /* VRAM's physical addresss */
-	unsigned int vram_size = (vmi_p->XResolution)*(vmi_p->YResolution)*num_bytes_mode(mode);  /* VRAM's size, but you can use
+	unsigned int vram_size = (vmi_p->XResolution)*v_res*num_bytes_mode(mode);  /* VRAM's size, but you can use
 				    the frame-buffer size, instead */
 
 	/* Allow memory mapping */
@@ -166,9 +186,28 @@ int map_vram(uint16_t mode, vbe_mode_info_t *vmi_p){
   	return 0;
 }
 
-int vg_draw_hline(uint16_t x, uint16_t y, uint16_t len, uint32_t color, void *addr){
-	addr += x*num_bytes_mode(mode_global);
-	addr += y*num_bytes_mode(mode_global);
+int vg_draw_rect(uint16_t x, uint16_t y, uint16_t len, uint16_t height, uint32_t color){
+
+	for (uint16_t i = 0; i < height; ++i)
+	{
+		video_mem += num_bytes_mode(mode_global)*h_res*(y++) + x*num_bytes_mode(mode_global);
+		
+		if (vg_draw_hline(len,color) != 0)
+		{
+			printf("Erro a imprimir linha %d\n", i);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int vg_draw_hline(uint16_t len, uint32_t color){
+	for (uint16_t i = 0; i < len; ++i)
+	{
+		*video_mem = color;
+		video_mem += num_bytes_mode(mode_global);
+	}
+	return 0;
 }
 
 int num_bytes_mode(uint16_t mode){
