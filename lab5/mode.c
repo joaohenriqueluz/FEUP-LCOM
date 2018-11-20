@@ -249,7 +249,7 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
     for (int j = 0; j < no_rectangles; j += v_num)
     {
       color = (first + (j * no_rectangles + i) * step) % (1 << bits_per_pixel);
-      if (vg_draw_rectangle(i,j,no_rectangles,no_rectangles,color) != 0)
+      if (vg_draw_rectangle(i,j,h_num,v_num,color) != 0)
       {
         printf("Erro na função vg_draw_rectangle\n");
         return 1;
