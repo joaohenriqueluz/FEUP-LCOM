@@ -243,18 +243,24 @@ int draw_matrix(uint8_t no_rectangles, uint32_t first, uint8_t step){
 
 int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
   uint32_t color;
-
-  for (int i = 0; i < no_rectangles; i += h_num)
-  {
-    for (int j = 0; j < no_rectangles; j += v_num)
+  unsigned int i=0, j=0;
+  for (unsigned int column = 0; column < no_rectangles; column++)
+  {j=0;
+    for (unsigned int row = 0; row< no_rectangles; row++)
     {
-      color = (first + (j * no_rectangles + i) * step) % (1 << bits_per_pixel);
+      color = (first + (row * no_rectangles + column) * step) % (1 << bits_per_pixel);
+      printf("ROW: %d  Column %d  cor: %d \n", row, column, color);
+
       if (vg_draw_rectangle(i,j,h_num,v_num,color) != 0)
       {
         printf("Erro na função vg_draw_rectangle\n");
         return 1;
+
       }
+      j += v_num;
+
     }
+    i += h_num;
   }
   return 0;
 }
