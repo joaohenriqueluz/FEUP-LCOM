@@ -22,6 +22,8 @@ static unsigned v_res;	        /* Vertical resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 static unsigned num_bytes_mode;
 
+int h_num, v_num;
+
 void* (vg_init)(uint16_t mode){
 	struct reg86u reg86;
 
@@ -35,6 +37,8 @@ void* (vg_init)(uint16_t mode){
   		printf("vg_enter(): sys_int86() failed \n");
   		return NULL;
   	}
+
+    lm_init(true);
 
   	vbe_mode_info_t *vmi_p = malloc(sizeof(vbe_mode_info_t));
 
@@ -191,7 +195,7 @@ int map_vram(vbe_mode_info_t *vmi_p){
   	return 0;
 }
 
-int vg_draw_rect(uint16_t x, uint16_t y, uint16_t len, uint16_t height, uint32_t color){
+int (vg_draw_rectangle)(uint16_t x, uint16_t y, uint16_t len, uint16_t height, uint32_t color){
 
   uint16_t x_old = x;
 
@@ -210,6 +214,47 @@ int (vg_draw_hline)(uint16_t x, uint16_t y, uint16_t len, uint32_t color){
     char *temp = video_mem;
     temp += (h_res*y+x)*num_bytes_mode;
     *temp = color;
+  }
+  return 0;
+}
+
+int draw_matrix(uint8_t no_rectangles, uint32_t first, uint8_t step){
+  h_num = h_res/no_rectangles;
+  v_num = v_res/no_rectangles;
+
+  switch(mode_global){
+    case 0x105:
+      if(draw_indexed(no_rectangles, first,step) != 0){
+        printf("Erro na função draw_indexed\n");
+        return 1;
+      }
+      break;
+
+    default:
+      // if (draw_direct(no_rectangles,first,step) != 0)
+      // {
+      //   printf("Erro na função draw_direct\n");
+      //   return 1;
+      // }
+    break;
+  }
+  return 0;
+}
+
+int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
+  uint32_t color;
+
+  for (int i = 0; i < no_rectangles; i += h_num)
+  {
+    for (int j = 0; j < no_rectangles; j += v_num)
+    {
+      color = (first + (j * no_rectangles + i) * step) % (1 << bits_per_pixel);
+      if (vg_draw_rectangle(i,j,no_rectangles,no_rectangles,color) != 0)
+      {
+        printf("Erro na função vg_draw_rectangle\n");
+        return 1;
+      }
+    }
   }
   return 0;
 }

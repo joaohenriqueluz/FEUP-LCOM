@@ -67,7 +67,7 @@ int (video_test_rectangle)(uint16_t mode, uint16_t x, uint16_t y,
     return 1;
   }
 
-  if (vg_draw_rect(x,y,width,height,color) != 0)
+  if (vg_draw_rectangle(x,y,width,height,color) != 0)
   {
     printf("Erro a imprimir o retangulo!\n");
     return 1;
@@ -87,9 +87,30 @@ int (video_test_rectangle)(uint16_t mode, uint16_t x, uint16_t y,
   return 0;
 }
 
-// int (video_test_pattern)(uint16_t mode, uint8_t no_rectangles, uint32_t first) {
-//   /* To be completed */
-//   printf("%s(0x%03x, %u, 0x%08x): under construction\n", __func__, mode, no_rectangles, first);
+int (video_test_pattern)(uint16_t mode, uint8_t no_rectangles, uint32_t first, uint8_t step) {
+  if (vg_init(mode) == NULL){
+    printf("Erro na função vg_enter\n");
+    return 1;
+  }
 
-//   return 1;
-// }
+  mode_global = mode;
+
+  if (draw_matrix(no_rectangles,first,step) != 0)
+  {
+    printf("Erro na função draw_matrix\n");
+    return 1;
+  }
+
+  if(program_exit() != 0){
+    printf("Erro na função program_exit\n");
+    return 1;
+  }
+
+  if(vg_exit() != 0){
+    printf("Erro na função vb_exit\n");
+    return 1;
+  }
+  
+
+  return 0;
+}
