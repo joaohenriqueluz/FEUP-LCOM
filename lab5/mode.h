@@ -19,4 +19,6 @@ int draw_matrix(uint8_t no_rectangles, uint32_t first, uint8_t step);
 
 int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step);
 
+int vg_draw_xpm(const char *xpm[], uint16_t x, uint16_t y);
+
 #endif
