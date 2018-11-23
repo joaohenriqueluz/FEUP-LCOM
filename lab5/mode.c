@@ -22,9 +22,14 @@ static unsigned v_res;	        /* Vertical resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 static unsigned num_bytes_mode;
 
-int h_num, v_num;
+uint8_t GlobalRedScreeMask, GlobalGreenScreeMask, GlobalBlueScreeMask;
+
+unsigned int h_num, v_num;
+
+unsigned int global_num_color;
 
 void* (vg_init)(uint16_t mode){
+
 	struct reg86u reg86;
 
 	memset(&reg86, 0, sizeof(reg86));	/* zero the structure */
@@ -166,6 +171,14 @@ int map_vram(vbe_mode_info_t *vmi_p){
 	v_res = vmi_p->YResolution;
   bits_per_pixel = vmi_p->BitsPerPixel;
   num_bytes_mode = bits_per_pixel/8;
+  if (bits_per_pixel == 15)
+  {
+    num_bytes_mode = 2;
+  }
+  GlobalRedScreeMask = vmi_p->RedFieldPosition;
+  GlobalGreenScreeMask = vmi_p->GreenFieldPosition;
+  GlobalBlueScreeMask = vmi_p->BlueFieldPosition;
+
 
 	int r;
 	struct minix_mem_range mr;
@@ -197,11 +210,11 @@ int map_vram(vbe_mode_info_t *vmi_p){
 
 int (vg_draw_rectangle)(uint16_t x, uint16_t y, uint16_t len, uint16_t height, uint32_t color){
 
-  uint16_t x_old = x;
+  //uint16_t x_old = x;
 
 	for (int i = 0; i < height; ++i, y++)
   {
-    x = x_old;
+    //x = x_old;
     vg_draw_hline(x,y,len,color);
   }
 	return 0;
@@ -213,42 +226,79 @@ int (vg_draw_hline)(uint16_t x, uint16_t y, uint16_t len, uint32_t color){
   {
     char *temp = video_mem;
     temp += (h_res*y+x)*num_bytes_mode;
-    *temp = color;
+    uint32_t tempColor = color;
+    for (unsigned int j = 0; j < num_bytes_mode; ++j, temp++)
+    {
+      *temp = tempColor;
+      tempColor = tempColor >> 8;
+    }
+    //printf("X = %d\n", x);
   }
   return 0;
+}
+
+int vg_draw_xpm(const char *xpm[], uint16_t x, uint16_t y)
+{
+  int height, width;
+char *sprite = read_xpm(xpm, &width, &height);
+uint16_t old_x = x;
+for (int i = 0; i < height; ++i,y++)
+{
+  x=old_x;
+  for (int j = 0; j < width; ++j,x++)
+  {
+    char *temp = video_mem;
+    temp += (h_res*y+x)*num_bytes_mode;
+    *temp = *(sprite + i* width +j);
+  }
+}
+
+return 0;
 }
 
 int draw_matrix(uint8_t no_rectangles, uint32_t first, uint8_t step){
   h_num = h_res/no_rectangles;
   v_num = v_res/no_rectangles;
 
-  switch(mode_global){
-    case 0x105:
-      if(draw_indexed(no_rectangles, first,step) != 0){
-        printf("Erro na função draw_indexed\n");
-        return 1;
-      }
-      break;
-
-    default:
-      // if (draw_direct(no_rectangles,first,step) != 0)
-      // {
-      //   printf("Erro na função draw_direct\n");
-      //   return 1;
-      // }
-    break;
-  }
+  if(draw_indexed(no_rectangles, first,step) != 0){
+      printf("Erro na função draw_indexed\n");
+      return 1;
+    }
+   
   return 0;
 }
 
 int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
   uint32_t color;
+  uint32_t R; 
+  uint32_t G; 
+  uint32_t B;
   unsigned int i=0, j=0;
+  uint32_t old_first = first;
   for (unsigned int column = 0; column < no_rectangles; column++)
   {j=0;
-    for (unsigned int row = 0; row< no_rectangles; row++)
+    for (unsigned int row = 0; row < no_rectangles; row++)
     {
-      color = (first + (row * no_rectangles + column) * step) % (1 << bits_per_pixel);
+
+      switch(mode_global){
+        case INDEXED:
+          global_num_color = 0;
+          color = (first + (row * no_rectangles + column) * step) % (1 << bits_per_pixel);
+          break;
+
+        case DIRECT_COLOR_24:
+        global_num_color = 2;
+          R = (((first >> 16) & 0x000f) + column * step) % (1 << GlobalRedScreeMask);
+          first = old_first;
+          G = (((first >> 8) & 0x000f) + row * step) % (1 << GlobalGreenScreeMask);
+          first = old_first;
+          B = ((first & 0x000f) + (column + row) * step) % (1 << GlobalBlueScreeMask);
+          first = old_first;
+          color = (R | G | B);
+          break;
+
+      }
+      //color = (first + (row * no_rectangles + column) * step) % (1 << bits_per_pixel);
       printf("ROW: %d  Column %d  cor: %d \n", row, column, color);
 
       if (vg_draw_rectangle(i,j,h_num,v_num,color) != 0)
@@ -264,6 +314,8 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
   }
   return 0;
 }
+
+
 
 // int num_bytes_mode(uint16_t mode){
 // 	int size;
