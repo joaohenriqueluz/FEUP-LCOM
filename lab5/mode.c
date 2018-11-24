@@ -26,22 +26,9 @@ uint8_t GlobalRedScreeMask, GlobalGreenScreeMask, GlobalBlueScreeMask;
 
 unsigned int h_num, v_num;
 
-unsigned int global_num_color;
-
 void* (vg_init)(uint16_t mode){
 
 	struct reg86u reg86;
-
-	memset(&reg86, 0, sizeof(reg86));	/* zero the structure */
-
-	reg86.u.w.ax = VBE_MODE;
-	reg86.u.w.bx = LINEAR | mode;
-	reg86.u.b.intno = INIT;
-
-	if(sys_int86(&reg86) != OK) {
-  		printf("vg_enter(): sys_int86() failed \n");
-  		return NULL;
-  	}
 
     lm_init(true);
 
@@ -56,6 +43,17 @@ void* (vg_init)(uint16_t mode){
     printf("Erro na função map_vram\n");
     return NULL;
   }
+
+  memset(&reg86, 0, sizeof(reg86)); /* zero the structure */
+
+  reg86.u.w.ax = VBE_MODE;
+  reg86.u.w.bx = LINEAR | mode;
+  reg86.u.b.intno = INIT;
+
+  if(sys_int86(&reg86) != OK) {
+      printf("vg_enter(): sys_int86() failed \n");
+      return NULL;
+    }
 
   return video_mem;
 }
@@ -175,9 +173,9 @@ int map_vram(vbe_mode_info_t *vmi_p){
   {
     num_bytes_mode = 2;
   }
-  GlobalRedScreeMask = vmi_p->RedFieldPosition;
-  GlobalGreenScreeMask = vmi_p->GreenFieldPosition;
-  GlobalBlueScreeMask = vmi_p->BlueFieldPosition;
+  GlobalRedScreeMask = vmi_p->RedMaskSize;
+  GlobalGreenScreeMask = vmi_p->GreenMaskSize;
+  GlobalBlueScreeMask = vmi_p->BlueMaskSize;
 
 
 	int r;
@@ -276,25 +274,57 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
   unsigned int i=0, j=0;
   uint32_t old_first = first;
   for (unsigned int column = 0; column < no_rectangles; column++)
-  {j=0;
+  {
+    j=0;
     for (unsigned int row = 0; row < no_rectangles; row++)
     {
-
       switch(mode_global){
-        case INDEXED:
-          global_num_color = 0;
+       case INDEXED:
           color = (first + (row * no_rectangles + column) * step) % (1 << bits_per_pixel);
           break;
 
         case DIRECT_COLOR_24:
-        global_num_color = 2;
-          R = (((first >> 16) & 0x000f) + column * step) % (1 << GlobalRedScreeMask);
+          R = (((first >> 16) & 0x00ff) + column * step) % (1 << GlobalRedScreeMask);
           first = old_first;
-          G = (((first >> 8) & 0x000f) + row * step) % (1 << GlobalGreenScreeMask);
+          G = (((first >> 8) & 0x00ff) + row * step) % (1 << GlobalGreenScreeMask);
           first = old_first;
-          B = ((first & 0x000f) + (column + row) * step) % (1 << GlobalBlueScreeMask);
+          B = ((first & 0x00ff) + (column + row) * step) % (1 << GlobalBlueScreeMask);
           first = old_first;
-          color = (R | G | B);
+          color = ((R << 16) | (G << 8) | B);
+          break;
+
+        case DIRECT_COLOR_15:
+          R = (((first >> 10) & 0x001f) + column * step) % (1 << GlobalRedScreeMask);
+          first = old_first;
+          G = (((first >> 5) & 0x001f) + row * step) % (1 << GlobalGreenScreeMask);
+          first = old_first;
+          B = ((first & 0x001f) + (column + row) * step) % (1 << GlobalBlueScreeMask);
+          first = old_first;
+          color = ((R << 10) | (G << 5) | B);
+          break;
+
+        case DIRECT_COLOR_16:
+          R = (((first >> 11) & 0x001f) + column * step) % (1 << GlobalRedScreeMask);
+          first = old_first;
+          G = (((first >> 5) & 0x003f) + row * step) % (1 << GlobalGreenScreeMask);
+          first = old_first;
+          B = ((first & 0x001f) + (column + row) * step) % (1 << GlobalBlueScreeMask);
+          first = old_first;
+          color = ((R << 11) | (G << 5) | B);
+          break;
+
+        case DIRECT_COLOR_32:
+          R = (((first >> 16) & 0x00ff) + column * step) % (1 << GlobalRedScreeMask);
+          first = old_first;
+          G = (((first >> 8) & 0x00ff) + row * step) % (1 << GlobalGreenScreeMask);
+          first = old_first;
+          B = ((first & 0x00ff) + (column + row) * step) % (1 << GlobalBlueScreeMask);
+          first = old_first;
+          color = ((R << 16) | (G << 8) | B);
+          break;
+
+
+        default:
           break;
 
       }
