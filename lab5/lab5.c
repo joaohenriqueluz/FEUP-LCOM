@@ -45,8 +45,8 @@ int (video_test_init)(uint16_t mode, uint8_t delay) {
     return 1;
   }
 
-  if(wait(delay) != 0){
-    printf("Erro na função delay\n");
+  if(sleep(delay) != 0){
+    printf("Erro na função sleep\n");
     return 1;
   }
 
@@ -122,8 +122,6 @@ int (video_test_xpm)(const char *xpm[], uint16_t x, uint16_t y) {
       printf("Erro na função vg_enter\n");
       return 1;
     }
-
-
 
   if(vg_draw_xpm(xpm, x,y) != 0)
   {
