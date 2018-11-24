@@ -235,19 +235,18 @@ int (vg_draw_hline)(uint16_t x, uint16_t y, uint16_t len, uint32_t color){
   return 0;
 }
 
-int vg_draw_xpm(const char *xpm[], uint16_t x, uint16_t y)
+int vg_draw_xpm(const char *xpm[], uint16_t x, uint16_t y, int *width, int *height)
 {
-  int height, width;
-char *sprite = read_xpm(xpm, &width, &height);
-uint16_t old_x = x;
-for (int i = 0; i < height; ++i,y++)
-{
-  x=old_x;
-  for (int j = 0; j < width; ++j,x++)
+  char *sprite = read_xpm(xpm, width, height);
+  uint16_t old_x = x;
+  for (int i = 0; i < *height; ++i,y++)
+  {
+   x=old_x;
+   for (int j = 0; j < *width; ++j,x++)
   {
     char *temp = video_mem;
     temp += (h_res*y+x)*num_bytes_mode;
-    *temp = *(sprite + i* width +j);
+    *temp = *(sprite + i * (*width) + j);
   }
 }
 
@@ -265,6 +264,8 @@ int draw_matrix(uint8_t no_rectangles, uint32_t first, uint8_t step){
    
   return 0;
 }
+
+
 
 int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
   uint32_t color;
@@ -346,31 +347,125 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
 }
 
 
+int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint16_t yf, int16_t speed, uint8_t fr_rate){
+  int ipc_status, ind = 0;
+  message msg;
+  unsigned int r;
+  uint16_t globalXi = xi;
+  uint16_t globalYi = yi;
+  int width = 0, height = 0;
+  int old_x = 0;
+  int old_y = 0;
+  uint8_t bit_no_timer, bit_no_kb, scancode1[1], scancode2[2];
 
-// int num_bytes_mode(uint16_t mode){
-// 	int size;
-// 	switch(mode){
-// 		case INDEXED:
-// 			size = 1;
-// 			break;
-// 		case DIRECT_COLOR_16:
-// 			size = 2;
-// 			break;
-// 		case DIRECT_COLOR_15:
-// 			size = 2;
-// 			break;
-// 		case DIRECT_COLOR_24:
-// 			size = 3;
-// 			break;
-// 		case DIRECT_COLOR_32:
-// 			size = 4;
-// 			break;
-// 		default:
-// 			size = 1;
-// 			break;
-// 	}
-// 	return size;
-// }
+  if(kb_subscribe(&bit_no_kb) != 0){
+    printf("Erro na funcao kb_subscribe\n");
+  }
+
+  if(timer_subscribe_int(&bit_no_timer) != 0){
+    printf("Erro na funcao timer_subscribe_int\n");
+  }
+
+  int freq = sys_hz();
+
+  int frame_counter = freq/fr_rate;
+  float distance = (speed*fr_rate)/freq;
+
+
+  uint32_t irq_set_kb = BIT(bit_no_kb);
+  uint32_t irq_set_timer = BIT(bit_no_timer);
+
+  while(!is_over) {
+
+    if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
+      { 
+        printf("driver_receive failed with: %d", r);
+        continue;
+      } 
+    if (is_ipc_notify(ipc_status))
+      { /* received notification */
+        switch (_ENDPOINT_P(msg.m_source))
+        {
+          case HARDWARE: /* hardware interrupt notification */      
+
+          if (msg.m_notify.interrupts & irq_set_timer)
+            {
+              timer_int_handler();
+              if((globalCounter % frame_counter) == 0)
+              {
+                if (globalXi == xf && globalYi == yf)
+                {
+                  continue;
+                }
+                if (globalXi <= xf && globalYi == yf)
+                {
+                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  old_x = globalXi;
+                  old_y = globalYi;
+                  globalXi += distance;
+                }
+                else if (globalXi >= xf && globalYi == yf)
+                {
+                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  old_x = globalXi;
+                  old_y = globalYi;
+                  globalXi -= distance;
+                }
+                else if (globalXi == xf && globalYi <= yf)
+                {
+                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  old_x = globalXi;
+                  old_y = globalYi;
+                  globalYi += distance;
+                }
+                else if (globalXi == xf && globalYi >= yf)
+                {
+                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  old_x = globalXi;
+                  old_y = globalYi;
+                  globalYi -= distance;
+                }
+              }
+            }
+
+            if (msg.m_notify.interrupts & irq_set_kb)
+              {
+                  kbc_ih();
+                  if (size == 2)
+                  {
+                    scancode2[ind] = byte;
+                  }
+                  else{
+                    scancode1[ind] = byte;
+                  }
+                  ind++;
+              }
+            
+         }
+     } else { /* received a standard message, not a notification */
+         /* no standard messages expected: do nothing */}
+
+     if (ind >= size)
+      {
+        make = true;
+        size = 1;
+        ind = 0;
+      }
+ }
+
+  if(timer_unsubscribe_int() != 0){
+    printf("Erro na funcao timer_unsubscribe_int\n");
+  }
+  if(kb_unsubscribe() != 0){
+    printf("Erro na funcao kb_unsubscribe\n");
+  }
+
+  return 0;
+}
 
 
 

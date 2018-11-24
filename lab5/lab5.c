@@ -118,12 +118,15 @@ int (video_test_pattern)(uint16_t mode, uint8_t no_rectangles, uint32_t first, u
 
 int (video_test_xpm)(const char *xpm[], uint16_t x, uint16_t y) {
   
+  int height;
+  int width;
+
    if (vg_init(INDEXED) == NULL){
       printf("Erro na função vg_enter\n");
       return 1;
     }
 
-  if(vg_draw_xpm(xpm, x,y) != 0)
+  if(vg_draw_xpm(xpm,x,y,&width,&height) != 0)
   {
     printf("Erro na função vg_draw_xpm\n");
     return 1;
@@ -143,10 +146,28 @@ int (video_test_xpm)(const char *xpm[], uint16_t x, uint16_t y) {
 }
 
 int (video_test_move)(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint16_t yf, int16_t speed, uint8_t fr_rate) {
-  /* To be completed */
-  printf("%s(%8p, %u, %u, %u, %u, %d, %u): under construction\n", __func__, xpm, xi, yi, xf, yf, speed, fr_rate);
+  
+  if (vg_init(INDEXED) == NULL){
+      printf("Erro na função vg_enter\n");
+      return 1;
+    }
 
-  return 1;
+  if(move_pixemap(xpm, xi, yi,  xf,  yf, speed, fr_rate) != 0){
+    printf("Erro na funcao move_pixemap\n");
+    return 1;
+  }
+
+  if(program_exit() != 0){
+    printf("Erro na função program_exit\n");
+    return 1;
+   }
+
+  if(vg_exit() != 0){
+    printf("Erro na função vb_exit\n");
+    return 1;
+  }
+
+  return 0;
 }
 
 int (video_test_controller)() {
