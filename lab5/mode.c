@@ -338,10 +338,11 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
         return 1;
 
       }
-      j += v_num;
+      i += h_num;
+      
 
     }
-    i += h_num;
+    j += v_num;
   }
   return 0;
 }
@@ -394,13 +395,18 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
               timer_int_handler();
               if((globalCounter % frame_counter) == 0)
               {
-                fr_couter++;
+               
                 if (globalXi == xf && globalYi == yf)
                 {
                   continue;
                 }
-                if (abs(speed) == fr_couter)
+
+                if(speed < 0)
                 {
+                   fr_couter++;
+                    if (abs(speed) == fr_couter)
+                  {
+                    fr_couter = 0;
                   if (globalXi <= xf && globalYi == yf)
                   {
                       vg_draw_rectangle(old_x,old_y,1,height,0);
@@ -434,8 +440,11 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                     globalYi -= 1;
                   }
                 }
-                if (globalXi <= xf && globalYi == yf)
-                {
+              }
+               
+               else 
+              {if (globalXi <= xf && globalYi == yf)
+                  {
                   vg_draw_rectangle(old_x,old_y,distance,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
@@ -467,7 +476,8 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   globalYi -= 1;
                 }
               }
-              fr_couter = 0;
+            }
+
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
