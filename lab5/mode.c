@@ -353,6 +353,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
   unsigned int r;
   uint16_t globalXi = xi;
   uint16_t globalYi = yi;
+  uint16_t fr_couter = 0;
   int width = 0, height = 0;
   int old_x = 0;
   int old_y = 0;
@@ -393,9 +394,45 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
               timer_int_handler();
               if((globalCounter % frame_counter) == 0)
               {
+                fr_couter++;
                 if (globalXi == xf && globalYi == yf)
                 {
                   continue;
+                }
+                if (abs(speed) == fr_couter)
+                {
+                  if (globalXi <= xf && globalYi == yf)
+                  {
+                      vg_draw_rectangle(old_x,old_y,1,height,0);
+                      vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                      old_x = globalXi;
+                      old_y = globalYi;
+                      globalXi += 1;
+                 }
+                else if (globalXi >= xf && globalYi == yf)
+                 {
+                    vg_draw_rectangle(globalXi+width,old_y,1,height,0);
+                    vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                    old_x = globalXi;
+                   old_y = globalYi;
+                   globalXi -= 1;
+                  }
+                else if (globalXi == xf && globalYi <= yf)
+                  {
+                    vg_draw_rectangle(old_x,old_y,width,1,0);
+                    vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                    old_x = globalXi;
+                    old_y = globalYi;
+                   globalYi += 1;
+                  }
+                 else if (globalXi == xf && globalYi >= yf)
+                 {
+                    vg_draw_rectangle(old_x,globalYi+height,width,1,0);
+                    vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                    old_x = globalXi;
+                    old_y = globalYi;
+                    globalYi -= 1;
+                  }
                 }
                 if (globalXi <= xf && globalYi == yf)
                 {
@@ -403,7 +440,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi += distance;
+                  globalXi += 1;
                 }
                 else if (globalXi >= xf && globalYi == yf)
                 {
@@ -411,7 +448,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi -= distance;
+                  globalXi -= 1;
                 }
                 else if (globalXi == xf && globalYi <= yf)
                 {
@@ -419,7 +456,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi += distance;
+                  globalYi += 1;
                 }
                 else if (globalXi == xf && globalYi >= yf)
                 {
@@ -427,9 +464,10 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi -= distance;
+                  globalYi -= 1;
                 }
               }
+              fr_couter = 0;
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
