@@ -399,7 +399,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                 }
                 if (globalXi <= xf && globalYi == yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_rectangle(old_x,old_y,distance,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
@@ -407,7 +407,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                 }
                 else if (globalXi >= xf && globalYi == yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_rectangle(globalXi+width,old_y,distance,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
@@ -415,7 +415,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                 }
                 else if (globalXi == xf && globalYi <= yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_rectangle(old_x,old_y,width,distance,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
@@ -423,7 +423,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                 }
                 else if (globalXi == xf && globalYi >= yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,height,0);
+                  vg_draw_rectangle(old_x,globalYi+height,width,distance,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
