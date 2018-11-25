@@ -34,7 +34,7 @@ void* (vg_init)(uint16_t mode){
 
   	vbe_mode_info_t *vmi_p = malloc(sizeof(vbe_mode_info_t));
 
-  if(vbe_get_mode_info(mode, vmi_p) != 0){
+  if(vbe_get_info(mode, vmi_p) != 0){
     printf("Erro na função vbe_get_mode_info\n");
     return NULL;
   }
@@ -51,11 +51,39 @@ void* (vg_init)(uint16_t mode){
   reg86.u.b.intno = INIT;
 
   if(sys_int86(&reg86) != OK) {
-      printf("vg_enter(): sys_int86() failed \n");
+      printf("vg_init(): sys_int86() failed \n");
       return NULL;
     }
 
   return video_mem;
+}
+
+int vbe_get_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
+  struct reg86u r;
+  mmap_t m;
+  lm_alloc(sizeof(mmap_t), &m);                /* use liblm.a to initialize buf */
+  phys_bytes buf = m.phys;
+
+  memset(&r, 0, sizeof(r)); /* zero the structure */
+
+  r.u.w.ax = MODE_INFO;          /* VBE get mode info */
+  /* translate the buffer linear address to a far pointer */
+  r.u.w.es = PB2BASE(buf);    /* set a segment base */
+  r.u.w.di = PB2OFF(buf);     /* set the offset accordingly */
+  r.u.w.cx = mode;
+  r.u.b.intno = 0x10;
+
+
+  if( sys_int86(&r) != OK ){
+    printf("vg_init(): sys_int86() failed \n");
+    return 1;
+  }
+
+  *vmi_p = *(vbe_mode_info_t *) m.virt;
+
+  lm_free(&m);
+
+  return 0;
 }
 
 int wait(uint8_t time){
@@ -419,8 +447,8 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                     vg_draw_rectangle(globalXi+width,old_y,1,height,0);
                     vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                     old_x = globalXi;
-                   old_y = globalYi;
-                   globalXi -= 1;
+                    old_y = globalYi;
+                    globalXi -= 1;
                   }
                 else if (globalXi == xf && globalYi <= yf)
                   {
@@ -442,13 +470,14 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
               }
                
                else 
-              {if (globalXi <= xf && globalYi == yf)
+              {
+                if (globalXi <= xf && globalYi == yf)
                   {
                   vg_draw_rectangle(old_x,old_y,distance,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi += 1;
+                  globalXi += distance;
                 }
                 else if (globalXi >= xf && globalYi == yf)
                 {
@@ -456,7 +485,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi -= 1;
+                  globalXi -= distance;
                 }
                 else if (globalXi == xf && globalYi <= yf)
                 {
@@ -464,7 +493,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi += 1;
+                  globalYi += distance;
                 }
                 else if (globalXi == xf && globalYi >= yf)
                 {
@@ -472,7 +501,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi -= 1;
+                  globalYi -= distance;
                 }
               }
             }
