@@ -75,7 +75,7 @@ int vbe_get_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
 
 
   if( sys_int86(&r) != OK ){
-    printf("vg_init(): sys_int86() failed \n");
+    printf("vg_get_info(): sys_int86() failed \n");
     return 1;
   }
 
@@ -398,7 +398,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
   int freq = sys_hz();
 
   int frame_counter = freq/fr_rate;
-  float distance = (speed*fr_rate)/freq;
+  //float distance = (speed*fr_rate)/freq;
 
 
   uint32_t irq_set_kb = BIT(bit_no_kb);
@@ -473,35 +473,35 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
               {
                 if (globalXi <= xf && globalYi == yf)
                   {
-                  vg_draw_rectangle(old_x,old_y,distance,height,0);
+                  vg_draw_rectangle(old_x,old_y,speed,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi += distance;
+                  globalXi += speed;
                 }
                 else if (globalXi >= xf && globalYi == yf)
                 {
-                  vg_draw_rectangle(globalXi+width,old_y,distance,height,0);
+                  vg_draw_rectangle(globalXi+width,old_y,speed,height,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalXi -= distance;
+                  globalXi -= speed;
                 }
                 else if (globalXi == xf && globalYi <= yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,distance,0);
+                  vg_draw_rectangle(old_x,old_y,width,speed,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi += distance;
+                  globalYi += speed;
                 }
                 else if (globalXi == xf && globalYi >= yf)
                 {
-                  vg_draw_rectangle(old_x,globalYi+height,width,distance,0);
+                  vg_draw_rectangle(old_x,globalYi+height,width,speed,0);
                   vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
                   old_x = globalXi;
                   old_y = globalYi;
-                  globalYi -= distance;
+                  globalYi -= speed;
                 }
               }
             }
