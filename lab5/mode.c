@@ -79,6 +79,12 @@ int vbe_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
     return 1;
   }
 
+  if (r.u.b.ah != 0)
+  {
+    lm_free(&m);
+    return 1;
+  }
+
   *vmi_p = *(vbe_mode_info_t *) m.virt;
 
   lm_free(&m);
@@ -403,7 +409,7 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
 
   uint32_t irq_set_kb = BIT(bit_no_kb);
   uint32_t irq_set_timer = BIT(bit_no_timer);
-
+  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
   while(!is_over) {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
@@ -473,35 +479,82 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
               {
                 if (globalXi <= xf && globalYi == yf)
                   {
-                  vg_draw_rectangle(old_x,old_y,speed,height,0);
-                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
-                  old_x = globalXi;
-                  old_y = globalYi;
+                    if(globalXi + speed > xf)
+                    {
+                      vg_draw_rectangle(globalXi-speed,globalYi,speed,height,0);
+
+                      globalXi = xf;
+                     vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                     continue;
+                    }
+                  else
+                  {
                   globalXi += speed;
+                  vg_draw_rectangle(globalXi-speed,globalYi,speed,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  if(globalXi >= xf )
+                    continue;
+                  }  
+                  
                 }
                 else if (globalXi >= xf && globalYi == yf)
                 {
-                  vg_draw_rectangle(globalXi+width,old_y,speed,height,0);
-                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
-                  old_x = globalXi;
-                  old_y = globalYi;
+                 if(globalXi - speed < xf)
+                    {
+                      vg_draw_rectangle(globalXi+width,globalYi,speed,height,0);
+
+                      globalXi = xf;
+                     vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                     continue;
+                    }
+                  else
+                  {
                   globalXi -= speed;
+                  vg_draw_rectangle(globalXi+width,globalYi,speed,height,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  if(globalXi <= xf )
+                    continue;
+                  }  
+                  
+                  
                 }
                 else if (globalXi == xf && globalYi <= yf)
                 {
-                  vg_draw_rectangle(old_x,old_y,width,speed,0);
-                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
-                  old_x = globalXi;
-                  old_y = globalYi;
+                  if(globalYi + speed > yf)
+                    {
+                      vg_draw_rectangle(globalXi,globalYi-speed,width,speed,0);
+
+                      globalYi = yf;
+                     vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                     continue;
+                    }
+                  else
+                  {
                   globalYi += speed;
+                      vg_draw_rectangle(globalXi,globalYi-speed,width,speed,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  if(globalYi >= yf )
+                    continue;
+                  } 
                 }
                 else if (globalXi == xf && globalYi >= yf)
                 {
-                  vg_draw_rectangle(old_x,globalYi+height,width,speed,0);
-                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
-                  old_x = globalXi;
-                  old_y = globalYi;
+                  if(globalYi - speed < yf)
+                    {
+                      vg_draw_rectangle(globalXi,globalYi+height,width,speed,0);
+
+                      globalYi = yf;
+                     vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                     continue;
+                    }
+                  else
+                  {
                   globalYi -= speed;
+                    vg_draw_rectangle(globalXi,globalYi+height,width,speed,0);
+                  vg_draw_xpm(xpm,globalXi,globalYi, &width, &height);
+                  if(globalYi <= yf )
+                    continue;
+                  }  
                 }
               }
             }
