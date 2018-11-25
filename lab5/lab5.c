@@ -171,8 +171,22 @@ int (video_test_move)(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, 
 }
 
 int (video_test_controller)() {
-  /* To be completed */
-  printf("%s(): under construction\n", __func__);
+  // struct reg86u reg86;
 
-  return 1;
+  // memset(&reg86, 0, sizeof(reg86)); /* zero the structure */
+
+  // vg_vbe_contr_info_t *info_p = malloc(sizeof(vg_vbe_contr_info_t));
+
+  // reg86.u.w.ax = VBE_INFO;
+  // reg86.u.w.es = info_p;
+
+  // if(sys_int86(&reg86) != OK) {
+  //     printf("vg_enter(): sys_int86() failed \n");
+  //     return 1;
+  //   }
+
+  //   vg_display_vbe_contr_info(info_p);
+
+
+  return 0;
 } 

@@ -338,11 +338,10 @@ int draw_indexed(uint8_t no_rectangles, uint32_t first, uint8_t step){
         return 1;
 
       }
-      i += h_num;
-      
+      j += v_num;
 
     }
-    j += v_num;
+    i += h_num;
   }
   return 0;
 }

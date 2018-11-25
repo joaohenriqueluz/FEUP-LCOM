@@ -4,6 +4,7 @@
 #define BIT(n) (0x01<<(n))
 
 #define VBE_MODE 0x4f02
+#define VBE_INFO 0x4f00
 #define LINEAR   BIT(14)
 #define INIT      0x10
 
