@@ -34,7 +34,7 @@ void* (vg_init)(uint16_t mode){
 
   	vbe_mode_info_t *vmi_p = malloc(sizeof(vbe_mode_info_t));
 
-  if(vbe_get_info(mode, vmi_p) != 0){
+  if(vbe_info(mode, vmi_p) != 0){
     printf("Erro na função vbe_get_mode_info\n");
     return NULL;
   }
@@ -58,7 +58,7 @@ void* (vg_init)(uint16_t mode){
   return video_mem;
 }
 
-int vbe_get_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
+int vbe_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
   struct reg86u r;
   mmap_t m;
   lm_alloc(sizeof(mmap_t), &m);                /* use liblm.a to initialize buf */
@@ -539,6 +539,51 @@ int move_pixemap(const char *xpm[], uint16_t xi, uint16_t yi, uint16_t xf, uint1
   if(kb_unsubscribe() != 0){
     printf("Erro na funcao kb_unsubscribe\n");
   }
+
+  return 0;
+}
+
+int get_controller(){
+  struct reg86u r;
+  mmap_t m;
+
+  lm_init(true);
+
+  vg_vbe_contr_info_t *info_p = malloc(sizeof(vg_vbe_contr_info_t));
+  lm_alloc(sizeof(mmap_t), &m);                /* use liblm.a to initialize buf */
+  phys_bytes buf = m.phys;
+
+  memset(&r, 0, sizeof(r)); /* zero the structure */
+
+  info_p->VBESignature[0] = 'V';
+  info_p->VBESignature[1] = 'B';
+  info_p->VBESignature[2] = 'E';
+  info_p->VBESignature[3] = '2';
+
+  r.u.w.ax = VBE_INFO;          /* VBE get mode info */
+  /* translate the buffer linear address to a far pointer */
+  r.u.w.es = PB2BASE(buf);    /* set a segment base */
+  r.u.w.di = PB2OFF(buf);      /*set the offset accordingly */
+  r.u.w.cx = mode;
+  r.u.b.intno = 0x10;
+
+  if( sys_int86(&r) != OK ){
+    printf("vg_get_info(): sys_int86() failed \n");
+    return 1;
+  }
+
+  info_p = (vg_vbe_contr_info_t *) m.virt;
+
+  lm_free(&m);
+
+  if (vg_display_vbe_contr_info(info_p) != 0)
+  {
+    printf("Erro a imprimeir na função video_test_controller\n");
+    return 1;
+  }
+
+  lm_free(&m);
+
 
   return 0;
 }
