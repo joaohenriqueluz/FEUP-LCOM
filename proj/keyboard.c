@@ -35,11 +35,11 @@ uint8_t (kb_scan_byte)(bool poll){
 
 	uint32_t stat, data;
 	while( 1 ){
-	 sys_inb_cnt(KB_STATUS_REG, &stat); /* assuming it returns OK */
+	 sys_inb(KB_STATUS_REG, &stat); /* assuming it returns OK */
         /* loop while 8042 output buffer is empty */
         if( stat & OBF ) 
         	{
-            sys_inb_cnt(OUT_BUF, &data);
+            sys_inb(OUT_BUF, &data);
             if(!poll) 
             {/* assuming it returns OK */
             if ( (stat &(PAR_ERR | TO_ERR)) == 0 )
@@ -66,7 +66,7 @@ int (kbc_reenable)(){
   
     sys_outb(KB_STATUS_REG,KBC_READ);
 
-    sys_inb_cnt(OUT_BUF,&cmd);
+    sys_inb(OUT_BUF,&cmd);
 
   cmd = cmd| KB_ENABLE;
 
@@ -157,14 +157,4 @@ int (kb_read_poll)(){
 
     return 0;
 }
-
-int sys_inb_cnt(port_t port, uint32_t *byte)
-{
-  counter++;
-  int i = sys_inb(port,byte);
-  if(i != OK)
-    printf("Erro sys_inb\n");
-  return i;
-}
-
 
