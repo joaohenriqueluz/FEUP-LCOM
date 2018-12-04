@@ -1,7 +1,13 @@
 // IMPORTANT: you must include the following line in all your C files
 #include <lcom/lcf.h>
-
+#include "graphics.h"
+#include "bmp.h"
+#include "vbe_macros.h"
 // Any header files included below this line should have been created by you
+
+
+
+
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -27,9 +33,12 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int (proj_main_loop)(int argc, char *argv[]) {
-  /* To be completed */
-  printf("%s(%d, %p): under construction\n", __func__, argc, argv);
+int (proj_main_loop)() {
+  vg_init(0x144);
+  Bitmap* new_bmp = loadBitmap("/home/lcom/labs/proj/imagens/spacecomdiogo.bmp");
+  drawBitmap(new_bmp,0,0,ALIGN_LEFT);
+  sleep(10);
+  vg_exit();
 
-  return 1;
+  return 0;
 }
