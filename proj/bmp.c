@@ -1,12 +1,8 @@
-#include <lcom/lcf.h>
-#include <stdlib.h>
-
 #include "bmp.h"
-#include "Bitmap.h"
 
 #include "stdio.h"
-#include "Graphics.h"
-#include "Utilities.h"
+#include "graphics.h"
+
 
 Bitmap* loadBitmap(const char* filename) {
     // allocating necessary size
@@ -38,7 +34,7 @@ Bitmap* loadBitmap(const char* filename) {
             break;
     } while (0);
 
-    if (rd = !1) {
+    if (rd !=1) {
         fprintf(stderr, "Error reading file\n");
         exit(-1);
     }
@@ -92,8 +88,8 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
     else if (alignment == ALIGN_RIGHT)
         x -= width;
 
-    if (x + width < 0 || x > getHorResolution() || y + height < 0
-            || y > getVerResolution())
+    if (x + width < 0 || x > h_res || y + height < 0
+            || y > v_res)
         return;
 
     int xCorrection = 0;
@@ -102,10 +98,10 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
         drawWidth -= xCorrection;
         x = 0;
 
-        if (drawWidth > getHorResolution())
-            drawWidth = getHorResolution();
-    } else if (x + drawWidth >= getHorResolution()) {
-        drawWidth = getHorResolution() - x;
+        if (drawWidth > h_res)
+            drawWidth = h_res;
+    } else if (x + drawWidth >= h_res) {
+        drawWidth = h_res - x;
     }
 
     char* bufferStartPos;
@@ -115,15 +111,15 @@ void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
     for (i = 0; i < height; i++) {
         int pos = y + height - 1 - i;
 
-        if (pos < 0 || pos >= getVerResolution())
+        if (pos < 0 || pos >= v_res)
             continue;
 
-        bufferStartPos = getGraphicsBuffer();
-        bufferStartPos += x * 2 + pos * getHorResolution() * 2;
+        bufferStartPos = video_mem;
+        bufferStartPos += x * 4 + pos * h_res * 4;
 
-        imgStartPos = bmp->bitmapData + xCorrection * 2 + i * width * 2;
+        imgStartPos = (char*) bmp->bitmapData + xCorrection * 4 + i * width * 4;
 
-        memcpy(bufferStartPos, imgStartPos, drawWidth * 2);
+        memcpy(bufferStartPos, imgStartPos, drawWidth * 4);
     }
 }
 
