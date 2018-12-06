@@ -196,6 +196,36 @@ Bitmap* loadBitmap(const char* filename) {
     return bmp;
 }
 
+
+void kbd_read(){
+  byte = kb_scan_byte(false);
+
+  if (byte == ESC_BREAK)
+  {
+      is_over = true;
+      make = false;
+      return;
+  }
+ if (byte == TWO_BYTE_SCAN)
+ {
+    size = 2;
+    return;
+  }
+  else{
+  if (byte & 0x80)
+  {
+      make = false;
+      return;
+   }
+   else{
+    make = true;
+   }
+ }
+ 
+   return;
+}
+
+
 void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
     if (bmp == NULL)
         return;
@@ -250,5 +280,61 @@ void deleteBitmap(Bitmap* bmp) {
 
     free(bmp->bitmapData);
     free(bmp);
+}
+
+
+void move_ship(Bitmap* ship, Bitmap* background)
+{
+int delta = 20;
+if (globalCounter % (sys_hz() / 30) == 0)
+{ 
+  while(byte == 0x4d)
+  {
+
+  if(globalXi + delta > 970)
+    {
+      
+       drawBitmap(background, 0, 0, ALIGN_LEFT);
+       globalXi = 970;        
+       drawBitmap(ship, globalXi, 690, ALIGN_LEFT);
+       break;
+    }
+  else
+   {
+     globalXi += delta;
+    drawBitmap(background,0,0,ALIGN_LEFT);   
+    drawBitmap(ship,globalXi,690,ALIGN_LEFT);
+    break;
+  }  
+
+
+
+  }
+
+  while(byte == 0x4b)
+  {
+
+  if(globalXi - delta < 25)
+    {
+      
+       drawBitmap(background, 0, 0, ALIGN_LEFT);
+       globalXi = 25;        
+       drawBitmap(ship, globalXi, 690, ALIGN_LEFT);
+       break;
+    }
+  else
+   {
+     globalXi -= delta;
+    drawBitmap(background,0,0,ALIGN_LEFT);   
+    drawBitmap(ship,globalXi,690,ALIGN_LEFT);
+    break;
+  }  
+
+
+
+  }
+
+}
+
 }
 
