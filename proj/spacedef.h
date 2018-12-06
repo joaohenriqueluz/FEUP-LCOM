@@ -13,8 +13,10 @@ static int h_res;	        /* Horizontal resolution in pixels */
 static int v_res;	        /* Vertical resolution in pixels */
 static int bits_per_pixel; /* Number of VRAM bits per pixel */
 static int num_bytes_mode;
-static int globalXi = 487;
-
+static int playerX = 487;
+static int shotY = 630;
+static int shotX;
+bool fire = false;
 
 
 typedef enum {
@@ -84,4 +86,6 @@ int map_vram(vbe_mode_info_t *vmi_p);
 void move_ship(Bitmap* ship, Bitmap* background);
 
 void kbd_read();
+
+void shoot(Bitmap* ship, Bitmap* background, Bitmap* shot);
 

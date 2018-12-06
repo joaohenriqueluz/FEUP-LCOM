@@ -41,6 +41,7 @@ int (proj_main_loop)() {
   vg_init(0x144);
   Bitmap* background = loadBitmap("/home/lcom/labs/proj/imagens/spacecomdiogo.bmp");
   Bitmap* ship = loadBitmap("/home/lcom/labs/proj/imagens/blue1.bmp");
+  Bitmap* shot = loadBitmap("/home/lcom/labs/proj/imagens/bola.bmp");
 
 int ipc_status, ind = 0;
   message msg;
@@ -86,6 +87,7 @@ int ipc_status, ind = 0;
 
                   kbd_read();
                   move_ship(ship,  background);
+
                   if (size == 2)
                   {
                     scancode2[ind] = byte;
@@ -106,6 +108,11 @@ int ipc_status, ind = 0;
         size = 1;
         ind = 0;
       }
+
+      if (globalCounter % (sys_hz() / 20) == 0)
+		{
+ 		 shoot( ship, background, shot);
+		}
 
  
   

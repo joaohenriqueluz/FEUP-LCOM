@@ -285,56 +285,112 @@ void deleteBitmap(Bitmap* bmp) {
 
 void move_ship(Bitmap* ship, Bitmap* background)
 {
-int delta = 20;
-if (globalCounter % (sys_hz() / 30) == 0)
-{ 
-  while(byte == 0x4d)
-  {
+  int delta = 20;
+  if (globalCounter % (sys_hz() / 30) == 0)
+  { 
+      //shoot( ship, background, shot);
 
-  if(globalXi + delta > 970)
+    if(byte == 0x4d)
     {
-      
-       drawBitmap(background, 0, 0, ALIGN_LEFT);
-       globalXi = 970;        
-       drawBitmap(ship, globalXi, 690, ALIGN_LEFT);
-       break;
+
+    if(playerX + delta > 970)
+      {
+        
+         drawBitmap(background, 0, 0, ALIGN_LEFT);
+         playerX = 970;        
+         drawBitmap(ship, playerX, 690, ALIGN_LEFT);
+         return;
+      }
+    else
+     {
+       playerX += delta;
+      drawBitmap(background,0,0,ALIGN_LEFT);   
+      drawBitmap(ship,playerX,690,ALIGN_LEFT);
+      return;
+    }  
+
+
+
     }
-  else
-   {
-     globalXi += delta;
-    drawBitmap(background,0,0,ALIGN_LEFT);   
-    drawBitmap(ship,globalXi,690,ALIGN_LEFT);
-    break;
-  }  
+
+    if(byte == 0x4b)
+    {
+
+    if(playerX - delta < 25)
+      {
+        
+         drawBitmap(background, 0, 0, ALIGN_LEFT);
+         playerX = 25;        
+         drawBitmap(ship, playerX, 690, ALIGN_LEFT);
+         return;
+      }
+    else
+     {
+       playerX -= delta;
+      drawBitmap(background,0,0,ALIGN_LEFT);   
+      drawBitmap(ship,playerX,690,ALIGN_LEFT);
+      return;
+    }  
 
 
+
+    }
+
+    if(byte == 0x39)
+  {
+    fire = true;
+    shotX = playerX +13;
+    
 
   }
-
-  while(byte == 0x4b)
-  {
-
-  if(globalXi - delta < 25)
-    {
-      
-       drawBitmap(background, 0, 0, ALIGN_LEFT);
-       globalXi = 25;        
-       drawBitmap(ship, globalXi, 690, ALIGN_LEFT);
-       break;
-    }
-  else
-   {
-     globalXi -= delta;
-    drawBitmap(background,0,0,ALIGN_LEFT);   
-    drawBitmap(ship,globalXi,690,ALIGN_LEFT);
-    break;
-  }  
-
 
 
   }
 
 }
 
-}
+
+  void shoot(Bitmap* ship, Bitmap* background, Bitmap* shot){
+
+    
+
+    int shot_delta = 20;
+    if(fire)
+    {
+      //drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
+      if(shotY - shot_delta < 0)
+      {
+        shotY = 0;
+        drawBitmap(background,0,0,ALIGN_LEFT);   
+        drawBitmap(ship,playerX,690,ALIGN_LEFT);
+        drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
+        drawBitmap(background,0,0,ALIGN_LEFT);   
+        drawBitmap(ship,playerX,690,ALIGN_LEFT);
+        
+        fire = false;
+        shotY = 630;
+      }
+      else if(shotY -shot_delta > 0)
+      {
+        shotY -= shot_delta;
+        drawBitmap(background,0,0,ALIGN_LEFT);   
+        drawBitmap(ship,playerX,690,ALIGN_LEFT);
+        drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
+
+      }
+
+      if(shotY == 0 )
+      {
+        drawBitmap(background,0,0,ALIGN_LEFT);   
+        drawBitmap(ship,playerX,690,ALIGN_LEFT);
+
+      }
+
+      
+
+    }
+  
+
+
+  }
 
