@@ -9,8 +9,13 @@
 #include "vbe_macros.h"
 #include "spacedef.h"
 #include "keyboard.h"
+#include <stdbool.h>
+
 
 uint8_t GlobalRedScreeMask, GlobalGreenScreeMask, GlobalBlueScreeMask;
+
+int space = 0;
+int arrived = 1;
 
 void* (vg_init)(uint16_t mode){
 
@@ -337,10 +342,12 @@ void move_ship(Bitmap* ship, Bitmap* background)
     }
 
     if(byte == 0x39)
-  {
-    fire = true;
-    shotX = playerX +13;
-    
+  { 
+    space = 1;
+    if(arrived == 1)
+    { 
+      shotX = playerX +13;
+    }
 
   }
 
@@ -350,12 +357,12 @@ void move_ship(Bitmap* ship, Bitmap* background)
 }
 
 
-  void shoot(Bitmap* ship, Bitmap* background, Bitmap* shot){
+  void animations(Bitmap* ship, Bitmap* background, Bitmap* shot){
 
     
 
     int shot_delta = 20;
-    if(fire)
+    if(space == 1)
     {
       //drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
       if(shotY - shot_delta < 0)
@@ -366,8 +373,8 @@ void move_ship(Bitmap* ship, Bitmap* background)
         drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
         drawBitmap(background,0,0,ALIGN_LEFT);   
         drawBitmap(ship,playerX,690,ALIGN_LEFT);
-        
-        fire = false;
+        arrived = 1;
+        space = 0;
         shotY = 630;
       }
       else if(shotY -shot_delta > 0)
@@ -376,21 +383,11 @@ void move_ship(Bitmap* ship, Bitmap* background)
         drawBitmap(background,0,0,ALIGN_LEFT);   
         drawBitmap(ship,playerX,690,ALIGN_LEFT);
         drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
-
-      }
-
-      if(shotY == 0 )
-      {
-        drawBitmap(background,0,0,ALIGN_LEFT);   
-        drawBitmap(ship,playerX,690,ALIGN_LEFT);
+        arrived = 0;
 
       }
 
       
-
-    }
-  
-
-
+    }  
   }
 

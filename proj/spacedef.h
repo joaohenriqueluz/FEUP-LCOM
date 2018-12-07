@@ -7,16 +7,27 @@
  */
 
 
-
+//////////////////////////////////////////////////////////////////////////////////
 static char *video_mem;		/* Process (virtual) address to which VRAM is mapped */
 static int h_res;	        /* Horizontal resolution in pixels */
 static int v_res;	        /* Vertical resolution in pixels */
 static int bits_per_pixel; /* Number of VRAM bits per pixel */
 static int num_bytes_mode;
+//////////////////////////////////////////////////////////////////////////////////
+
 static int playerX = 487;
+//////////////////////////////////////////////////////////////////////////////////
+
 static int shotY = 630;
 static int shotX;
-bool fire = false;
+//bool shotEnd = true;
+//////////////////////////////////////////////////////////////////////////////////
+// static int enemyX = 487;
+// static int enemyY = 0;
+// bool enemyR = true;
+// bool enemyL = false;
+// bool enemyAlive = true;
+
 
 
 typedef enum {
@@ -87,5 +98,5 @@ void move_ship(Bitmap* ship, Bitmap* background);
 
 void kbd_read();
 
-void shoot(Bitmap* ship, Bitmap* background, Bitmap* shot);
+void animations(Bitmap* ship, Bitmap* background, Bitmap* shot);
 
