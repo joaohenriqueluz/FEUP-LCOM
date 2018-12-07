@@ -7,6 +7,8 @@
 #include "i8254.h"
 #include "i8042.h"
 #include "vbe_macros.h"
+#include <stdbool.h>
+
 // Any header files included below this line should have been created by you
 
 
@@ -42,11 +44,13 @@ int (proj_main_loop)() {
   Bitmap* background = loadBitmap("/home/lcom/labs/proj/imagens/spacecomdiogo.bmp");
   Bitmap* ship = loadBitmap("/home/lcom/labs/proj/imagens/blue1.bmp");
   Bitmap* shot = loadBitmap("/home/lcom/labs/proj/imagens/bola.bmp");
-
-int ipc_status, ind = 0;
+  //Bitmap* enemy = loadBitmap("/home/lcom/labs/proj/imagens/blue2.bmp");
+int ipc_status;
+// ind = 0
   message msg;
   unsigned int r;
-  uint8_t bit_no_timer, bit_no_kb, scancode1[1], scancode2[2];
+  uint8_t bit_no_timer, bit_no_kb;
+  // scancode1[1], scancode2[2];
   //uint8_t seconds = 0;
 
   if(kb_subscribe(&bit_no_kb) != 0)
@@ -60,7 +64,10 @@ int ipc_status, ind = 0;
 
   drawBitmap(background,0,0,ALIGN_LEFT);
 
-  drawBitmap(ship, 487, 690, ALIGN_LEFT);
+  drawBitmap(ship, playerX, 690, ALIGN_LEFT);
+
+  //drawBitmap(enemy, 487, 0, ALIGN_LEFT);
+
 
   while(!is_over) {
 
@@ -86,32 +93,32 @@ int ipc_status, ind = 0;
                   globalCounter = 0;
 
                   kbd_read();
-                  move_ship(ship,  background);
+                  move_ship(ship, background);
 
-                  if (size == 2)
-                  {
-                    scancode2[ind] = byte;
-                  }
-                  else{
-                    scancode1[ind] = byte;
-                  }
-                  ind++;
+                  // if (size == 2)
+                  // {
+                  //   scancode2[ind] = byte;
+                  // }
+                  // else{
+                  //   scancode1[ind] = byte;
+                  // }
+                  // ind++;
               }
             
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
 
-     if (ind >= size)
-      {
-        make = true;
-        size = 1;
-        ind = 0;
-      }
+     // if (ind >= size)
+     //  {
+     //    make = true;
+     //    size = 1;
+     //    ind = 0;
+     //  }
 
       if (globalCounter % (sys_hz() / 20) == 0)
 		{
- 		 shoot( ship, background, shot);
+ 		 animations(ship, background, shot);
 		}
 
  
