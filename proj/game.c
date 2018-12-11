@@ -50,7 +50,7 @@ Player* playerInit(Jogo* jogo){
 void move_ship(Jogo* mib, Player* willsmith){
 	if (byte == LEFT_ARROW)
 	{
-		if (willsmith->x + mib->ship_info.width > h_res)
+		if (willsmith->x + mib->ship_info.width > h_res-10)
 		{
 			willsmith->x = h_res - mib->ship_info.width;
 		}
@@ -62,7 +62,7 @@ void move_ship(Jogo* mib, Player* willsmith){
 	{
 		if (willsmith->x - willsmith->speed < 0)
 		{
-			willsmith->speed = 0;
+			willsmith->x = 0;
 		}
 		else{
 			willsmith->x -= willsmith->speed;
@@ -106,7 +106,7 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 		if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
 		{
 			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
-			sleep(2);
+			sleep(1);
 			alive = false;
 		}
 		if (shotY - 10 >= 0)
