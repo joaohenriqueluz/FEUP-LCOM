@@ -1,6 +1,6 @@
 PROG=proj
 
-SRCS = main.c spacedef.c keyboard.c timer.c
+SRCS = main.c game.c spacedef.c keyboard.c timer.c
 
 CPPFLAGS += -pedantic #-D __LCOM_OPTIMIZED__
 
