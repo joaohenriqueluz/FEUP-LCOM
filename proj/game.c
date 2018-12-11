@@ -103,7 +103,7 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 		int minX = frank->x;
 		int maxY = frank->y + (mib->alien_info.height);
 		int maxX = frank->x + (mib->alien_info.width);
-		if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX))
+		if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
 		{
 			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
 			sleep(2);
