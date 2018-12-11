@@ -6,7 +6,7 @@
 
 typedef struct {
 
-	xpm_image_t background_info;
+  xpm_image_t background_info;
   xpm_string_t* background_map;
   unsigned char* background_pic;
 
@@ -14,9 +14,17 @@ typedef struct {
   xpm_string_t* ship_map;
   unsigned char* ship_pic;
 
+  xpm_image_t alien_info;
+  xpm_string_t* alien_map;
+  unsigned char* alien_pic;
+
   xpm_image_t shot_info;
   xpm_string_t* shot_map;
   unsigned char* shot_pic;
+
+  xpm_image_t bang_info;
+  xpm_string_t* bang_map;
+  unsigned char* bang_pic;
 } Jogo;
 
 typedef struct {
@@ -29,7 +37,7 @@ typedef struct {
 
 Jogo* inicio();
 
-void drawJogo(Jogo* jogo, Player* player);
+void drawJogo(Jogo* jogo, Player* player, Alien* alien);
 
 void fim(Jogo* jogo);
 
@@ -39,7 +47,7 @@ void move_ship(Jogo* jogo, Player* player);
 
 void playerDelete(Player* player);
 
-Alien* alienInit();
+Alien* alienInit(Jogo* jogo);
 
 void alienDelete(Alien* alien);
 

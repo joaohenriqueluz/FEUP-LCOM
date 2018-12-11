@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int (interrupt_loop)(Jogo* mib, Player* willSmith) {
+int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   int ipc_status;
   message msg;
   unsigned int r;
@@ -53,7 +53,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith) {
   uint32_t irq_set_kb = BIT(bit_no_kb);
   uint32_t irq_set_timer = BIT(bit_no_timer);
 
-  drawJogo(mib,willSmith);
+  drawJogo(mib,willSmith,frank);
 
   while(!is_over) {
 
@@ -71,7 +71,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith) {
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              drawJogo(mib,willSmith);
+              drawJogo(mib,willSmith,frank);
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
@@ -109,7 +109,8 @@ int (proj_main_loop)(){
   vg_init(0x11a);
   Jogo* mib = (Jogo*) inicio();
   Player* willSmith = (Player*) playerInit(mib);
-  interrupt_loop(mib, willSmith);
+  Alien* frank = (Alien*) alienInit(mib);
+  interrupt_loop(mib, willSmith, frank);
   vg_exit();
 
   playerDelete(willSmith);
