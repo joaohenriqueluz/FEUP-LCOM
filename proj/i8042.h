@@ -32,6 +32,10 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define PAR_ERR 	       BIT(7)
 #define TO_ERR 		       BIT(6)
 
+#define LEFT_ARROW        0x4d
+#define RIGHT_ARROW       0x4b
+#define SPACE_BAR         0x39
+
 
 
 #endif /* _LCOM_I8042_H */

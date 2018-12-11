@@ -1,18 +1,15 @@
-
 #include <lcom/lcf.h>
 #include <machine/int86.h> // /usr/src/include/arch/i386
 #include <stdint.h>
 #include <stdio.h>
 #include <minix/sysutil.h>
-#include "i8254.h"
-#include "i8042.h"
+#include <stdbool.h>
 #include "vbe_macros.h"
 #include "spacedef.h"
-#include "keyboard.h"
-#include <stdbool.h>
 
 
 uint8_t GlobalRedScreeMask, GlobalGreenScreeMask, GlobalBlueScreeMask;
+int h_res, v_res;
 
 int space = 0;
 int arrived = 1;
@@ -128,266 +125,23 @@ int map_vram(vbe_mode_info_t *vmi_p){
   	return 0;
 }
 
-
-
-Bitmap* loadBitmap(const char* filename) {
-    // allocating necessary size
-    Bitmap* bmp = (Bitmap*) malloc(sizeof(Bitmap));
-
-    // open filename in read binary mode
-    FILE *filePtr;
-    filePtr = fopen(filename, "rb");
-    if (filePtr == NULL)
-        return NULL;
-
-    // read the bitmap file header
-    BitmapFileHeader bitmapFileHeader;
-    fread(&bitmapFileHeader, 2, 1, filePtr);
-
-    // verify that this is a bmp file by check bitmap id
-    if (bitmapFileHeader.type != 0x4D42) {
-        fclose(filePtr);
-        return NULL;
-    }
-
-    int rd;
-    do {
-        if ((rd = fread(&bitmapFileHeader.size, 4, 1, filePtr)) != 1)
-            break;
-        if ((rd = fread(&bitmapFileHeader.reserved, 4, 1, filePtr)) != 1)
-            break;
-        if ((rd = fread(&bitmapFileHeader.offset, 4, 1, filePtr)) != 1)
-            break;
-    } while (0);
-
-    if (rd !=1) {
-        fprintf(stderr, "Error reading file\n");
-        exit(-1);
-    }
-
-    // read the bitmap info header
-    BitmapInfoHeader bitmapInfoHeader;
-    fread(&bitmapInfoHeader, sizeof(BitmapInfoHeader), 1, filePtr);
-
-    // move file pointer to the begining of bitmap data
-    fseek(filePtr, bitmapFileHeader.offset, SEEK_SET);
-
-    // allocate enough memory for the bitmap image data
-    unsigned char* bitmapImage = (unsigned char*) malloc(
-            bitmapInfoHeader.imageSize);
-
-    // verify memory allocation
-    if (!bitmapImage) {
-        free(bitmapImage);
-        fclose(filePtr);
-        return NULL;
-    }
-
-    // read in the bitmap image data
-    fread(bitmapImage, bitmapInfoHeader.imageSize, 1, filePtr);
-
-    // make sure bitmap image data was read
-    if (bitmapImage == NULL) {
-        fclose(filePtr);
-        return NULL;
-    }
-
-    // close file and return bitmap image data
-    fclose(filePtr);
-
-    bmp->bitmapData = bitmapImage;
-    bmp->bitmapInfoHeader = bitmapInfoHeader;
-
-    return bmp;
-}
-
-
-void kbd_read(){
-  byte = kb_scan_byte(false);
-
-  if (byte == ESC_BREAK)
-  {
-      is_over = true;
-      make = false;
-      return;
-  }
- if (byte == TWO_BYTE_SCAN)
- {
-    size = 2;
-    return;
-  }
-  else{
-  if (byte & 0x80)
-  {
-      make = false;
-      return;
-   }
-   else{
-    make = true;
-   }
- }
- 
-   return;
-}
-
-
-void drawBitmap(Bitmap* bmp, int x, int y, Alignment alignment) {
-    if (bmp == NULL)
-        return;
-
-    int width = bmp->bitmapInfoHeader.width;
-    int drawWidth = width;
-    int height = bmp->bitmapInfoHeader.height;
-
-    if (alignment == ALIGN_CENTER)
-        x -= width / 2;
-    else if (alignment == ALIGN_RIGHT)
-        x -= width;
-
-    if (x + width < 0 || x > h_res || y + height < 0
-            || y > v_res)
-        return;
-
-    int xCorrection = 0;
-    if (x < 0) {
-        xCorrection = -x;
-        drawWidth -= xCorrection;
-        x = 0;
-
-        if (drawWidth > h_res)
-            drawWidth = h_res;
-    } else if (x + drawWidth >= h_res) {
-        drawWidth = h_res - x;
-    }
-
-    char* bufferStartPos;
-    char* imgStartPos;
-
-    int i;
-    for (i = 0; i < height; i++) {
-        int pos = y + height - 1 - i;
-
-        if (pos < 0 || pos >= v_res)
-            continue;
-
-        bufferStartPos = video_mem;
-        bufferStartPos += x * 4 + pos * h_res * 4;
-
-        imgStartPos = (char*) bmp->bitmapData + xCorrection * 4 + i * width * 4;
-
-        memcpy(bufferStartPos, imgStartPos, drawWidth * 4);
-    }
-}
-
-void deleteBitmap(Bitmap* bmp) {
-    if (bmp == NULL)
-        return;
-
-    free(bmp->bitmapData);
-    free(bmp);
-}
-
-
-void move_ship(Bitmap* ship, Bitmap* background)
+int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y)
 {
-  int delta = 20;
-  if (globalCounter % (sys_hz() / 30) == 0)
-  { 
-      //shoot( ship, background, shot);
-
-    if(byte == 0x4d)
-    {
-
-    if(playerX + delta > 970)
-      {
-        
-         drawBitmap(background, 0, 0, ALIGN_LEFT);
-         playerX = 970;        
-         drawBitmap(ship, playerX, 690, ALIGN_LEFT);
-         return;
-      }
-    else
-     {
-       playerX += delta;
-      drawBitmap(background,0,0,ALIGN_LEFT);   
-      drawBitmap(ship,playerX,690,ALIGN_LEFT);
-      return;
-    }  
-
-
-
-    }
-
-    if(byte == 0x4b)
-    {
-
-    if(playerX - delta < 25)
-      {
-        
-         drawBitmap(background, 0, 0, ALIGN_LEFT);
-         playerX = 25;        
-         drawBitmap(ship, playerX, 690, ALIGN_LEFT);
-         return;
-      }
-    else
-     {
-       playerX -= delta;
-      drawBitmap(background,0,0,ALIGN_LEFT);   
-      drawBitmap(ship,playerX,690,ALIGN_LEFT);
-      return;
-    }  
-
-
-
-    }
-
-    if(byte == 0x39)
-  { 
-    space = 1;
-    if(arrived == 1)
-    { 
-      shotX = playerX +13;
-    }
-
+  int p = 0;
+  uint16_t old_x = x;
+  for (int i = 0; i < xpm->height; ++i,y++)
+  {
+   x=old_x;
+   for (int j = 0; j < xpm->width; ++j,x++)
+  {
+    //char *temp = video_mem;
+    int temp = (h_res*y+x)*num_bytes_mode;
+    *(video_mem +temp) = pic[p];
+    *(video_mem + temp+1) = pic[p+1];
+    p += 2;
   }
-
-
-  }
-
 }
 
-
-  void animations(Bitmap* ship, Bitmap* background, Bitmap* shot){
-
-    
-
-    int shot_delta = 20;
-    if(space == 1)
-    {
-      //drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
-      if(shotY - shot_delta < 0)
-      {
-        shotY = 0;
-        drawBitmap(background,0,0,ALIGN_LEFT);   
-        drawBitmap(ship,playerX,690,ALIGN_LEFT);
-        drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
-        drawBitmap(background,0,0,ALIGN_LEFT);   
-        drawBitmap(ship,playerX,690,ALIGN_LEFT);
-        arrived = 1;
-        space = 0;
-        shotY = 630;
-      }
-      else if(shotY -shot_delta > 0)
-      {
-        shotY -= shot_delta;
-        drawBitmap(background,0,0,ALIGN_LEFT);   
-        drawBitmap(ship,playerX,690,ALIGN_LEFT);
-        drawBitmap(shot,shotX, shotY,ALIGN_LEFT);
-        arrived = 0;
-
-      }
-
-      
-    }  
-  }
+return 0;
+}
 

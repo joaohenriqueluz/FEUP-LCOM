@@ -1,19 +1,17 @@
 // IMPORTANT: you must include the following line in all your C files
 #include <lcom/lcf.h>
-#include "spacedef.h"
-#include "keyboard.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "i8254.h"
 #include "i8042.h"
 #include "vbe_macros.h"
-#include <stdbool.h>
+#include "spacedef.h"
+#include "keyboard.h"
+#include "game.h"
+
 
 // Any header files included below this line should have been created by you
-
-
-
-
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -39,18 +37,11 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int (proj_main_loop)() {
-  vg_init(0x144);
-  Bitmap* background = loadBitmap("/home/lcom/labs/proj/imagens/spacecomdiogo.bmp");
-  Bitmap* ship = loadBitmap("/home/lcom/labs/proj/imagens/blue1.bmp");
-  Bitmap* shot = loadBitmap("/home/lcom/labs/proj/imagens/bola.bmp");
-  //Bitmap* enemy = loadBitmap("/home/lcom/labs/proj/imagens/blue2.bmp");
-int ipc_status;
-// ind = 0
+int (interrupt_loop)(Jogo* mib, Player* willSmith) {
+  int ipc_status;
   message msg;
   unsigned int r;
   uint8_t bit_no_timer, bit_no_kb;
-  // scancode1[1], scancode2[2];
   //uint8_t seconds = 0;
 
   if(kb_subscribe(&bit_no_kb) != 0)
@@ -62,12 +53,7 @@ int ipc_status;
   uint32_t irq_set_kb = BIT(bit_no_kb);
   uint32_t irq_set_timer = BIT(bit_no_timer);
 
-  drawBitmap(background,0,0,ALIGN_LEFT);
-
-  drawBitmap(ship, playerX, 690, ALIGN_LEFT);
-
-  //drawBitmap(enemy, 487, 0, ALIGN_LEFT);
-
+  drawJogo(mib,willSmith);
 
   while(!is_over) {
 
@@ -85,41 +71,24 @@ int ipc_status;
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              //printf("sec = %d\n", seconds);
+              drawJogo(mib,willSmith);
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                  globalCounter = 0;
-
                   kbd_read();
-                  move_ship(ship, background);
-
-                  // if (size == 2)
-                  // {
-                  //   scancode2[ind] = byte;
-                  // }
-                  // else{
-                  //   scancode1[ind] = byte;
-                  // }
-                  // ind++;
+                  move_ship(mib, willSmith);
+                  printf("X = %d\n", willSmith->x);
               }
             
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
 
-     // if (ind >= size)
-     //  {
-     //    make = true;
-     //    size = 1;
-     //    ind = 0;
-     //  }
-
-      if (globalCounter % (sys_hz() / 20) == 0)
-		{
- 		 animations(ship, background, shot);
-		}
+  //     if (globalCounter % (sys_hz() / 60) == 0)
+		// {
+ 	// 	 animations(ship, background, shot);
+		// }
 
  
   
@@ -132,7 +101,23 @@ int ipc_status;
   if(kb_unsubscribe() != 0)
     printf("Erro na funcao kb_unsubscribe\n");
 
+  return 0;
+}
+
+int (proj_main_loop)(){
+
+  vg_init(0x11a);
+  Jogo* mib = (Jogo*) inicio();
+  Player* willSmith = (Player*) playerInit(mib);
+  interrupt_loop(mib, willSmith);
   vg_exit();
+
+  playerDelete(willSmith);
+  fim(mib);
 
   return 0;
 }
+
+
+
+
