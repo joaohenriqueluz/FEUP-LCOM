@@ -22,3 +22,5 @@ int map_vram(vbe_mode_info_t *vmi_p);
 
 int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y);
 
+void double_buffering();
+
