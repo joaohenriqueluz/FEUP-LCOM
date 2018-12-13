@@ -53,6 +53,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   uint32_t irq_set_kb = BIT(bit_no_kb);
   uint32_t irq_set_timer = BIT(bit_no_timer);
 
+
   drawJogo(mib,willSmith,frank);
 
   while(!is_over) {
@@ -72,6 +73,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
             {
               timer_int_handler();
               drawJogo(mib,willSmith,frank);
+              double_buffering();
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)

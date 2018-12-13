@@ -8,6 +8,8 @@
 int shotX, shotY;
 extern int h_res, v_res;
 bool alive = true;
+bool right = true;
+bool left = false;
 
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
@@ -38,8 +40,8 @@ Player* playerInit(Jogo* jogo){
 	Player* player = (Player*) malloc(sizeof(Player));
 
 	player->x = h_res/2 - (jogo->ship_info.width)/2;
-	player->y = v_res-(jogo->ship_info.height)*3.5;
-	player->speed = 10;
+	player->y = v_res-(jogo->ship_info.height)*2;
+	player->speed = 20;
 	player->shot = 0;
 	player->lives = 5;
 	player->score = 0;
@@ -85,7 +87,7 @@ Alien* alienInit(Jogo* jogo){
 
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
 	frank->y = 0;
-	frank->speed = 0;
+	frank->speed = 10;
 
 	return frank;
 }
@@ -97,6 +99,37 @@ void alienDelete(Alien* frank){
 void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 	vg_draw_xpm(mib->background_pic, &mib->background_info, 0, 0);
 	vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+
+	if(right)
+	{
+		if (frank->x + mib->alien_info.width > h_res-10)
+		{
+			frank->x = h_res - mib->alien_info.width;
+			right = false;
+			left = true;
+		}
+		else{
+			frank->x += frank->speed;
+		}
+
+	}
+
+	else if(left)
+	{
+		
+		if (frank->x - frank->speed < 0)
+		{
+			frank->x = 0;
+			left = false;
+			right = true;
+		}
+		else{
+			frank->x -= frank->speed;
+		}
+
+
+	}
+
 	if (willsmith->shot)
 	{
 		int minY = frank->y;

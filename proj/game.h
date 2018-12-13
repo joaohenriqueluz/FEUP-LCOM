@@ -32,7 +32,7 @@ typedef struct {
 } Player;
 
 typedef struct {
-    unsigned int x, y, speed;
+     int x, y, speed;
 } Alien;
 
 Jogo* inicio();
