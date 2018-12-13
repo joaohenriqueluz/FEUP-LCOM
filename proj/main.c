@@ -11,6 +11,7 @@
 #include "game.h"
 
 
+
 // Any header files included below this line should have been created by you
 
 int main(int argc, char *argv[]) {
@@ -74,6 +75,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               timer_int_handler();
               drawJogo(mib,willSmith,frank);
               double_buffering();
+
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)

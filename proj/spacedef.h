@@ -11,6 +11,7 @@
 static char *video_mem;		/* Process (virtual) address to which VRAM is mapped */
 static int bits_per_pixel; /* Number of VRAM bits per pixel */
 static int num_bytes_mode;
+
 //////////////////////////////////////////////////////////////////////////////////
 
 static int playerX = 487;
