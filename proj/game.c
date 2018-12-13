@@ -10,6 +10,8 @@ extern int h_res, v_res;
 bool alive = true;
 bool right = true;
 bool left = false;
+bool explosion = false;
+int counterExplosion = 0;
 
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
@@ -87,7 +89,7 @@ Alien* alienInit(Jogo* jogo){
 
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
 	frank->y = 0;
-	frank->speed = 10;
+	frank->speed = 1;
 
 	return frank;
 }
@@ -132,19 +134,33 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 
 	if (willsmith->shot)
 	{
+
 		int minY = frank->y;
 		int minX = frank->x;
 		int maxY = frank->y + (mib->alien_info.height);
 		int maxX = frank->x + (mib->alien_info.width);
+
+		explosion = false;
+
 		if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
 		{
-			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
-			sleep(1);
 			alive = false;
+			explosion = true;
+			counterExplosion = 30;
 		}
-		if (shotY - 10 >= 0)
+		if(explosion)
 		{
-			shotY -= 10;
+			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
+			counterExplosion--;
+		}
+		if(counterExplosion == 0 && explosion)
+		{
+			explosion = false;
+			
+		}
+		if (shotY - 20 >= 0 && !explosion)
+		{
+			shotY -= 20;
 			vg_draw_xpm(mib->shot_pic, &mib->shot_info, shotX, shotY);
 			if (alive)
 			{
@@ -160,6 +176,8 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 		}
 	
 	willsmith->shot = 0;
+
+
 }
 
 void kbd_read(){

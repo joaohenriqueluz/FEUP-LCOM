@@ -13,6 +13,7 @@ int h_res, v_res;
 
 int space = 0;
 int arrived = 1;
+extern bool explosion;
 static char * doubleBuff;
 
 void* (vg_init)(uint16_t mode){
@@ -52,7 +53,6 @@ int vbe_info(uint16_t mode,  vbe_mode_info_t *vmi_p){
   struct reg86u r;
   mmap_t m;
   lm_alloc(sizeof(mmap_t), &m);  
-            /* use liblm.a to initialize buf */
   phys_bytes buf = m.phys;
 
   memset(&r, 0, sizeof(r)); /* zero the structure */
@@ -89,8 +89,9 @@ int map_vram(vbe_mode_info_t *vmi_p){
 	h_res = vmi_p->XResolution;
 	v_res = vmi_p->YResolution;
   bits_per_pixel = vmi_p->BitsPerPixel;
-  doubleBuff=(char*) malloc(h_res*v_res*bits_per_pixel/8);    
   num_bytes_mode = bits_per_pixel/8;
+  doubleBuff=(char*) malloc(h_res*v_res*bits_per_pixel/8);              /* use liblm.a to initialize buf */
+
   if (bits_per_pixel == 15)
   {
     num_bytes_mode = 2;
@@ -139,9 +140,9 @@ int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y)
   {
     //char *temp = video_mem;
     int temp = (h_res*y+x)*num_bytes_mode;
-    
-    *(doubleBuff +temp) = pic[p];
-    *(doubleBuff + temp+1) = pic[p+1];
+    if(pic[p] != (unsigned char) 0x0588 && pic[p+1] != (unsigned char) 0x0588)
+      { *(doubleBuff +temp) = pic[p];
+       *(doubleBuff + temp+1) = pic[p+1];}
     p += 2;
   }
 }
@@ -153,7 +154,5 @@ return 0;
 
 void double_buffering()
 {
-
   memcpy(video_mem, doubleBuff,h_res*v_res*bits_per_pixel/8);
-
 }
