@@ -92,13 +92,13 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
       printf("Counter = %d frankShot = %d  shots_fired %d \n", counter, frank->shot, shots_fired);
 
     }
-    if(counter == 1 && !frank->shot){
+    if(counter == 2 && !frank->shot){
       frank->shot = 1;
       alien_shot(mib,frank);
       shots_fired++;
       counter = 0;
     }
-    else if(counter == 1){
+    else if(counter == 2){
       counter=0;
       frank->shot = 0;
     }
