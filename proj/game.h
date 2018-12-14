@@ -32,7 +32,7 @@ typedef struct {
 } Player;
 
 typedef struct {
-     int x, y, speed;
+     int x, y, speed, shot;
 } Alien;
 
 Jogo* inicio();
@@ -50,6 +50,8 @@ void playerDelete(Player* player);
 Alien* alienInit(Jogo* jogo);
 
 void alienDelete(Alien* alien);
+
+void alien_shot(Jogo* jogo, Alien* alien);
 
 void kbd_read();
 

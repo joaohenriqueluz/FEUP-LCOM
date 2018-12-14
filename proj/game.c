@@ -4,14 +4,18 @@
 #include "game.h"
 #include "spacedef.h"
 #include "keyboard.h"
+#include <stdio.h>
 
-int shotX, shotY;
+int shotX, shotY, alien_shotX, alien_shotY;
 extern int h_res, v_res;
 bool alive = true;
+bool ship_alive = true;
 bool right = true;
 bool left = false;
 bool explosion = false;
+bool ship_explosion = false;
 int counterExplosion = 0;
+int ship_counterExplosion = 0;
 
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
@@ -42,7 +46,7 @@ Player* playerInit(Jogo* jogo){
 	Player* player = (Player*) malloc(sizeof(Player));
 
 	player->x = h_res/2 - (jogo->ship_info.width)/2;
-	player->y = v_res-(jogo->ship_info.height)*2;
+	player->y = v_res-(jogo->ship_info.height)*3.5;
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 5;
@@ -89,6 +93,7 @@ Alien* alienInit(Jogo* jogo){
 
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
 	frank->y = 0;
+	frank->shot = 0;
 	frank->speed = 1;
 
 	return frank;
@@ -100,8 +105,9 @@ void alienDelete(Alien* frank){
 
 void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 	vg_draw_xpm(mib->background_pic, &mib->background_info, 0, 0);
-	vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
 
+if(alive)
+{
 	if(right)
 	{
 		if (frank->x + mib->alien_info.width > h_res-10)
@@ -131,9 +137,13 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 
 
 	}
+}
 
+
+if(ship_alive){
 	if (willsmith->shot)
 	{
+
 
 		int minY = frank->y;
 		int minX = frank->x;
@@ -156,9 +166,8 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 		if(counterExplosion == 0 && explosion)
 		{
 			explosion = false;
-			
 		}
-		if (shotY - 20 >= 0 && !explosion)
+		if (shotY - 70 >= 0 && !explosion)
 		{
 			shotY -= 20;
 			vg_draw_xpm(mib->shot_pic, &mib->shot_info, shotX, shotY);
@@ -166,18 +175,89 @@ void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 			{
 				vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
 			}
+			if(ship_alive){
+				vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+			}
 			return;
 		}
 	}
+}
 	
-		if (alive)
+
+
+	
+	
+	if (alive)
+	{			
+		vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+		
+	}
+
+if(frank->shot){
+		int minY = willsmith->y;
+		int minX = willsmith->x;
+		int maxY = willsmith->y + (mib->ship_info.height);
+		int maxX = willsmith->x + (mib->ship_info.width);
+
+		ship_explosion = false;
+
+		if ((alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && ship_alive))
 		{
-			vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+			ship_alive = false;
+			ship_explosion = true;
+			ship_counterExplosion = 30;
 		}
+		if(ship_explosion)
+		{
+			vg_draw_xpm(mib->bang_pic, &mib->bang_info, willsmith->x, willsmith->y);
+			frank->shot = 0;
+			ship_counterExplosion--;
+		}
+		if(counterExplosion == 0 && ship_explosion)
+		{
+			ship_explosion = false;
+			frank->shot = 0;
+		}
+		if (alien_shotY + 70 <= v_res && !explosion)
+		{
+			alien_shotY += 20;
+
+			vg_draw_xpm(mib->shot_pic, &mib->shot_info, alien_shotX, alien_shotY);
+			if (alive)
+			{
+				vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+			}
+			if (ship_alive)
+			{
+				vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+			}
+			return;
+		}
+		
+	}
+
+
+
+
+
+
+
+
+
+	if(ship_alive){
+		vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+	}
 	
 	willsmith->shot = 0;
+	
+}
 
+void alien_shot(Jogo* mib, Alien* frank){
+	if(frank->shot){
+		alien_shotX = frank->x;
+		alien_shotY = frank->y + (mib->alien_info.height);
 
+	}
 }
 
 void kbd_read(){

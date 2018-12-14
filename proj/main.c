@@ -10,8 +10,6 @@
 #include "keyboard.h"
 #include "game.h"
 
-
-
 // Any header files included below this line should have been created by you
 
 int main(int argc, char *argv[]) {
@@ -43,6 +41,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   message msg;
   unsigned int r;
   uint8_t bit_no_timer, bit_no_kb;
+  unsigned counter = 0, shots_fired=0;
   //uint8_t seconds = 0;
 
   if(kb_subscribe(&bit_no_kb) != 0)
@@ -82,17 +81,27 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               {
                   kbd_read();
                   move_ship(mib, willSmith);
-                  printf("X = %d\n", willSmith->x);
               }
             
          }
      } else { /* received a standard message, not a notification */
          /* no standard messages expected: do nothing */}
 
-  //     if (globalCounter % (sys_hz() / 60) == 0)
-		// {
- 	// 	 animations(ship, background, shot);
-		// }
+    if (globalCounter % sys_hz() == 0){
+      counter++;
+      printf("Counter = %d frankShot = %d  shots_fired %d \n", counter, frank->shot, shots_fired);
+
+    }
+    if(counter == 1 && !frank->shot){
+      frank->shot = 1;
+      alien_shot(mib,frank);
+      shots_fired++;
+      counter = 0;
+    }
+    else if(counter == 1){
+      counter=0;
+      frank->shot = 0;
+    }
 
  
   
