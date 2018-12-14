@@ -140,73 +140,40 @@ if(alive)
 }
 
 
-if(ship_alive){
-	if (willsmith->shot)
-	{
 
 
-		int minY = frank->y;
-		int minX = frank->x;
-		int maxY = frank->y + (mib->alien_info.height);
-		int maxX = frank->x + (mib->alien_info.width);
 
-		explosion = false;
 
-		if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
-		{
-			alive = false;
-			explosion = true;
-			counterExplosion = 30;
-		}
-		if(explosion)
-		{
-			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
-			counterExplosion--;
-		}
-		if(counterExplosion == 0 && explosion)
-		{
-			explosion = false;
-		}
-		if (shotY - 70 >= 0 && !explosion)
-		{
-			shotY -= 20;
-			vg_draw_xpm(mib->shot_pic, &mib->shot_info, shotX, shotY);
-			if (alive)
-			{
-				vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
-			}
-			if(ship_alive){
-				vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
-			}
-			return;
-		}
-	}
+
+	
+	
+if (alive)
+{			
+	vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+	
 }
 	
 
+if(ship_alive){
+	vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+}
 
-	
-	
-	if (alive)
-	{			
-		vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
-		
-	}
-
-if(frank->shot){
-		int minY = willsmith->y;
-		int minX = willsmith->x;
-		int maxY = willsmith->y + (mib->ship_info.height);
-		int maxX = willsmith->x + (mib->ship_info.width);
-
+if(frank->shot && alive){
+	int minY = willsmith->y;
+	int minX = willsmith->x;
+	int maxY = willsmith->y + (mib->ship_info.height);
+	int maxX = willsmith->x + (mib->ship_info.width);
 		ship_explosion = false;
-
 		if ((alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && ship_alive))
-		{
+	{
+			willsmith->lives--;
+		
+		if(willsmith->lives == 0)
 			ship_alive = false;
-			ship_explosion = true;
-			ship_counterExplosion = 30;
-		}
+
+		ship_explosion = true;
+		ship_counterExplosion = 30;
+	}
 		if(ship_explosion)
 		{
 			vg_draw_xpm(mib->bang_pic, &mib->bang_info, willsmith->x, willsmith->y);
@@ -223,32 +190,69 @@ if(frank->shot){
 			alien_shotY += 20;
 
 			vg_draw_xpm(mib->shot_pic, &mib->shot_info, alien_shotX, alien_shotY);
-			if (alive)
-			{
-				vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
-			}
-			if (ship_alive)
-			{
-				vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
-			}
-			return;
+			
+			
 		}
+
+		if(alien_shotY +70 > v_res)
+			frank->shot=0;
+
 		
 	}
 
-
-
-
-
-
-
-
-
-	if(ship_alive){
+	if (alive)
+		{
+			vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+		}
+	if (ship_alive)
+	{
 		vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
 	}
+
+
+
+
+
+	if (willsmith->shot && ship_alive)
+	{
+		int minY = frank->y;
+		int minX = frank->x;
+		int maxY = frank->y + (mib->alien_info.height);
+		int maxX = frank->x + (mib->alien_info.width);
+			explosion = false;	
+			if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
+		{
+			alive = false;
+			explosion = true;
+			counterExplosion = 30;
+		}
+		if(explosion)
+		{
+			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
+			counterExplosion--;
+		}
+		if(counterExplosion == 0 && explosion)
+		{
+			explosion = false;
+		}
+			if (shotY - 20 >= 0 && !explosion)
+		{
+				shotY -= 20;
+				vg_draw_xpm(mib->shot_pic, &mib->shot_info, shotX, shotY);
+				if (alive)
+				{
+					vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+				}
+				
+				if(ship_alive){
+					vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+				}
+				return;
+			}
+		}
 	
 	willsmith->shot = 0;
+	//frank->shot =0;
 	
 }
 
