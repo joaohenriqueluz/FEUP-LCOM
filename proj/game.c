@@ -94,8 +94,8 @@ Alien* alienInit(Jogo* jogo){
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
 	frank->y = 0;
 	frank->shot = 0;
-	frank->speed = 1;
-	frank->lives = 5;
+	frank->speed = 3;
+	frank->lives = 3;
 
 	return frank;
 }
@@ -224,11 +224,8 @@ if(frank->shot && alive){
 			if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
 		{
 			frank->lives--;
-			if(frank->lives == 0)
-			{
+			if(frank->lives ==0)
 				alive = false;
-
-			}
 
 			explosion = true;
 		}
