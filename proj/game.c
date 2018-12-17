@@ -12,9 +12,9 @@ bool alive = true;
 bool ship_alive = true;
 bool right = true;
 bool left = false;
-bool explosion = false;
+extern bool explosion;
 bool ship_explosion = false;
-int counterExplosion = 0;
+extern int counterExplosion;
 int ship_counterExplosion = 0;
 
 Jogo* inicio(){
@@ -185,7 +185,7 @@ if(frank->shot && alive){
 			ship_explosion = false;
 			frank->shot = 0;
 		}
-		if (alien_shotY + 70 <= v_res && !explosion)
+		if (alien_shotY + 70 <= v_res && !ship_explosion)
 		{
 			alien_shotY += 20;
 
@@ -219,23 +219,15 @@ if(frank->shot && alive){
 		int minX = frank->x;
 		int maxY = frank->y + (mib->alien_info.height);
 		int maxX = frank->x + (mib->alien_info.width);
-			explosion = false;	
+			
 			if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alive))
 		{
 			alive = false;
 			explosion = true;
-			counterExplosion = 30;
 		}
-		if(explosion)
-		{
-			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
-			counterExplosion--;
-		}
-		if(counterExplosion == 0 && explosion)
-		{
-			explosion = false;
-		}
-			if (shotY - 20 >= 0 && !explosion)
+		
+		
+		if (shotY - 20 >= 0 && !explosion)
 		{
 				shotY -= 20;
 				vg_draw_xpm(mib->shot_pic, &mib->shot_info, shotX, shotY);
@@ -251,6 +243,11 @@ if(frank->shot && alive){
 			}
 		}
 	
+	if(explosion)
+		{
+			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
+			
+		}
 	willsmith->shot = 0;
 	//frank->shot =0;
 	
