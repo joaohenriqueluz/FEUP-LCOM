@@ -12,6 +12,14 @@
 
 // Any header files included below this line should have been created by you
 
+
+bool explosion= false;
+
+int counterExplosion =0;
+
+
+
+
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
   lcf_set_language("EN-US");
@@ -89,8 +97,10 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
     if (globalCounter % sys_hz() == 0){
       counter++;
-      printf("Counter = %d frankShot = %d  shots_fired %d \n", counter, frank->shot, shots_fired);
-
+      
+      printf("counterExplosion = %d explosion = %d  \n", counterExplosion, explosion);
+      if(explosion)
+        {counterExplosion++;}
     }
     if(counter == 2 && !frank->shot){
       frank->shot = 1;
@@ -101,6 +111,13 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
     else if(counter == 2){
       counter=0;
       frank->shot = 0;
+    }
+
+    if(counterExplosion == 1)
+    {
+
+      counterExplosion =0;
+      explosion = false;
     }
 
  
