@@ -17,6 +17,7 @@ bool ship_explosion = false;
 extern int counterExplosion;
 int ship_counterExplosion = 0;
 extern bool allowed_to_fire;
+extern bool protected;
 
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
@@ -26,6 +27,9 @@ Jogo* inicio(){
 
 	jogo->ship_map =  rocket2_xpm;
 	jogo->ship_pic = xpm_load(jogo->ship_map, XPM_5_6_5, &jogo->ship_info);
+
+	jogo->shield_map =  shield_xpm;
+	jogo->shield_pic = xpm_load(jogo->shield_map, XPM_5_6_5, &jogo->shield_info);
 
 	jogo->shot_map =  redLaser_xpm;
 	jogo->shot_pic = xpm_load(jogo->shot_map, XPM_5_6_5, &jogo->shot_info);
@@ -152,7 +156,12 @@ if (alive)
 	
 
 if(ship_alive){
-	vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+	if(protected)
+	{
+		vg_draw_xpm(mib->shield_pic, &mib->shield_info, willsmith->x, willsmith->y);
+	}
+	else
+		vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
 }
 
 if(frank->shot && alive){
@@ -162,14 +171,18 @@ if(frank->shot && alive){
 	int maxX = willsmith->x + (mib->ship_info.width);
 		ship_explosion = false;
 		if ((alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && ship_alive))
-	{
-			willsmith->lives--;
+	{	
+		if(!protected)
+			{
+				willsmith->lives--;
+				ship_explosion = true;
+				ship_counterExplosion = 30;
+			}
 		
 		if(willsmith->lives == 0)
 			ship_alive = false;
 
-		ship_explosion = true;
-		ship_counterExplosion = 30;
+		
 	}
 		if(ship_explosion)
 		{
@@ -201,9 +214,16 @@ if(frank->shot && alive){
 		{
 			vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
 		}
-	if (ship_alive)
+	
+
+	if(ship_alive)
 	{
-		vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+		if(protected)
+		{
+			vg_draw_xpm(mib->shield_pic, &mib->shield_info, willsmith->x, willsmith->y);
+		}
+		else
+			vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
 	}
 
 
@@ -236,8 +256,14 @@ if(frank->shot && alive){
 					vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
 				}
 				
-				if(ship_alive){
-					vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+				if(ship_alive)
+				{
+					if(protected)
+					{
+						vg_draw_xpm(mib->shield_pic, &mib->shield_info, willsmith->x, willsmith->y);
+					}
+					else
+						vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
 				}
 				return;
 			}

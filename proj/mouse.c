@@ -6,15 +6,15 @@
 #include "mouse.h"
 
 
-int globalHookId;
+int globalHookIdMouse;
 extern uint8_t byte, packet[3];
 extern int byteCounter;
 struct packet pp;
 struct packet old_pp;
 state_t state = INITIAL;
-uint8_t global_tolerance = 50;
+uint8_t global_tolerance = 100;
 struct mouse_ev gesture;
- bool allowed_to_fire = false;
+ bool allowed_to_fire = false, protected= false;
 
 
 int (mouse_subscribe)(uint8_t *bit_no){
@@ -23,7 +23,7 @@ int (mouse_subscribe)(uint8_t *bit_no){
   	if(sys_irqsetpolicy(MOUSE_IRQ, (IRQ_REENABLE | IRQ_EXCLUSIVE), &temp_hook) != OK)
       return 1;
 
-  	globalHookId = temp_hook;
+  	globalHookIdMouse = temp_hook;
  
  	*bit_no = TEMP_HOOK_MOUSE;
 
@@ -32,7 +32,7 @@ int (mouse_subscribe)(uint8_t *bit_no){
 
 int (mouse_unsubscribe)(){
   
-  if(sys_irqrmpolicy(&globalHookId) != OK)
+  if(sys_irqrmpolicy(&globalHookIdMouse) != OK)
     return 1;
 
   return 0;
@@ -186,29 +186,38 @@ void check_line(struct mouse_ev evt)
 	case INITIAL:
 		
 	
-		printf("INIT\n");
+		
 		if( evt.type == LB_PRESSED)
 		{
 			gesture.delta_x = 0;
       		gesture.delta_y = 0;
-			state = MOVE;
+			state = UP;
 			
 		}
+
+		if( evt.type == RB_PRESSED)
+		{
+			gesture.delta_x = 0;
+      		gesture.delta_y = 0;
+			state = RIGHT;
+			
+		}
+
 		break;
 
 		
-	case MOVE:
+	case UP:
 		
 		 if(evt.type == MOUSE_MOV)
 		 {
 		 	
-		 	state = MOVE;
+		 	state = UP;
 		 }
 
 		else if(evt.type == LB_RELEASED)
 		{
  		
-	 			state = COMP;
+	 			state = COMP_UP;
 	 			break;
 		 }
 
@@ -216,8 +225,25 @@ void check_line(struct mouse_ev evt)
      	  	state =INITIAL;
      	  break;
 
+	case RIGHT:
+		if(evt.type == MOUSE_MOV)
+		 {
+		 	
+		 	state = RIGHT;
+		 }
+
+		else if(evt.type == RB_RELEASED)
+		{
+ 		
+	 			state = COMP_RIGHT;
+	 			break;
+		 }
+
+     	  else 
+     	  	state =INITIAL;
+     	  break;
 	
-	case COMP:
+	case COMP_UP:
 	
 	if(evt.type == MOUSE_MOV)
 	{
@@ -225,6 +251,19 @@ void check_line(struct mouse_ev evt)
 		allowed_to_fire = true;
 		break;	
 	}
+		break;
+
+	
+	case COMP_RIGHT:
+	
+	if(evt.type == MOUSE_MOV)
+	{
+		state = INITIAL;
+		protected = true;
+		printf("Protected true\n");
+		break;	
+	}
+		break;
 
 	default:
 		break;
@@ -239,7 +278,7 @@ void set_mouse_events()
 	{
 		if(pp.delta_x != 0 && pp.delta_y != 0)
 		{
-			if(tolerance())
+			if(fire_tolerance())
 			{
 
 			
@@ -259,9 +298,44 @@ void set_mouse_events()
 	}
 	else if(pp.lb == 0 && pp.rb == 0 && pp.mb ==0) // letf button released
 	{
-		if(state == MOVE)
+		if(state == UP)
 		{
 			gesture.type = LB_RELEASED;
+		}
+		else
+			{
+				gesture.type= BUTTON_EV;
+				return;
+			}
+	}
+
+	else if(pp.lb == 0 && pp.rb == 1 && pp.mb ==0) //left button pressed
+	{
+		if(pp.delta_x != 0 && pp.delta_y != 0)
+		{
+			if(protect_tolerance())
+			{
+
+			
+       		gesture.delta_x += pp.delta_x;
+      		gesture.delta_y += pp.delta_y;
+			gesture.type = MOUSE_MOV;
+
+			}
+			else
+			gesture.type = BUTTON_EV;
+			return;
+
+		}
+		
+		gesture.type = RB_PRESSED;
+		return;
+	}
+	else if(pp.lb == 0 && pp.rb == 0 && pp.mb ==0) // right button released
+	{
+		if(state == RIGHT)
+		{
+			gesture.type = RB_RELEASED;
 		}
 		else
 			{
@@ -276,9 +350,22 @@ void set_mouse_events()
 
 
 
-bool tolerance()
+bool fire_tolerance()
 {
 	if(pp.delta_x <= global_tolerance)
+		{
+		return true;
+		}
+		else
+		{
+			return false;
+		}
+
+}
+
+bool protect_tolerance()
+{
+	if(pp.delta_y <= global_tolerance)
 		{
 		return true;
 		}

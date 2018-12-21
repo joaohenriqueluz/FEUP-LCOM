@@ -20,7 +20,7 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define KB_ENABLE 		   BIT(0)
 #define WRITE_BYTE         0x60
 
-#define OUT_BUF      	   0x60 // PODIAMOS ALTERAR ESTE PARA FICAR IGUAL AOS OUTROS
+#define OUT_BUF      	   0x60 
 
 #define ESC_BREAK          0x81
 #define TWO_BYTE_SCAN      0xe0
