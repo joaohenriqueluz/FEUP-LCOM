@@ -4,4 +4,5 @@
 #include "space.xpm"
 #include "alien.xpm"
 #include "explosion.xpm"
+#include "shield.xpm"
 

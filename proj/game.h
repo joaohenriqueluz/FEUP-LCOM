@@ -14,6 +14,10 @@ typedef struct {
   xpm_string_t* ship_map;
   unsigned char* ship_pic;
 
+  xpm_image_t shield_info;
+  xpm_string_t* shield_map;
+  unsigned char* shield_pic;
+
   xpm_image_t alien_info;
   xpm_string_t* alien_map;
   unsigned char* alien_pic;

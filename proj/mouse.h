@@ -1,7 +1,7 @@
 #ifndef ___MOUSE_H___
 #define ___MOUSE_H___
 
-typedef enum {INITIAL,MOVE, COMP} state_t;
+typedef enum {INITIAL,UP,RIGHT,COMP_UP, COMP_RIGHT} state_t;
 extern state_t state;
 
 int (mouse_subscribe)(uint8_t *bit_no);
@@ -24,13 +24,14 @@ void enable_cmd_int();
 
 void disable_cmd_int();
 
-bool tolerance();
+bool fire_tolerance();
 
 void check_line(struct mouse_ev evt);
 
 void set_mouse_events();
 
 
+bool protect_tolerance();
 
 
 
