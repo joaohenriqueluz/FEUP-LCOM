@@ -29,6 +29,7 @@ typedef struct {
 
 typedef struct {
     int x, y, speed, shot, lives, score;
+    bool right,left;
 } Player;
 
 typedef struct {
@@ -45,6 +46,8 @@ Player* playerInit();
 
 void move_ship(Jogo* jogo, Player* player);
 
+void check_player_fire(Jogo* jogo,Player* player);
+
 void playerDelete(Player* player);
 
 Alien* alienInit(Jogo* jogo);
@@ -54,5 +57,9 @@ void alienDelete(Alien* alien);
 void alien_shot(Jogo* jogo, Alien* alien);
 
 void kbd_read();
+
+bool shot_player(int x, int y, Player* player);
+
+void set_mouse_events();
 
 #endif
