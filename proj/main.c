@@ -9,6 +9,7 @@
 #include "spacedef.h"
 #include "keyboard.h"
 #include "game.h"
+#include "mouse.h"
 
 // Any header files included below this line should have been created by you
 
@@ -16,6 +17,10 @@
 bool explosion= false;
 
 int counterExplosion =0;
+
+uint8_t byte, packet[3];
+
+int byteCounter = 0;
 
 
 
@@ -48,9 +53,14 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   int ipc_status;
   message msg;
   unsigned int r;
-  uint8_t bit_no_timer, bit_no_kb;
+  uint8_t bit_no_timer, bit_no_kb, bit_no_mouse;
   unsigned counter = 0, shots_fired=0;
   //uint8_t seconds = 0;
+
+  enable_cmd_int();
+
+  if(mouse_subscribe(&bit_no_mouse) != 0)
+    printf("Erro na funcao mouse_subscribe\n");
 
   if(kb_subscribe(&bit_no_kb) != 0)
     printf("Erro na funcao kb_subscribe\n");
@@ -60,6 +70,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
   uint32_t irq_set_kb = BIT(bit_no_kb);
   uint32_t irq_set_timer = BIT(bit_no_timer);
+  uint32_t irq_set_mouse = BIT(bit_no_mouse);
 
 
   drawJogo(mib,willSmith,frank);
@@ -80,6 +91,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
+              check_player_fire(mib,willSmith);
               drawJogo(mib,willSmith,frank);
               double_buffering();
 
@@ -89,6 +101,11 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               {
                   kbd_read();
                   move_ship(mib, willSmith);
+              }
+            
+            if (msg.m_notify.interrupts & irq_set_mouse)
+              {
+                 mouse_ih();
               }
             
          }

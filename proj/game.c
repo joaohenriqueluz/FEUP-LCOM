@@ -16,6 +16,7 @@ extern bool explosion;
 bool ship_explosion = false;
 extern int counterExplosion;
 int ship_counterExplosion = 0;
+extern bool allowed_to_fire;
 
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
@@ -76,12 +77,7 @@ void move_ship(Jogo* mib, Player* willsmith){
 			willsmith->x -= willsmith->speed;
 		}
 	}
-	else if (byte == SPACE_BAR && !(willsmith->shot))
-	{
-		willsmith->shot = 1;
-		shotX = willsmith->x + (mib->ship_info.width)/2 - (mib->shot_info.width)/2;
-		shotY = willsmith->y;
-	}
+	
 }
 
 void playerDelete(Player* player){
@@ -245,6 +241,8 @@ if(frank->shot && alive){
 				}
 				return;
 			}
+			else
+				willsmith->shot = 0;
 		}
 	
 	if(explosion)
@@ -252,7 +250,7 @@ if(frank->shot && alive){
 			vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
 			
 		}
-	willsmith->shot = 0;
+	
 	//frank->shot =0;
 	
 }
@@ -292,3 +290,18 @@ void kbd_read(){
  
    return;
 }
+
+
+
+void check_player_fire(Jogo* jogo,Player* player)
+{
+	if (allowed_to_fire && !(player->shot))
+	{
+		player->shot = 1;
+		shotX = player->x + (jogo->ship_info.width)/2 - (jogo->shot_info.width)/2;
+		shotY = player->y;
+	}
+
+	allowed_to_fire = false;
+}
+
