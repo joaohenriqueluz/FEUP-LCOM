@@ -148,6 +148,11 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   if(kb_unsubscribe() != 0)
     printf("Erro na funcao kb_unsubscribe\n");
 
+  if(mouse_unsubscribe() != 0)
+    printf("Erro na funcao mouse_unsubscribe\n");
+
+  disable_cmd_int();
+
   return 0;
 }
 
