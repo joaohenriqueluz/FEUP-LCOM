@@ -22,6 +22,10 @@ uint8_t byte, packet[3];
 
 int byteCounter = 0;
 
+int ship_counterExplosion = 0;
+
+bool ship_explosion= false;
+
 
 
 
@@ -118,10 +122,15 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
       
       if(explosion)
         {counterExplosion++;}
+
+      if(ship_explosion)
+      {
+        ship_counterExplosion++;
+      }
     }
     if(counter == 2 && !frank->shot){
       frank->shot = 1;
-      alien_shot(mib,frank);
+      alien_shot_init(mib,frank);
       shots_fired++;
       counter = 0;
     }
@@ -135,6 +144,12 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
       counterExplosion =0;
       explosion = false;
+    }
+
+    if(ship_counterExplosion ==1)
+    {
+      ship_counterExplosion = 0;
+      ship_explosion = false;
     }
 
  

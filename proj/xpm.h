@@ -5,4 +5,6 @@
 #include "alien.xpm"
 #include "explosion.xpm"
 #include "shield.xpm"
+#include "explosion100.xpm"
+#include "SCORE.xpm"
 
