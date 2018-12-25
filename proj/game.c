@@ -10,6 +10,7 @@ int shotX, shotY, alien_shotX, alien_shotY;
 extern int h_res, v_res;
 
 
+
 extern bool explosion;
 extern bool ship_explosion;
 extern int counterExplosion;
@@ -44,6 +45,8 @@ Jogo* inicio(){
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
 
+	//alien[0]= alienInit(jogo);
+	//alien[0]->y = 15;
 	return jogo;
 }
 
@@ -58,7 +61,7 @@ Player* playerInit(Jogo* jogo){
 	player->y = v_res-(jogo->ship_info.height)*3.5;
 	player->speed = 20;
 	player->shot = 0;
-	player->lives = 2;
+	player->lives = 200;
 	player->score = 0;
 	player->alive=true;;
 
@@ -100,9 +103,9 @@ Alien* alienInit(Jogo* jogo){
 	Alien* frank = (Alien*) malloc(sizeof(Alien));
 
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
-	frank->y = 0;
+	frank->y = 100;
 	frank->shot = 0;
-	frank->speed = 0;
+	frank->speed = 2;
 	frank->lives = 3;
 	frank->alive = true;
 	frank->right = true;
@@ -119,10 +122,11 @@ void alienDelete(Alien* frank){
 /////////////////////////////////////////////////////////////////////////////////////
 void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 	
-	vg_draw_xpm(mib->background_pic, &mib->background_info, 0, 0); // Desenha o background;
+draw_background(mib);
+move_alien(mib,frank);											//Altera posiçao do alien;
 
+//vg_draw_xpm(mib->shield_pic, &mib->shield_info, mouseX, mouseY);
 
-	move_alien(mib,frank);											//Altera posiçao do alien;
 
 /*
 if(frank->shot && frank->alive){
@@ -407,7 +411,10 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		{
 			alien->lives--;
 			if(alien->lives ==0)
-				alien->alive = false;
+				{
+					alien->alive = false;
+					player->score+= 100;
+				}
 
 			explosion = true;
 		}
@@ -438,3 +445,10 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		}
 }
 
+
+void draw_background(Jogo * jogo)
+{
+
+vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
+vg_draw_xpm(jogo->SCORE_pic, &jogo->SCORE_info, 10, 10); // Desenha o background;
+}

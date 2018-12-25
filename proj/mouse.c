@@ -4,6 +4,7 @@
 
 #include "i8042.h"
 #include "mouse.h"
+#include "game.h"
 
 
 int globalHookIdMouse;
@@ -16,6 +17,7 @@ uint8_t global_tolerance = 100;
 struct mouse_ev gesture;
  bool allowed_to_fire = false, protected= false;
 
+int mouseX= 500,mouseY= 500;
 
 int (mouse_subscribe)(uint8_t *bit_no){
 	int temp_hook = TEMP_HOOK_MOUSE;
@@ -141,6 +143,12 @@ void printPacket(){
       //mouse_print_packet(&pp);
     	set_mouse_events();
     	check_line(gesture);
+
+    	
+		/*if(pp.x_ov!= 1 && (mouseX + pp.delta_x <= 1180) && (mouseX + pp.delta_x > 10))
+    	mouseX += pp.delta_x;
+    	if(pp.y_ov!= 1 && (mouseY - pp.delta_y > 0) && (mouseY + pp.delta_y <= 724))
+    	mouseY -= pp.delta_y;*/
 
       clearPacket();
       byteCounter = 0;
@@ -276,7 +284,7 @@ void set_mouse_events()
 {
 	if(pp.lb == 1 && pp.rb == 0 && pp.mb ==0) //left button pressed
 	{
-		if(pp.delta_x != 0 && pp.delta_y != 0)
+		if(pp.delta_x != 0 || pp.delta_y != 0)
 		{
 			if(fire_tolerance())
 			{
@@ -311,7 +319,7 @@ void set_mouse_events()
 
 	else if(pp.lb == 0 && pp.rb == 1 && pp.mb ==0) //left button pressed
 	{
-		if(pp.delta_x != 0 && pp.delta_y != 0)
+		if(pp.delta_x != 0 || pp.delta_y != 0)
 		{
 			if(protect_tolerance())
 			{

@@ -4,6 +4,15 @@
 #include "spacedef.h"
 #include "xpm.h"
 
+
+
+
+typedef struct {
+     int x, y, speed, shot, lives;
+     bool alive,right, left;
+} Alien;
+
+
 typedef struct {
 
   xpm_image_t background_info;
@@ -38,6 +47,10 @@ typedef struct {
   xpm_image_t bang_info;
   xpm_string_t* bang_map;
   unsigned char* bang_pic;
+
+
+
+  //Alien* aliens[3];
 } Jogo;
 
 typedef struct {
@@ -45,14 +58,13 @@ typedef struct {
     bool right,left, alive;
 } Player;
 
-typedef struct {
-     int x, y, speed, shot, lives;
-     bool alive,right, left;
-} Alien;
+
 
 Jogo* inicio();
 
 void drawJogo(Jogo* jogo, Player* player, Alien* alien);
+
+void draw_background(Jogo * jogo);
 
 void fim(Jogo* jogo);
 
@@ -81,5 +93,9 @@ void kbd_read();
 bool shot_player(int x, int y, Player* player);
 
 void set_mouse_events();
+
+
+extern int mouseX,mouseY;
+
 
 #endif
