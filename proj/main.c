@@ -104,6 +104,14 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
             if (msg.m_notify.interrupts & irq_set_kb)
               {
                   kbd_read();
+                  if (byte == SPACE_BAR)
+                  {
+                    timer_int_handler();
+                    check_player_fire(mib,willSmith);
+                    drawJogo(mib,willSmith,frank);
+                    double_buffering();  
+                    continue;
+                  }
                   move_ship(mib, willSmith);
               }
             
