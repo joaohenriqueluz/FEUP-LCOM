@@ -122,7 +122,7 @@ void alienDelete(Alien* frank){
 /////////////////////////////////////////////////////////////////////////////////////
 void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
 	
-draw_background(mib);
+draw_background(mib, willsmith);
 move_alien(mib,frank);											//Altera posiçao do alien;
 
 //vg_draw_xpm(mib->shield_pic, &mib->shield_info, mouseX, mouseY);
@@ -363,8 +363,21 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 		if ((alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && player->alive))
 	{	
 		
-				player->lives--;
-				ship_explosion = true;
+				if(!protected)
+				{
+					player->lives--;
+					ship_explosion = true;
+					if(player->score - 25 <= 0)
+					{
+						player-> score = 0;
+					}
+					else
+					{
+					player->score -= 25;
+					}
+				}
+
+				protected = false;
 				
 		
 		if(player->lives == 0)
@@ -417,14 +430,19 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 					player->score+= 100;
 				}
 
+			player->score += 50;
+
 			explosion = true;
 		}
 		
 		
-		if (shotY - 20 >= 0 && !explosion)
+		if (shotY - 20 >= 0)
 		{
 				shotY -= 20;
-				vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, shotX, shotY);
+				if(!explosion)
+				{
+					vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, shotX, shotY);
+				}
 				if (alien->alive)
 				{
 					vg_draw_xpm(jogo->alien_pic, &jogo->alien_info, alien->x, alien->y);
@@ -442,14 +460,88 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 				return;
 			}
 			else
-				player->shot = 0;
+				{
+					player->shot = 0;
+					if(player->score -10 <= 0)
+					{
+						player->score = 0;
+					}
+					else
+					{
+						player->score -=10;
+					}
+				}
 		}
 }
 
 
-void draw_background(Jogo * jogo)
+void draw_background(Jogo * jogo,Player* player)
 {
 
 vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
 vg_draw_xpm(jogo->SCORE_pic, &jogo->SCORE_info, 10, 10); // Desenha o background;
+show_score(jogo,player);
+}
+
+
+
+void show_score(Jogo* jogo, Player* player)
+{
+int unidades = (player->score % 10);
+display_number(jogo,300, 0, unidades);
+int dezenas = (player->score % 100);
+display_number(jogo,200, 0, dezenas);
+int centenas = (player->score % 1000);
+display_number(jogo,100, 0, centenas);
+}
+
+
+
+
+void display_number(Jogo* jogo,int x, int y, int number)
+{
+	switch(number)
+	{
+
+	case 1:
+		vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 2:
+		vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 3:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 4:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 5:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 6:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 7:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 8:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+	case 9:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+	case 0:
+vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		break;
+
+
+	}
 }

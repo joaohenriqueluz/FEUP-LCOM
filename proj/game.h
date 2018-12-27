@@ -64,7 +64,7 @@ Jogo* inicio();
 
 void drawJogo(Jogo* jogo, Player* player, Alien* alien);
 
-void draw_background(Jogo * jogo);
+void draw_background(Jogo * jogo, Player* player);
 
 void fim(Jogo* jogo);
 
@@ -93,6 +93,10 @@ void kbd_read();
 bool shot_player(int x, int y, Player* player);
 
 void set_mouse_events();
+
+void show_score(Jogo* jogo, Player* player);
+
+void display_number(Jogo* jogo,int x, int y, int number);
 
 
 extern int mouseX,mouseY;
