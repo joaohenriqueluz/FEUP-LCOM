@@ -63,7 +63,7 @@ uint8_t (mouse_scan_byte)(){
 void (mouse_ih)(){
 	byte = mouse_scan_byte();
 
-	printf("Mouse event\n");
+	
 
 	packet[byteCounter] = byte;
 
@@ -194,7 +194,7 @@ void check_line(struct mouse_ev evt)
 	switch (state) 
 	{
 	case INITIAL:
-		printf("INITIAL\n");
+		
 		if(evt.type == LB_PRESSED)
 		{
 			gesture.delta_x = 0;
@@ -211,7 +211,7 @@ void check_line(struct mouse_ev evt)
 		break;
 
 	case UP:
-		printf("UP\n");
+		
 		 if(evt.type == MOUSE_MOV)
 		 {
 		 	state = UP;
@@ -228,7 +228,7 @@ void check_line(struct mouse_ev evt)
      	break;
 
 	case RIGHT:
-		printf("RIGHT\n");
+		
 		if(evt.type == MOUSE_MOV)
 		 {
 		 	state = RIGHT;
@@ -247,24 +247,24 @@ void check_line(struct mouse_ev evt)
        break;
 	
 	case COMP_UP:
-		printf("COMP_UP\n");
+		
 		if(evt.type == MOUSE_MOV)
 		{
 			state = INITIAL;
 			allowed_to_fire = true;
-			printf("FIRE!!!!\n");
+			
 			break;	
 		}
 		break;
 
 	
 	case COMP_RIGHT:
-		printf("COMP_RIGHT\n");
+		
 		if(evt.type == MOUSE_MOV)
 		{
 			state = INITIAL;
 			protected = true;
-			printf("Protected true\n");
+			
 			break;	
 		}
 		break;

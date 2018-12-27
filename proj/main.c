@@ -126,6 +126,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
     if (globalCounter % sys_hz() == 0){
       counter++;
+      printf("Score = %d \n", willSmith->score);
       
       
       if(explosion)
