@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include "vbe_macros.h"
 #include "spacedef.h"
+#include "game.h"
+
 
 
 uint8_t GlobalRedScreeMask, GlobalGreenScreeMask, GlobalBlueScreeMask;
@@ -141,8 +143,12 @@ int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y)
     //char *temp = video_mem;
     int temp = (h_res*y+x)*num_bytes_mode;
     if(pic[p] != (unsigned char) 0x0588 && pic[p+1] != (unsigned char) 0x0588)
-      { *(doubleBuff +temp) = pic[p];
-       *(doubleBuff + temp+1) = pic[p+1];}
+      { 
+        
+          *(doubleBuff +temp) = pic[p];
+          *(doubleBuff + temp+1) = pic[p+1];
+        
+      }
     p += 2;
   }
 }
@@ -156,3 +162,35 @@ void double_buffering()
 {
   memcpy(video_mem, doubleBuff,h_res*v_res*bits_per_pixel/8);
 }
+
+
+
+bool check_colision(int xi, int yi,int width, int height)
+{
+  int x = xi, y = yi;
+
+int p = 0;
+  uint16_t old_x = x;
+  for (int i = 0; i < height; ++i,y++)
+  {
+   x=old_x;
+   for (int j = 0; j < width; ++j,x++)
+  {
+    //char *temp = video_mem;
+    int temp = (h_res*y+x)*num_bytes_mode;
+    if((*(doubleBuff +temp) == (char) 0xFF00)  && (*(doubleBuff + temp + 1) ==  (char) 0xFF00))
+    {
+         return true;
+    }
+        
+    
+    p += 2;
+  }
+}
+
+
+
+return false;
+
+}
+

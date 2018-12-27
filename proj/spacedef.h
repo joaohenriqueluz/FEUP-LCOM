@@ -12,6 +12,7 @@ static char *video_mem;		/* Process (virtual) address to which VRAM is mapped */
 static int bits_per_pixel; /* Number of VRAM bits per pixel */
 static int num_bytes_mode;
 
+
 //////////////////////////////////////////////////////////////////////////////////
 
 static int playerX = 487;
@@ -25,3 +26,4 @@ int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y);
 
 void double_buffering();
 
+bool check_colision(int xi, int yi,int width, int height);

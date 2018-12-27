@@ -9,7 +9,7 @@
 
 typedef struct {
      int x, y, speed, shot, lives;
-     bool alive,right, left;
+     bool alive,right, left, colision;
 } Alien;
 
 
@@ -55,7 +55,7 @@ typedef struct {
 
 typedef struct {
     int x, y, speed, shot, lives, score;
-    bool right,left, alive;
+    bool right,left, alive, colision;
 } Player;
 
 
@@ -97,6 +97,7 @@ void set_mouse_events();
 void show_score(Jogo* jogo, Player* player);
 
 void display_number(Jogo* jogo,int x, int y, int number);
+
 
 
 extern int mouseX,mouseY;
