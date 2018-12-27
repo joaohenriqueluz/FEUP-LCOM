@@ -63,6 +63,8 @@ uint8_t (mouse_scan_byte)(){
 void (mouse_ih)(){
 	byte = mouse_scan_byte();
 
+	printf("Mouse event\n");
+
 	packet[byteCounter] = byte;
 
 	if ((packet[0] & BIT(3)) == 0)
@@ -192,85 +194,79 @@ void check_line(struct mouse_ev evt)
 	switch (state) 
 	{
 	case INITIAL:
-		
-	
-		
-		if( evt.type == LB_PRESSED)
+		printf("INITIAL\n");
+		if(evt.type == LB_PRESSED)
 		{
 			gesture.delta_x = 0;
       		gesture.delta_y = 0;
 			state = UP;
-			
 		}
 
-		if( evt.type == RB_PRESSED)
+		else if(evt.type == RB_PRESSED)
 		{
 			gesture.delta_x = 0;
       		gesture.delta_y = 0;
 			state = RIGHT;
-			
 		}
-
 		break;
 
-		
 	case UP:
-		
+		printf("UP\n");
 		 if(evt.type == MOUSE_MOV)
 		 {
-		 	
 		 	state = UP;
 		 }
 
 		else if(evt.type == LB_RELEASED)
 		{
- 		
-	 			state = COMP_UP;
-	 			break;
-		 }
-
-     	  else 
-     	  	state =INITIAL;
-     	  break;
+	 		state = COMP_UP;
+		}
+     	else 
+     	{
+     		state = INITIAL;
+     	}
+     	break;
 
 	case RIGHT:
+		printf("RIGHT\n");
 		if(evt.type == MOUSE_MOV)
 		 {
-		 	
 		 	state = RIGHT;
 		 }
 
 		else if(evt.type == RB_RELEASED)
 		{
- 		
-	 			state = COMP_RIGHT;
-	 			break;
-		 }
+	 		state = COMP_RIGHT;
+	 		break;
+		}
 
-     	  else 
-     	  	state =INITIAL;
-     	  break;
+       else
+       {
+       	 state = INITIAL;
+       }
+       break;
 	
 	case COMP_UP:
-	
-	if(evt.type == MOUSE_MOV)
-	{
-		state = INITIAL;
-		allowed_to_fire = true;
-		break;	
-	}
+		printf("COMP_UP\n");
+		if(evt.type == MOUSE_MOV)
+		{
+			state = INITIAL;
+			allowed_to_fire = true;
+			printf("FIRE!!!!\n");
+			break;	
+		}
 		break;
 
 	
 	case COMP_RIGHT:
-	
-	if(evt.type == MOUSE_MOV)
-	{
-		state = INITIAL;
-		protected = true;
-		printf("Protected true\n");
-		break;	
-	}
+		printf("COMP_RIGHT\n");
+		if(evt.type == MOUSE_MOV)
+		{
+			state = INITIAL;
+			protected = true;
+			printf("Protected true\n");
+			break;	
+		}
 		break;
 
 	default:
@@ -284,75 +280,96 @@ void set_mouse_events()
 {
 	if(pp.lb == 1 && pp.rb == 0 && pp.mb ==0) //left button pressed
 	{
-		if(pp.delta_x != 0 || pp.delta_y != 0)
+		if(pp.delta_y != 0 || (pp.delta_x != 0 && pp.delta_y != 0))
 		{
-			if(fire_tolerance())
+			if(state == UP)
 			{
-
-			
-       		gesture.delta_x += pp.delta_x;
-      		gesture.delta_y += pp.delta_y;
-			gesture.type = MOUSE_MOV;
-
+				if (fire_tolerance())
+				{
+					gesture.delta_x += pp.delta_x;
+      				gesture.delta_y += pp.delta_y;
+					gesture.type = MOUSE_MOV;
+				}
+				else
+				{
+					state = INITIAL;
+					return;
+				}
 			}
+			else if (state == INITIAL)
+				{
+					gesture.type = LB_PRESSED;
+				}
 			else
-			gesture.type = BUTTON_EV;
-			return;
-
+			{
+				gesture.type = BUTTON_EV;
+			}
 		}
-		
-		gesture.type = LB_PRESSED;
-		return;
+		else if (state == INITIAL)
+		{
+			gesture.type = LB_PRESSED;
+		}
+		else
+		{
+			gesture.type = BUTTON_EV;
+		}
 	}
-	else if(pp.lb == 0 && pp.rb == 0 && pp.mb ==0) // letf button released
+	else if(pp.lb == 0 && pp.rb == 0 && pp.mb == 0) // all buttons released
 	{
 		if(state == UP)
 		{
 			gesture.type = LB_RELEASED;
 		}
-		else
-			{
-				gesture.type= BUTTON_EV;
-				return;
-			}
-	}
-
-	else if(pp.lb == 0 && pp.rb == 1 && pp.mb ==0) //left button pressed
-	{
-		if(pp.delta_x != 0 || pp.delta_y != 0)
-		{
-			if(protect_tolerance())
-			{
-
-			
-       		gesture.delta_x += pp.delta_x;
-      		gesture.delta_y += pp.delta_y;
-			gesture.type = MOUSE_MOV;
-
-			}
-			else
-			gesture.type = BUTTON_EV;
-			return;
-
-		}
-		
-		gesture.type = RB_PRESSED;
-		return;
-	}
-	else if(pp.lb == 0 && pp.rb == 0 && pp.mb ==0) // right button released
-	{
-		if(state == RIGHT)
+		else if (state == RIGHT)
 		{
 			gesture.type = RB_RELEASED;
 		}
 		else
-			{
-				gesture.type= BUTTON_EV;
-				return;
-			}
+		{
+			gesture.type = MOUSE_MOV;	
+		}
 	}
 
-	
+	else if(pp.lb == 0 && pp.rb == 1 && pp.mb ==0) //right button pressed
+	{
+		if(pp.delta_x != 0 || (pp.delta_y != 0 && pp.delta_x != 0))
+		{
+			if (state == RIGHT)
+			{
+				if(protect_tolerance())
+				{
+       				gesture.delta_x += pp.delta_x;
+      				gesture.delta_y += pp.delta_y;
+					gesture.type = MOUSE_MOV;
+				}
+				else
+				{
+					state = INITIAL;
+					return;
+				}
+			}
+			else if (state == INITIAL)
+			{
+				gesture.type = RB_PRESSED;
+			}
+			else
+			{
+				gesture.type = BUTTON_EV;
+			}
+		}
+		else if (state == INITIAL)
+		{
+			gesture.type = RB_PRESSED;
+		}
+		else
+		{
+			gesture.type = BUTTON_EV;
+		}		
+	}
+	else
+	{
+		gesture.type = BUTTON_EV;
+	}	
 }
 
 

@@ -229,6 +229,7 @@ if(willsmith->alive)
 {
 	if(protected)
 	{
+		printf("protected\n");
 		vg_draw_xpm(mib->shield_pic, &mib->shield_info, willsmith->x, willsmith->y);
 	}
 	else
