@@ -147,7 +147,7 @@ Alien* alienInit(Jogo* jogo){
 	frank->y = 60;
 	frank->shot = 0;
 	frank->speed = 0;
-	frank->lives = 3;
+	frank->lives = 6;
 	frank->alive = true;
 	frank->right = true;
 	frank->left = false;
@@ -322,7 +322,7 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 		
 		if (alien_shotY + 70 <= v_res && !ship_explosion)
 		{
-			alien_shotY += 1;
+			alien_shotY += 20;
 
 			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
 			
@@ -356,7 +356,7 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 				protected = false;
 				
 		
-			if(player->lives == 0)
+			if(player->score == 0)
 				player->alive = false;
 
 			alien->shot =0;
@@ -375,62 +375,45 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 
 	if (player->shot && player->alive)
 	{
-		int minY = alien->y;
-		int minX = alien->x;
-		int maxY = alien->y + (jogo->alien_info.height);
-		int maxX = alien->x + (jogo->alien_info.width);
-			
-			if (shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alien->alive)
-		{	printf("lives %d\n", alien->lives );
-			alien->lives--;
-			if(alien->lives == 0)
-				{
-					alien->alive = false;
-					player->score+= 100;
-				}
-
-			player->score += 50;
-			player->shot = 0;
-			explosion = true;
-			return;
-		}
 		
 		
 		if (shotY - 20 >= 0)
 		{
 				shotY -= 20;
-				if(!explosion)
-				{
-					vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, shotX, shotY);
-				}
-				if (alien->alive)
-				{
-					vg_draw_xpm(jogo->alien_pic, &jogo->alien_info, alien->x, alien->y);
-				}
+				vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, shotX, shotY);
 				
-				if(player->alive)
+		}
+		else
+		{
+				player->shot = 0;
+				if(player->score -10 <= 0)
 				{
-					if(protected)
-					{
-						vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, player->x, player->y);
-					}
-					else
-						vg_draw_xpm(jogo->ship_pic, &jogo->ship_info, player->x, player->y);
+					player->score = 0;
 				}
-				return;
+				else
+				{
+					player->score -=10;
+				}
+		}
+		
+
+			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) && !explosion)
+			{	printf("lives %d\n", alien->lives );
+				alien->lives--;
+				if(alien->lives == 0)
+					{
+						alien->alive = false;
+						player->score+= 100;
+					}
+
+				player->score += 50;
+				player->shot = 0;
+				explosion = true;
+				
 			}
-			else
-				{
-					player->shot = 0;
-					if(player->score -10 <= 0)
-					{
-						player->score = 0;
-					}
-					else
-					{
-						player->score -=10;
-					}
-				}
+		
+
+
 		}
 		
 }
