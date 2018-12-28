@@ -98,23 +98,35 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              check_player_fire(mib,willSmith);
-              drawJogo(mib,willSmith,frank);
-              double_buffering();
+              if (game_state == GAME)
+              {
+                check_player_fire(mib,willSmith);
+                drawJogo(mib,willSmith,frank);
+                double_buffering();
+              }
+              else if (game_state == PAUSE)
+              {
+                drawPause(mib);
+                double_buffering();
+              }
+              else if (game_state == GAME_OVER)
+              {
+                drawGameOver(mib);
+                double_buffering();
+                game_state = MAIN_MENU;
+              }
+              else if (game_state == WON)
+              {
+                drawWon(mib);
+                double_buffering();
+                game_state = MAIN_MENU;
+              }
 
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
                   kbd_read();
-                  if (byte == SPACE_BAR)
-                  {
-                    timer_int_handler();
-                    check_player_fire(mib,willSmith);
-                    drawJogo(mib,willSmith,frank);
-                    double_buffering();  
-                    continue;
-                  }
                   move_ship(mib, willSmith);
               }
             
@@ -219,8 +231,16 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              drawMenu(jogo, mouse);
-              double_buffering();
+              if (game_state == MAIN_MENU)
+              {
+                drawMenu(jogo, mouse);
+                double_buffering();
+              }
+              else if (game_state == INSTRUCTIONS)
+              {
+                drawInstructions(jogo);
+                double_buffering();
+              }
 
             } 
             if (msg.m_notify.interrupts & irq_set_kb)
@@ -293,6 +313,9 @@ int (proj_main_loop)(){
       playerDelete(willSmith);
       fim(mib);
       return 0;
+
+    default:
+      break;
     }
   }
 
