@@ -25,7 +25,7 @@ Jogo* inicio(){
 	jogo->background_map =  space_xpm;
 	jogo->background_pic = xpm_load(jogo->background_map, XPM_5_6_5, &jogo->background_info);
 
-	jogo->ship_map =  alien_xpm;
+	jogo->ship_map =  rocket2_xpm;
 	jogo->ship_pic = xpm_load(jogo->ship_map, XPM_5_6_5, &jogo->ship_info);
 
 	jogo->shield_map =  shield_xpm;
@@ -306,23 +306,13 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 	
 	if(alien->shot && alien->alive){
 		
-		
-		
-		
-		if (alien_shotY + 70 <= v_res && !ship_explosion)
-		{
-			alien_shotY += 20;
+		int minY = player->y;
+		int minX = player->x;
+		int maxY = player->y + (jogo->ship_info.height);
+		int maxX = player->x + (jogo->ship_info.width);
 
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
-			
-		}
-
-		if(alien_shotY +70 > v_res)
-			{
-				alien->shot=0;
-				return;
-			}
-		if ( check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion )
+		
+		if (alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && player->alive)  //check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion
 		{	
 				printf("boom\n");
 		
@@ -346,8 +336,23 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 			if(player->lives == 0)
 				player->alive = false;
 
-		
+			alien->shot =0;
 		}	
+		
+		if (alien_shotY + 70 <= v_res && !ship_explosion)
+		{
+			alien_shotY += 20;
+
+			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
+			
+		}
+
+		if(alien_shotY +70 > v_res)
+			{
+				alien->shot=0;
+				return;
+			}
+
 	}
 
 }
@@ -365,7 +370,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		int maxY = alien->y + (jogo->alien_info.height);
 		int maxX = alien->x + (jogo->alien_info.width);
 			
-			if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alien->alive))
+			if (shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alien->alive)
 		{	printf("lives %d\n", alien->lives );
 			alien->lives--;
 			if(alien->lives == 0)

@@ -164,7 +164,7 @@ void double_buffering()
 }
 
 
-
+/*
 bool check_colision(unsigned char* pic, int x, int y,int width, int height)
 {
   int p = 0;
@@ -186,5 +186,5 @@ bool check_colision(unsigned char* pic, int x, int y,int width, int height)
 
 return false;
 
-}
+}*/
 
