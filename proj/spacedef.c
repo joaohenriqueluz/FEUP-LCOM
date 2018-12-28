@@ -202,7 +202,7 @@ bool check_colision(unsigned char* pic,int x, int y,int width, int height)
     //char *temp = video_mem;
     int temp = (h_res*y+x)*num_bytes_mode;
      if(   ((uint8_t) *(doubleBuff +temp) == 0x00 && (uint8_t) *(doubleBuff +temp + 1) == 0xF8) && 
-          pic[p] != (unsigned char) 0x0000 && pic[p+1] != (unsigned char) 0x0000) 
+          pic[p] != (unsigned char) 0x0000 && pic[p+1] != (unsigned char) 0x0000)
       { 
         return true;
       }
