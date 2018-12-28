@@ -161,9 +161,6 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
       ship_explosion = false;
     }
 
- 
-  
-    //drawBitmap(ship,100,100,ALIGN_LEFT);
 
       
  }

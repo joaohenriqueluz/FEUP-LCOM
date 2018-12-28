@@ -26,4 +26,4 @@ int vg_draw_xpm(unsigned char* pic,  xpm_image_t* xpm, uint16_t x, uint16_t y);
 
 void double_buffering();
 
-bool check_colision(int xi, int yi,int width, int height);
+bool check_colision(unsigned char* pic, int x, int y,int width, int height);

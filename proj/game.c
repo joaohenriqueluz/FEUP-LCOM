@@ -46,6 +46,37 @@ Jogo* inicio(){
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
 
+
+	jogo->num0_map = n0_xpm;
+	jogo->num0_pic = xpm_load(jogo->num0_map, XPM_5_6_5, &jogo->num0_info);
+
+	jogo->num1_map = n1_xpm;
+	jogo->num1_pic = xpm_load(jogo->num1_map, XPM_5_6_5, &jogo->num1_info);
+
+	jogo->num2_map = n2_xpm;
+	jogo->num2_pic = xpm_load(jogo->num2_map, XPM_5_6_5, &jogo->num2_info);
+
+	jogo->num3_map = n3_xpm;
+	jogo->num3_pic = xpm_load(jogo->num3_map, XPM_5_6_5, &jogo->num3_info);
+
+	jogo->num4_map = n4_xpm;
+	jogo->num4_pic = xpm_load(jogo->num4_map, XPM_5_6_5, &jogo->num4_info);
+
+	jogo->num5_map = n5_xpm;
+	jogo->num5_pic = xpm_load(jogo->num5_map, XPM_5_6_5, &jogo->num5_info);
+
+	jogo->num6_map = n6_xpm;
+	jogo->num6_pic = xpm_load(jogo->num6_map, XPM_5_6_5, &jogo->num6_info);
+
+	jogo->num7_map = n7_xpm;
+	jogo->num7_pic = xpm_load(jogo->num7_map, XPM_5_6_5, &jogo->num7_info);
+
+	jogo->num8_map = n8_xpm;
+	jogo->num8_pic = xpm_load(jogo->num8_map, XPM_5_6_5, &jogo->num8_info);
+
+	jogo->num9_map = n9_xpm;
+	jogo->num9_pic = xpm_load(jogo->num9_map, XPM_5_6_5, &jogo->num9_info);
+
 	return jogo;
 }
 
@@ -102,7 +133,7 @@ Alien* alienInit(Jogo* jogo){
 	Alien* frank = (Alien*) malloc(sizeof(Alien));
 
 	frank->x = h_res/2 - (jogo->alien_info.width)/2;
-	frank->y = 700;
+	frank->y = 60;
 	frank->shot = 0;
 	frank->speed = 0;
 	frank->lives = 3;
@@ -207,6 +238,7 @@ void kbd_read(){
    else{
     make = true;
    }
+
  }
  
    return;
@@ -274,9 +306,25 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 	
 	if(alien->shot && alien->alive){
 		
-		if ( check_colision(player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) )
-	{	
-		printf("boom\n");
+		
+		
+		
+		if (alien_shotY + 70 <= v_res && !ship_explosion)
+		{
+			alien_shotY += 20;
+
+			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
+			
+		}
+
+		if(alien_shotY +70 > v_res)
+			{
+				alien->shot=0;
+				return;
+			}
+		if ( check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion )
+		{	
+				printf("boom\n");
 		
 				if(!protected)
 				{
@@ -295,29 +343,11 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 				protected = false;
 				
 		
-		if(player->lives == 0)
-			player->alive = false;
+			if(player->lives == 0)
+				player->alive = false;
 
 		
-	}	
-		
-		
-		if (alien_shotY + 70 <= v_res && !ship_explosion)
-		{
-			alien_shotY += 1;
-
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
-			
-			
-		}
-
-		if(alien_shotY +70 > v_res)
-			alien->shot=0;
-
-
-
-
-		
+		}	
 	}
 
 }
@@ -327,6 +357,7 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 
 void player_fire(Jogo* jogo, Alien* alien, Player* player)
 {
+
 	if (player->shot && player->alive)
 	{
 		int minY = alien->y;
@@ -335,17 +366,18 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		int maxX = alien->x + (jogo->alien_info.width);
 			
 			if ((shotY >= minY && shotY <= maxY && shotX >= minX && shotX <= maxX && alien->alive))
-		{
+		{	printf("lives %d\n", alien->lives );
 			alien->lives--;
-			if(alien->lives ==0)
+			if(alien->lives == 0)
 				{
 					alien->alive = false;
 					player->score+= 100;
 				}
 
 			player->score += 50;
-
+			player->shot = 0;
 			explosion = true;
+			return;
 		}
 		
 		
@@ -385,6 +417,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 					}
 				}
 		}
+		
 }
 
 
@@ -401,11 +434,12 @@ show_score(jogo,player);
 void show_score(Jogo* jogo, Player* player)
 {
 int unidades = (player->score % 10);
-display_number(jogo,300, 0, unidades);
-int dezenas = (player->score % 100);
-display_number(jogo,200, 0, dezenas);
-int centenas = (player->score % 1000);
-display_number(jogo,100, 0, centenas);
+display_number(jogo,210, 10, unidades);
+int dezenas = (player->score % 100)/10;
+display_number(jogo,160, 10, dezenas);
+int centenas = (player->score / 100);
+display_number(jogo,110, 10, centenas);
+
 }
 
 
@@ -417,42 +451,42 @@ void display_number(Jogo* jogo,int x, int y, int number)
 	{
 
 	case 1:
-		vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num1_pic, &jogo->num1_info, x,y);
 		break;
 
 	case 2:
-		vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num2_pic, &jogo->num2_info, x,y);
 		break;
 
 	case 3:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num3_pic, &jogo->num3_info, x,y);
 		break;
 
 	case 4:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num4_pic, &jogo->num4_info, x,y);
 		break;
 
 	case 5:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num5_pic, &jogo->num5_info, x,y);
 		break;
 
 	case 6:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num6_pic, &jogo->num6_info, x,y);
 		break;
 
 	case 7:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num7_pic, &jogo->num7_info, x,y);
 		break;
 
 	case 8:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num8_pic, &jogo->num8_info, x,y);
 		break;
 	case 9:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num9_pic, &jogo->num9_info, x,y);
 		break;
 
 	case 0:
-vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, x,y);
+		vg_draw_xpm(jogo->num0_pic, &jogo->num0_info, x,y);
 		break;
 
 
