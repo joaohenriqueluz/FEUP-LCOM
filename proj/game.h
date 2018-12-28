@@ -48,7 +48,45 @@ typedef struct {
   xpm_string_t* bang_map;
   unsigned char* bang_pic;
 
+  xpm_image_t num0_info;
+  xpm_string_t* num0_map;
+  unsigned char* num0_pic;
 
+  xpm_image_t num1_info;
+  xpm_string_t* num1_map;
+  unsigned char* num1_pic;
+
+  xpm_image_t num2_info;
+  xpm_string_t* num2_map;
+  unsigned char* num2_pic;
+
+  xpm_image_t num3_info;
+  xpm_string_t* num3_map;
+  unsigned char* num3_pic;
+
+  xpm_image_t num4_info;
+  xpm_string_t* num4_map;
+  unsigned char* num4_pic;
+
+  xpm_image_t num5_info;
+  xpm_string_t* num5_map;
+  unsigned char* num5_pic;
+
+  xpm_image_t num6_info;
+  xpm_string_t* num6_map;
+  unsigned char* num6_pic;
+
+  xpm_image_t num7_info;
+  xpm_string_t* num7_map;
+  unsigned char* num7_pic;
+
+  xpm_image_t num8_info;
+  xpm_string_t* num8_map;
+  unsigned char* num8_pic;
+
+  xpm_image_t num9_info;
+  xpm_string_t* num9_map;
+  unsigned char* num9_pic;
 
   //Alien* aliens[3];
 } Jogo;
