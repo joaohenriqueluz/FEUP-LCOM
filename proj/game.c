@@ -206,7 +206,7 @@ player_fire(mib,frank,willsmith);									//provoca disparo do Jogador
 
 	if(ship_explosion)
 	{
-			vg_draw_xpm(mib->bang_pic, &mib->bang_info, willsmith->x, willsmith->y);
+			vg_draw_xpm(mib->ship_explosion_pic, &mib->ship_explosion_info, willsmith->x, willsmith->y);
 			frank->shot = 0;
 			
 	}
@@ -317,13 +317,25 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 	
 	if(alien->shot && alien->alive){
 		
-		int minY = player->y;
-		int minX = player->x;
-		int maxY = player->y + (jogo->ship_info.height);
-		int maxX = player->x + (jogo->ship_info.width);
-
 		
-		if (alien_shotY >= minY && alien_shotY <= maxY && alien_shotX >= minX && alien_shotX <= maxX && player->alive)  //check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion
+			
+		
+		if (alien_shotY + 70 <= v_res && !ship_explosion)
+		{
+			alien_shotY += 1;
+
+			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
+			
+		}
+
+		if(alien_shotY +70 > v_res)
+			{
+				alien->shot=0;
+				return;
+			}
+
+
+		if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion)
 		{	
 				printf("boom\n");
 		
@@ -348,21 +360,8 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 				player->alive = false;
 
 			alien->shot =0;
-		}	
-		
-		if (alien_shotY + 70 <= v_res && !ship_explosion)
-		{
-			alien_shotY += 20;
-
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
-			
 		}
 
-		if(alien_shotY +70 > v_res)
-			{
-				alien->shot=0;
-				return;
-			}
 
 	}
 
@@ -518,6 +517,7 @@ void drawMenu(Jogo* jogo, Mouse* mouse){
 		vg_draw_xpm(jogo->menu_pic, &jogo->menu_info, 0, 0);
 	}
 	vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
+	printf("X = %d  Y= %d  \n", mouse->x, mouse->y);
 }
 
 void menu_kb_ih(){

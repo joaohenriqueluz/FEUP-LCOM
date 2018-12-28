@@ -38,7 +38,7 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	{
 		mouse->y = 0;
 	}
-	if (mouse->y >= 442)
+	if (mouse->y >= 642)
 	{
 		mouse->exit = true;
 		if (mouse->click)
