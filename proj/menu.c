@@ -4,6 +4,7 @@
 #include "menu.h"
 
 extern int h_res, v_res;
+extern game_st game_state;
 
 Mouse* mouseInit(){
 	Mouse* mouse = (Mouse*) malloc(sizeof(Mouse));
@@ -40,9 +41,17 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	if (mouse->y >= 442)
 	{
 		mouse->exit = true;
+		if (mouse->click)
+		{
+			game_state = COMP;
+		}
 	}
 	else{
 		mouse->exit = false;
+		if (mouse->click)
+		{
+			game_state = GAME;
+		}
 	}
 }
 
