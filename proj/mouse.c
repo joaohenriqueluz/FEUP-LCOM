@@ -5,7 +5,9 @@
 #include "i8042.h"
 #include "mouse.h"
 #include "game.h"
+#include "menu.h"
 
+extern game_st game_state;
 
 int globalHookIdMouse;
 extern uint8_t byte, packet[3];
@@ -79,6 +81,23 @@ void (mouse_ih)(){
 	}
 }
 
+void mouse_menu_ih(Mouse* mouse){
+	byte = mouse_scan_byte();
+
+	packet[byteCounter] = byte;
+
+	if ((packet[0] & BIT(3)) == 0)
+	{
+		byteCounter = 0;
+	}
+	else{
+		if (byteCounter >= 2) checkMenuPacket(mouse);
+		else{
+			byteCounter++;
+		}
+	}
+}
+
 
 
 
@@ -146,16 +165,50 @@ void printPacket(){
     	set_mouse_events();
     	check_line(gesture);
 
-    	
-		/*if(pp.x_ov!= 1 && (mouseX + pp.delta_x <= 1180) && (mouseX + pp.delta_x > 10))
-    	mouseX += pp.delta_x;
-    	if(pp.y_ov!= 1 && (mouseY - pp.delta_y > 0) && (mouseY + pp.delta_y <= 724))
-    	mouseY -= pp.delta_y;*/
 
       clearPacket();
       byteCounter = 0;
       
 }
+
+
+
+void checkMenuPacket(Mouse* mouse){
+	
+	for (int i = 0; i < 3; ++i)
+	{
+		pp.bytes[i] = packet[i];
+	}
+	old_pp = pp;
+	pp.rb = (pp.bytes[0] & BIT(1)) >> 1;
+     pp.mb = (pp.bytes[0] & BIT(2)) >> 2;
+      pp.lb = (pp.bytes[0] & BIT(0));
+      pp.x_ov = (pp.bytes[0] & BIT(6)) >> 6;
+      pp.y_ov = (pp.bytes[0] & BIT(7)) >> 7;
+      
+      if(((packet[0] & BIT(4)) >> 4)==0)
+        pp.delta_x = (packet[1] & 0x00ff);
+      else
+         pp.delta_x = (packet[1] | 0xff00);
+
+      if(((packet[0] & BIT(5)) >> 5)==0)
+         pp.delta_y = (packet[2] & 0x00ff);
+      else
+        pp.delta_y = (packet[2] | 0xff00);
+
+    	if (game_state == MAIN_MENU)
+    	{
+			updatePosition(mouse, pp.delta_x, pp.delta_y);
+    	}
+
+      clearPacket();
+      byteCounter = 0;
+      
+}
+
+
+
+
 
 void clearPacket(){
 	for (int i = 0; i < 3; ++i)

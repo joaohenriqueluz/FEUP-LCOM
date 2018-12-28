@@ -5,11 +5,13 @@
 #include "spacedef.h"
 #include "keyboard.h"
 #include <stdio.h>
+#include "menu.h"
+
 
 int shotX, shotY, alien_shotX, alien_shotY;
 extern int h_res, v_res;
 
-
+game_st game_state = MAIN_MENU;
 
 extern bool explosion;
 extern bool ship_explosion;
@@ -45,6 +47,12 @@ Jogo* inicio(){
 
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
+
+	jogo->menu_map =  menuStart_xpm;
+	jogo->menu_pic = xpm_load(jogo->menu_map, XPM_5_6_5, &jogo->menu_info);
+
+	jogo->rato_map =  rato_xpm;
+	jogo->rato_pic = xpm_load(jogo->rato_map, XPM_5_6_5, &jogo->rato_info);
 
 
 	jogo->num0_map = n0_xpm;
@@ -495,6 +503,25 @@ void display_number(Jogo* jogo,int x, int y, int number)
 		break;
 
 
+	}
+}
+
+void drawMenu(Jogo* jogo, Mouse* mouse){
+	vg_draw_xpm(jogo->menu_pic, &jogo->menu_info, 0, 0);
+	vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
+}
+
+void menu_kb_ih(){
+	switch(byte){
+		case ESC_BREAK:
+			game_state = COMP;
+			break;
+		case LEFT_ARROW:
+			break;
+		case RIGHT_ARROW:
+			break;
+		default:
+			break;
 	}
 }
 
