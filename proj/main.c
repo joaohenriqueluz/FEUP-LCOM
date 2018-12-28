@@ -10,6 +10,7 @@
 #include "keyboard.h"
 #include "game.h"
 #include "mouse.h"
+#include "menu.h"
 
 // Any header files included below this line should have been created by you
 
@@ -25,6 +26,8 @@ int byteCounter = 0;
 int ship_counterExplosion = 0;
 
 bool ship_explosion= false;
+
+extern game_st game_state;
 
 
 
@@ -177,18 +180,123 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   return 0;
 }
 
+
+int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
+  int ipc_status;
+  message msg;
+  unsigned int r;
+  uint8_t bit_no, bit_no_timer, bit_no_mouse;
+
+  enable_cmd_int();
+
+  if(mouse_subscribe(&bit_no_mouse) != 0)
+    printf("Erro na funcao mouse_subscribe\n");
+  if(kb_subscribe(&bit_no) != 0)
+    printf("Erro na funcao mouse_subscribe\n");
+  if(timer_subscribe_int(&bit_no_timer) != 0)
+    printf("Erro na funcao timer_subscribe_int\n");
+
+ uint32_t irq_set_kb = BIT(bit_no);
+ uint32_t irq_set_timer = BIT(bit_no_timer);
+ uint32_t irq_set_mouse = BIT(bit_no_mouse);
+
+  while(game_state != COMP)
+   {
+
+    if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
+      { 
+        printf("driver_receive failed with: %d", r);
+        continue;
+      } 
+    if (is_ipc_notify(ipc_status))
+      { /* received notification */
+        switch (_ENDPOINT_P(msg.m_source))
+        {
+          case HARDWARE: /* hardware interrupt notification */      
+
+          if (msg.m_notify.interrupts & irq_set_timer)
+            {
+              timer_int_handler();
+              drawMenu(jogo, mouse);
+              double_buffering();
+
+            } 
+            if (msg.m_notify.interrupts & irq_set_kb)
+              {
+                  kbd_read();
+                  menu_kb_ih();
+              }
+            if (msg.m_notify.interrupts & irq_set_mouse)
+            {
+                mouse_menu_ih(mouse);
+            }
+         }
+     }
+ }
+
+ 
+
+  if(kb_unsubscribe() != 0)
+    printf("Erro na funcao mouse_unsubscribe\n");
+  if(timer_unsubscribe_int() != 0)
+    printf("Erro na funcao timer_unsubscribe_int\n");
+  if(mouse_unsubscribe() != 0)
+    printf("Erro na funcao mouse_unsubscribe\n");
+
+  disable_cmd_int();
+
+
+  return 0;
+}
+
+
+
+// int (proj_main_loop)(){
+
+//   vg_init(0x11a);
+//   Jogo* mib = (Jogo*) inicio();
+//   Player* willSmith = (Player*) playerInit(mib);
+//   Alien* frank = (Alien*) alienInit(mib);
+//   interrupt_loop(mib, willSmith, frank);
+//   vg_exit();
+
+//   playerDelete(willSmith);
+//   fim(mib);
+
+//   return 0;
+// }
+
 int (proj_main_loop)(){
 
   vg_init(0x11a);
+
   Jogo* mib = (Jogo*) inicio();
   Player* willSmith = (Player*) playerInit(mib);
   Alien* frank = (Alien*) alienInit(mib);
-  interrupt_loop(mib, willSmith, frank);
-  vg_exit();
+  Mouse* mouse = (Mouse*) mouseInit();
 
+  while(1){
+    switch(game_state){
+    case MAIN_MENU:
+      printf("state menu\n");
+      menu_interrupt_loop(mib,mouse);
+      break;
+    case GAME:
+      printf("state game\n");
+      interrupt_loop(mib, willSmith, frank);
+      break;
+    case COMP:
+      printf("state end\n");
+      vg_exit();
+      playerDelete(willSmith);
+      fim(mib);
+      return 0;
+    }
+  }
+
+  vg_exit();
   playerDelete(willSmith);
   fim(mib);
-
   return 0;
 }
 

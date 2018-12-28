@@ -3,6 +3,7 @@
 
 #include "spacedef.h"
 #include "xpm.h"
+#include "menu.h"
 
 
 
@@ -28,9 +29,17 @@ typedef struct {
   xpm_string_t* ship_explosion_map;
   unsigned char* ship_explosion_pic;
 
+  xpm_image_t menu_info;
+  xpm_string_t* menu_map;
+  unsigned char* menu_pic;
+
   xpm_image_t shield_info;
   xpm_string_t* shield_map;
   unsigned char* shield_pic;
+
+  xpm_image_t rato_info;
+  xpm_string_t* rato_map;
+  unsigned char* rato_pic;
 
   xpm_image_t SCORE_info;
   xpm_string_t* SCORE_map;
@@ -136,6 +145,9 @@ void show_score(Jogo* jogo, Player* player);
 
 void display_number(Jogo* jogo,int x, int y, int number);
 
+void drawMenu(Jogo* jogo, Mouse* mouse);
+
+void menu_kb_ih();
 
 
 extern int mouseX,mouseY;
