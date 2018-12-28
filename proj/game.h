@@ -37,6 +37,22 @@ typedef struct {
   xpm_string_t* menuE_map;
   unsigned char* menuE_pic;
 
+  xpm_image_t pause_info;
+  xpm_string_t* pause_map;
+  unsigned char* pause_pic;
+
+  xpm_image_t gameOver_info;
+  xpm_string_t* gameOver_map;
+  unsigned char* gameOver_pic;
+
+  xpm_image_t gameWon_info;
+  xpm_string_t* gameWon_map;
+  unsigned char* gameWon_pic;
+
+  xpm_image_t instructions_info;
+  xpm_string_t* instructions_map;
+  unsigned char* instructions_pic;
+
   xpm_image_t shield_info;
   xpm_string_t* shield_map;
   unsigned char* shield_pic;
@@ -152,6 +168,14 @@ void display_number(Jogo* jogo,int x, int y, int number);
 void drawMenu(Jogo* jogo, Mouse* mouse);
 
 void menu_kb_ih();
+
+void drawPause(Jogo* jogo);
+
+void drawGameOver(Jogo* jogo);
+
+void drawWon(Jogo* jogo);
+
+void drawInstructions(Jogo* jogo);
 
 
 extern int mouseX,mouseY;

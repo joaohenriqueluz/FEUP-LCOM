@@ -13,7 +13,7 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y);
 void deleteMouse(Mouse* mouse);
 
 typedef enum {
-	MAIN_MENU, GAME, COMP
+	MAIN_MENU, GAME, PAUSE, OPTIONS, GAME_OVER, WON, INSTRUCTIONS, COMP
 } game_st;
 
 // typedef enum{

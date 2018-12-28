@@ -54,9 +54,20 @@ Jogo* inicio(){
 	jogo->menuE_map =  menuExit_xpm;
 	jogo->menuE_pic = xpm_load(jogo->menuE_map, XPM_5_6_5, &jogo->menuE_info);
 
+	jogo->pause_map = pause_xpm;
+	jogo->pause_pic = xpm_load(jogo->pause_map, XPM_5_6_5, &jogo->pause_info);
+
+	jogo->gameOver_map =  gameover_xpm;
+	jogo->gameOver_pic = xpm_load(jogo->gameOver_map, XPM_5_6_5, &jogo->gameOver_info);
+
+	jogo->gameWon_map =  won_xpm;
+	jogo->gameWon_pic = xpm_load(jogo->gameWon_map, XPM_5_6_5, &jogo->gameWon_info);
+
+	jogo->instructions_map =  instructions_xpm;
+	jogo->instructions_pic = xpm_load(jogo->instructions_map, XPM_5_6_5, &jogo->instructions_info);
+
 	jogo->rato_map =  rato_xpm;
 	jogo->rato_pic = xpm_load(jogo->rato_map, XPM_5_6_5, &jogo->rato_info);
-
 
 	jogo->num0_map = n0_xpm;
 	jogo->num0_pic = xpm_load(jogo->num0_map, XPM_5_6_5, &jogo->num0_info);
@@ -111,7 +122,7 @@ Player* playerInit(Jogo* jogo){
 
 void move_ship(Jogo* mib, Player* willsmith){
 
-if(willsmith->alive ==false)
+if(willsmith->alive == false)
 	return;
 
 	if (byte == LEFT_ARROW)
@@ -132,6 +143,17 @@ if(willsmith->alive ==false)
 		}
 		else{
 			willsmith->x -= willsmith->speed;
+		}
+	}
+	else if (byte ==KEY_P)
+	{
+		if (game_state == GAME)
+		{
+			game_state = PAUSE;
+		}
+		else if (game_state == PAUSE)
+		{
+			game_state = GAME;
 		}
 	}
 }
@@ -503,14 +525,36 @@ void drawMenu(Jogo* jogo, Mouse* mouse){
 	printf("X = %d  Y= %d  \n", mouse->x, mouse->y);
 }
 
+void drawPause(Jogo* jogo){
+	vg_draw_xpm(jogo->pause_pic, &jogo->pause_info, 0, 0);
+}
+
+void drawGameOver(Jogo* jogo){
+	vg_draw_xpm(jogo->gameOver_pic, &jogo->gameOver_info, 0, 0);
+}
+
+void drawWon(Jogo* jogo){
+	vg_draw_xpm(jogo->gameWon_pic, &jogo->gameWon_info, 0, 0);
+}
+
+void drawInstructions(Jogo* jogo){
+	vg_draw_xpm(jogo->instructions_pic, &jogo->instructions_info, 0, 0);
+}
+
 void menu_kb_ih(){
 	switch(byte){
 		case ESC_BREAK:
 			game_state = COMP;
 			break;
-		case LEFT_ARROW:
-			break;
-		case RIGHT_ARROW:
+		case KEY_P:
+			if (game_state == MAIN_MENU)
+			{
+				game_state = INSTRUCTIONS;
+			}
+			else if (game_state == INSTRUCTIONS)
+			{
+				game_state = MAIN_MENU;
+			}
 			break;
 		default:
 			break;
