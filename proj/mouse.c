@@ -197,7 +197,7 @@ void checkMenuPacket(Mouse* mouse){
         pp.delta_y = (packet[2] | 0xff00);
 
 
-    if (pp.rb == 1)
+    if (pp.lb == 1)
     {
     	mouse->click = true;
     }

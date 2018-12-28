@@ -140,13 +140,13 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
         ship_counterExplosion++;
       }
     }
-    if(counter == 2 && !frank->shot){
+    if(counter == 13 && !frank->shot){
       frank->shot = 1;
       alien_shot_init(mib,frank);
       shots_fired++;
       counter = 0;
     }
-    else if(counter == 2){
+    else if(counter == 13){
       counter=0;
       frank->shot = 0;
     }
