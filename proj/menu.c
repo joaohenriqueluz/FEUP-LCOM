@@ -11,12 +11,15 @@ Mouse* mouseInit(){
 	mouse->x = h_res/2;
 	mouse->y = v_res/2;
 
+	mouse->click = false;
+	mouse->exit = false;
+
 	return mouse;
 }
 
 void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	mouse->x += delta_x;
-	mouse->y += delta_y;
+	mouse->y -= delta_y;
 
 	if (mouse->x + 50 > h_res)
 	{
@@ -33,6 +36,13 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	if (mouse->y < 0)
 	{
 		mouse->y = 0;
+	}
+	if (mouse->y >= 442)
+	{
+		mouse->exit = true;
+	}
+	else{
+		mouse->exit = false;
 	}
 }
 

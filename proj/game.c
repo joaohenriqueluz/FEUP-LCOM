@@ -51,6 +51,9 @@ Jogo* inicio(){
 	jogo->menu_map =  menuStart_xpm;
 	jogo->menu_pic = xpm_load(jogo->menu_map, XPM_5_6_5, &jogo->menu_info);
 
+	jogo->menuE_map =  menuExit_xpm;
+	jogo->menuE_pic = xpm_load(jogo->menuE_map, XPM_5_6_5, &jogo->menuE_info);
+
 	jogo->rato_map =  rato_xpm;
 	jogo->rato_pic = xpm_load(jogo->rato_map, XPM_5_6_5, &jogo->rato_info);
 
@@ -507,7 +510,13 @@ void display_number(Jogo* jogo,int x, int y, int number)
 }
 
 void drawMenu(Jogo* jogo, Mouse* mouse){
-	vg_draw_xpm(jogo->menu_pic, &jogo->menu_info, 0, 0);
+	if (mouse->exit)
+	{
+		vg_draw_xpm(jogo->menuE_pic, &jogo->menuE_info, 0, 0);
+	}
+	else{
+		vg_draw_xpm(jogo->menu_pic, &jogo->menu_info, 0, 0);
+	}
 	vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
 }
 

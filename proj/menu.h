@@ -3,6 +3,7 @@
 
 typedef struct {
      int x, y;
+     bool click, exit;
 } Mouse;
 
 Mouse* mouseInit();
