@@ -439,7 +439,6 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 
 void draw_background(Jogo * jogo,Player* player)
 {
-
 vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
 vg_draw_xpm(jogo->SCORE_pic, &jogo->SCORE_info, 10, 10); // Desenha o background;
 show_score(jogo,player);
@@ -497,6 +496,7 @@ void display_number(Jogo* jogo,int x, int y, int number)
 	case 8:
 		vg_draw_xpm(jogo->num8_pic, &jogo->num8_info, x,y);
 		break;
+
 	case 9:
 		vg_draw_xpm(jogo->num9_pic, &jogo->num9_info, x,y);
 		break;

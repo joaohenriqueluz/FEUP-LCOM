@@ -196,6 +196,12 @@ void checkMenuPacket(Mouse* mouse){
       else
         pp.delta_y = (packet[2] | 0xff00);
 
+
+    if (pp.rb == 1)
+    {
+    	mouse->click = true;
+    }
+
     	if (game_state == MAIN_MENU)
     	{
 			updatePosition(mouse, pp.delta_x, pp.delta_y);

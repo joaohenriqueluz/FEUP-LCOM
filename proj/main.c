@@ -177,6 +177,8 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
   disable_cmd_int();
 
+  game_state = MAIN_MENU;
+
   return 0;
 }
 
@@ -200,7 +202,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
  uint32_t irq_set_timer = BIT(bit_no_timer);
  uint32_t irq_set_mouse = BIT(bit_no_mouse);
 
-  while(game_state != COMP)
+  while(game_state == MAIN_MENU)
    {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
