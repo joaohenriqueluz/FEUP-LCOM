@@ -137,6 +137,8 @@ void fim(Jogo* jogo);
 
 Player* playerInit();
 
+void reset_player(Jogo* jogo, Player* player);
+
 void move_ship(Jogo* jogo, Player* player);
 
 void move_alien(Jogo* jogo, Alien* alien);
@@ -146,6 +148,8 @@ void check_player_fire(Jogo* jogo,Player* player);
 void playerDelete(Player* player);
 
 Alien* alienInit(Jogo* jogo);
+
+void reset_alien(Jogo* jogo, Alien* alien);
 
 void alienDelete(Alien* alien);
 
