@@ -544,17 +544,10 @@ void drawInstructions(Jogo* jogo){
 void menu_kb_ih(){
 	switch(byte){
 		case ESC_BREAK:
-			game_state = COMP;
+			g¢ame_state = MAIN_MENU;
 			break;
 		case KEY_P:
-			if (game_state == MAIN_MENU)
-			{
-				game_state = INSTRUCTIONS;
-			}
-			else if (game_state == INSTRUCTIONS)
-			{
-				game_state = MAIN_MENU;
-			}
+			game_state = INSTRUCTIONS;
 			break;
 		default:
 			break;
