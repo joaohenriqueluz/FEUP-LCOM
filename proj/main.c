@@ -11,6 +11,7 @@
 #include "game.h"
 #include "mouse.h"
 #include "menu.h"
+#include "file.h"
 
 // Any header files included below this line should have been created by you
 
@@ -287,61 +288,78 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
 
 
 
+int (proj_main_loop)(){
+
+  Users users = usersInit();
+
+  users->name[0] = 'A';
+  users->name[1] = 'B';
+  users->name[2] = 'C';
+  users->score[0] = '1';
+  users->score[1] = '2';
+  users->score[2] = '3';
+  users->date[0] = '1';
+  users->date[1] = '0';
+  users->date[2] = '/';
+  users->date[3] = '1';
+  users->date[4] = '0';
+  users->date[5] = '/';
+  users->date[6] = '1';
+  users->date[7] = '8';
+
+  //write_to_file(users);
+
+  freeUsers(users);
+
+  Users users2 = usersInit();
+
+  read_from_file(users2);
+
+  write_to_file(users2);
+
+  return 0;
+}
+
 // int (proj_main_loop)(){
 
 //   vg_init(0x11a);
+
 //   Jogo* jogo = (Jogo*) inicio();
 //   Player* player = (Player*) playerInit(jogo);
 //   Alien* alien = (Alien*) alienInit(jogo);
-//   interrupt_loop(jogo, player, alien);
-//   vg_exit();
+//   Mouse* mouse = (Mouse*) mouseInit();
 
+//   while(1){
+//     switch(game_state){
+//     case MAIN_MENU:
+//       printf("state menu\n");
+//       reset_mouse(mouse);
+//       menu_interrupt_loop(jogo,mouse);
+//       break;
+//     case GAME:
+//       printf("state game\n");
+//       reset_player(jogo, player);
+//       reset_alien(jogo, alien);
+//       interrupt_loop(jogo, player, alien);
+//       game_state = MAIN_MENU;
+//       break;
+//     case COMP:
+//       printf("state end\n");
+//       vg_exit();
+//       playerDelete(player);
+//       fim(jogo);
+//       return 0;
+
+//     default:
+//       break;
+//     }
+//   }
+
+//   vg_exit();
 //   playerDelete(player);
 //   fim(jogo);
-
 //   return 0;
 // }
-
-int (proj_main_loop)(){
-
-  vg_init(0x11a);
-
-  Jogo* jogo = (Jogo*) inicio();
-  Player* player = (Player*) playerInit(jogo);
-  Alien* alien = (Alien*) alienInit(jogo);
-  Mouse* mouse = (Mouse*) mouseInit();
-
-  while(1){
-    switch(game_state){
-    case MAIN_MENU:
-      printf("state menu\n");
-      reset_mouse(mouse);
-      menu_interrupt_loop(jogo,mouse);
-      break;
-    case GAME:
-      printf("state game\n");
-      reset_player(jogo, player);
-      reset_alien(jogo, alien);
-      interrupt_loop(jogo, player, alien);
-      game_state = MAIN_MENU;
-      break;
-    case COMP:
-      printf("state end\n");
-      vg_exit();
-      playerDelete(player);
-      fim(jogo);
-      return 0;
-
-    default:
-      break;
-    }
-  }
-
-  vg_exit();
-  playerDelete(player);
-  fim(jogo);
-  return 0;
-}
 
 
 
