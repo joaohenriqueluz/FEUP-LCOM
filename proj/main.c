@@ -113,6 +113,8 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               {
                 drawGameOver(mib);
                 double_buffering();
+                sleep(3);
+                is_over = true;
                 game_state = MAIN_MENU;
               }
               else if (game_state == WON)
@@ -126,13 +128,19 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                  kbd_read();
-                  move_ship(mib, willSmith);
+                if(game_state == GAME)
+                  {
+                    kbd_read();
+                    move_ship(mib, willSmith);
+                  }
               }
             
             if (msg.m_notify.interrupts & irq_set_mouse)
               {
-                 mouse_ih();
+                 if(game_state == GAME)
+                 {
+                  mouse_ih();
+                 }
               }
             
          }
@@ -190,6 +198,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   disable_cmd_int();
 
   game_state = MAIN_MENU;
+  is_over = false;
 
   return 0;
 }
@@ -309,6 +318,7 @@ int (proj_main_loop)(){
     case GAME:
       printf("state game\n");
       interrupt_loop(mib, willSmith, frank);
+      game_state = MAIN_MENU;
       break;
     case COMP:
       printf("state end\n");

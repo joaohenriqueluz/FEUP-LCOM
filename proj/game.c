@@ -114,7 +114,7 @@ Player* playerInit(Jogo* jogo){
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 200;
-	player->score = 0;
+	player->score = 123;
 	player->alive=true;;
 
 	return player;
@@ -337,11 +337,8 @@ void move_alien(Jogo* jogo, Alien* alien)
 void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 {
 	
-	if(alien->shot && alien->alive){
-		
-		
-			
-		
+	if(alien->shot && alien->alive)
+	{		
 		if (alien_shotY + 70 <= v_res && !ship_explosion)
 		{
 			alien_shotY += 20;
@@ -379,13 +376,17 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 				
 		
 			if(player->score == 0)
-				player->alive = false;
+				{
+					player->alive = false;
+					game_state = GAME_OVER;
+				}
+
+
 
 			alien->shot =0;
 		}
-
-
 	}
+
 
 }
 
@@ -544,7 +545,7 @@ void drawInstructions(Jogo* jogo){
 void menu_kb_ih(){
 	switch(byte){
 		case ESC_BREAK:
-			g¢ame_state = MAIN_MENU;
+			game_state = MAIN_MENU;
 			break;
 		case KEY_P:
 			game_state = INSTRUCTIONS;
