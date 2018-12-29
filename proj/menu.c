@@ -18,6 +18,14 @@ Mouse* mouseInit(){
 	return mouse;
 }
 
+void reset_mouse(Mouse* mouse){
+	mouse->x = h_res/2;
+	mouse->y = v_res/2;
+
+	mouse->click = false;
+	mouse->exit = false;
+}
+
 void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	mouse->x += delta_x;
 	mouse->y -= delta_y;

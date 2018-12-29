@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
+int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
   int ipc_status;
   message msg;
   unsigned int r;
@@ -80,7 +80,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
   uint32_t irq_set_mouse = BIT(bit_no_mouse);
 
 
-  drawJogo(mib,willSmith,frank);
+  drawJogo(jogo,player,alien);
 
   while(!is_over) {
 
@@ -100,18 +100,18 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               timer_int_handler();
               if (game_state == GAME)
               {
-                check_player_fire(mib,willSmith);
-                drawJogo(mib,willSmith,frank);
+                check_player_fire(jogo,player);
+                drawJogo(jogo,player,alien);
                 double_buffering();
               }
               else if (game_state == PAUSE)
               {
-                drawPause(mib);
+                drawPause(jogo);
                 double_buffering();
               }
               else if (game_state == GAME_OVER)
               {
-                drawGameOver(mib);
+                drawGameOver(jogo);
                 double_buffering();
                 sleep(3);
                 is_over = true;
@@ -119,8 +119,10 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
               }
               else if (game_state == WON)
               {
-                drawWon(mib);
+                drawWon(jogo);
                 double_buffering();
+                sleep(3);
+                is_over = true;
                 game_state = MAIN_MENU;
               }
 
@@ -131,7 +133,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
                 if(game_state == GAME)
                   {
                     kbd_read();
-                    move_ship(mib, willSmith);
+                    move_ship(jogo, player);
                   }
               }
             
@@ -149,7 +151,7 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
 
     if (globalCounter % sys_hz() == 0){
       counter++;
-     // printf("Score = %d \n", willSmith->score);
+     // printf("Score = %d \n", player->score);
       
       
       if(explosion)
@@ -160,15 +162,15 @@ int (interrupt_loop)(Jogo* mib, Player* willSmith, Alien* frank) {
         ship_counterExplosion++;
       }
     }
-    if(counter == 2 && !frank->shot){
-      frank->shot = 1;
-      alien_shot_init(mib,frank);
+    if(counter == 2 && !alien->shot){
+      alien->shot = 1;
+      alien_shot_init(jogo,alien);
       shots_fired++;
       counter = 0;
     }
     else if(counter == 2){
       counter=0;
-      frank->shot = 0;
+      alien->shot = 0;
     }
 
     if(counterExplosion == 1)
@@ -288,14 +290,14 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
 // int (proj_main_loop)(){
 
 //   vg_init(0x11a);
-//   Jogo* mib = (Jogo*) inicio();
-//   Player* willSmith = (Player*) playerInit(mib);
-//   Alien* frank = (Alien*) alienInit(mib);
-//   interrupt_loop(mib, willSmith, frank);
+//   Jogo* jogo = (Jogo*) inicio();
+//   Player* player = (Player*) playerInit(jogo);
+//   Alien* alien = (Alien*) alienInit(jogo);
+//   interrupt_loop(jogo, player, alien);
 //   vg_exit();
 
-//   playerDelete(willSmith);
-//   fim(mib);
+//   playerDelete(player);
+//   fim(jogo);
 
 //   return 0;
 // }
@@ -304,27 +306,30 @@ int (proj_main_loop)(){
 
   vg_init(0x11a);
 
-  Jogo* mib = (Jogo*) inicio();
-  Player* willSmith = (Player*) playerInit(mib);
-  Alien* frank = (Alien*) alienInit(mib);
+  Jogo* jogo = (Jogo*) inicio();
+  Player* player = (Player*) playerInit(jogo);
+  Alien* alien = (Alien*) alienInit(jogo);
   Mouse* mouse = (Mouse*) mouseInit();
 
   while(1){
     switch(game_state){
     case MAIN_MENU:
       printf("state menu\n");
-      menu_interrupt_loop(mib,mouse);
+      reset_mouse(mouse);
+      menu_interrupt_loop(jogo,mouse);
       break;
     case GAME:
       printf("state game\n");
-      interrupt_loop(mib, willSmith, frank);
+      reset_player(jogo, player);
+      reset_alien(jogo, alien);
+      interrupt_loop(jogo, player, alien);
       game_state = MAIN_MENU;
       break;
     case COMP:
       printf("state end\n");
       vg_exit();
-      playerDelete(willSmith);
-      fim(mib);
+      playerDelete(player);
+      fim(jogo);
       return 0;
 
     default:
@@ -333,8 +338,8 @@ int (proj_main_loop)(){
   }
 
   vg_exit();
-  playerDelete(willSmith);
-  fim(mib);
+  playerDelete(player);
+  fim(jogo);
   return 0;
 }
 

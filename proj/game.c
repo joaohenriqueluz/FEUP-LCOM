@@ -115,34 +115,44 @@ Player* playerInit(Jogo* jogo){
 	player->shot = 0;
 	player->lives = 200;
 	player->score = 123;
-	player->alive=true;;
+	player->alive=true;
 
 	return player;
 }
 
-void move_ship(Jogo* mib, Player* willsmith){
+void reset_player(Jogo* jogo, Player* player){
+	player->x = h_res/2 - (jogo->ship_info.width)/2;
+	player->y = v_res-(jogo->ship_info.height)*3.5;
+	player->speed = 20;
+	player->shot = 0;
+	player->lives = 200;
+	player->score = 123;
+	player->alive=true;
+}
 
-if(willsmith->alive == false)
+void move_ship(Jogo* jogo, Player* player){
+
+if(player->alive == false)
 	return;
 
 	if (byte == LEFT_ARROW)
 	{
-		if (willsmith->x + mib->ship_info.width > h_res-10)
+		if (player->x + jogo->ship_info.width > h_res-10)
 		{
-			willsmith->x = h_res - mib->ship_info.width;
+			player->x = h_res - jogo->ship_info.width;
 		}
 		else{
-			willsmith->x += willsmith->speed;
+			player->x += player->speed;
 		}
 	}
 	else if (byte == RIGHT_ARROW)
 	{
-		if (willsmith->x - willsmith->speed < 0)
+		if (player->x - player->speed < 0)
 		{
-			willsmith->x = 0;
+			player->x = 0;
 		}
 		else{
-			willsmith->x -= willsmith->speed;
+			player->x -= player->speed;
 		}
 	}
 	else if (byte ==KEY_P)
@@ -163,58 +173,69 @@ void playerDelete(Player* player){
 	}
 
 Alien* alienInit(Jogo* jogo){
-	Alien* frank = (Alien*) malloc(sizeof(Alien));
+	Alien* alien = (Alien*) malloc(sizeof(Alien));
 
-	frank->x = h_res/2 - (jogo->alien_info.width)/2;
-	frank->y = 60;
-	frank->shot = 0;
-	frank->speed = 0;
-	frank->lives = 6;
-	frank->alive = true;
-	frank->right = true;
-	frank->left = false;
+	alien->x = h_res/2 - (jogo->alien_info.width)/2;
+	alien->y = 60;
+	alien->shot = 0;
+	alien->speed = 0;
+	alien->lives = 6;
+	alien->alive = true;
+	alien->right = true;
+	alien->left = false;
 
-	return frank;
+	return alien;
 }
 
-void alienDelete(Alien* frank){
-	free(frank);
+void reset_alien(Jogo* jogo, Alien* alien){
+	alien->x = h_res/2 - (jogo->alien_info.width)/2;
+	alien->y = 60;
+	alien->shot = 0;
+	alien->speed = 0;
+	alien->lives = 6;
+	alien->alive = true;
+	alien->right = true;
+	alien->left = false;
+}
+
+void alienDelete(Alien* alien){
+	free(alien);
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////
-void drawJogo(Jogo* mib, Player* willsmith, Alien* frank){
+void drawJogo(Jogo* jogo, Player* player, Alien* alien){
 	
-draw_background(mib, willsmith);
+	draw_background(jogo, player);
 
-move_alien(mib,frank);											//Altera posiçao do alien;
+	move_alien(jogo, alien);											//Altera posiçao do alien;
 
-//vg_draw_xpm(mib->shield_pic, &mib->shield_info, mouseX, mouseY);
+//vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, mouseX, mouseY);
 
 
-if (frank->alive)
+if (alien->alive)
 	{
-		vg_draw_xpm(mib->alien_pic, &mib->alien_info, frank->x, frank->y);
+		vg_draw_xpm(jogo->alien_pic, &jogo->alien_info, alien->x, alien->y);
 	}
 	
 
-if(willsmith->alive)
+if(player->alive)
 { 
 	if(protected)
 	{
 		printf("protected\n");
-		vg_draw_xpm(mib->shield_pic, &mib->shield_info, willsmith->x, willsmith->y);
+		vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, player->x, player->y);
 	}
 	else
-		vg_draw_xpm(mib->ship_pic, &mib->ship_info, willsmith->x, willsmith->y);
+		vg_draw_xpm(jogo->ship_pic, &jogo->ship_info, player->x, player->y);
 }
 
 
-alien_fire(mib,frank,willsmith);								//Provoca disparo do alien
+alien_fire(jogo,alien,player);								//Provoca disparo do alien
 
 
 
-player_fire(mib,frank,willsmith);									//provoca disparo do Jogador
+player_fire(jogo,alien,player);									//provoca disparo do Jogador
 
 
 
@@ -222,14 +243,14 @@ player_fire(mib,frank,willsmith);									//provoca disparo do Jogador
 
 	if(explosion)
 	{
-		vg_draw_xpm(mib->bang_pic, &mib->bang_info, frank->x, frank->y);
+		vg_draw_xpm(jogo->bang_pic, &jogo->bang_info, alien->x, alien->y);
 	
 	}
 
 	if(ship_explosion)
 	{
-			vg_draw_xpm(mib->ship_explosion_pic, &mib->ship_explosion_info, willsmith->x, willsmith->y);
-			frank->shot = 0;
+			vg_draw_xpm(jogo->ship_explosion_pic, &jogo->ship_explosion_info, player->x, player->y);
+			alien->shot = 0;
 			
 	}
 	
@@ -240,10 +261,10 @@ player_fire(mib,frank,willsmith);									//provoca disparo do Jogador
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-void alien_shot_init(Jogo* mib, Alien* frank){
-	if(frank->shot){
-		alien_shotX = frank->x;
-		alien_shotY = frank->y + (mib->alien_info.height);
+void alien_shot_init(Jogo* jogo, Alien* alien){
+	if(alien->shot){
+		alien_shotX = alien->x;
+		alien_shotY = alien->y + (jogo->alien_info.height);
 
 	}
 }
