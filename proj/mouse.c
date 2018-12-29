@@ -201,6 +201,10 @@ void checkMenuPacket(Mouse* mouse){
     {
     	mouse->click = true;
     }
+    else
+    {
+    	mouse->click = false;
+    }
 
     	if (game_state == MAIN_MENU)
     	{
