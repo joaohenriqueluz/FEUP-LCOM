@@ -125,6 +125,110 @@ typedef struct {
   xpm_string_t* num9_map;
   unsigned char* num9_pic;
 
+  xpm_image_t lA_info;
+  xpm_string_t* lA_map;
+  unsigned char* lA_pic;
+
+  xpm_image_t lB_info;
+  xpm_string_t* lB_map;
+  unsigned char* lB_pic;
+
+  xpm_image_t lC_info;
+  xpm_string_t* lC_map;
+  unsigned char* lC_pic;
+
+  xpm_image_t lD_info;
+  xpm_string_t* lD_map;
+  unsigned char* lD_pic;
+
+  xpm_image_t lE_info;
+  xpm_string_t* lE_map;
+  unsigned char* lE_pic;
+
+  xpm_image_t lF_info;
+  xpm_string_t* lF_map;
+  unsigned char* lF_pic;
+
+  xpm_image_t lG_info;
+  xpm_string_t* lG_map;
+  unsigned char* lG_pic;
+
+  xpm_image_t lH_info;
+  xpm_string_t* lH_map;
+  unsigned char* lH_pic;
+
+  xpm_image_t lI_info;
+  xpm_string_t* lI_map;
+  unsigned char* lI_pic;
+
+  xpm_image_t lJ_info;
+  xpm_string_t* lJ_map;
+  unsigned char* lJ_pic;
+
+  xpm_image_t lK_info;
+  xpm_string_t* lK_map;
+  unsigned char* lK_pic;
+
+  xpm_image_t lL_info;
+  xpm_string_t* lL_map;
+  unsigned char* lL_pic;
+
+  xpm_image_t lM_info;
+  xpm_string_t* lM_map;
+  unsigned char* lM_pic;
+
+  xpm_image_t lN_info;
+  xpm_string_t* lN_map;
+  unsigned char* lN_pic;
+
+  xpm_image_t lO_info;
+  xpm_string_t* lO_map;
+  unsigned char* lO_pic;
+
+  xpm_image_t lP_info;
+  xpm_string_t* lP_map;
+  unsigned char* lP_pic;
+
+  xpm_image_t lQ_info;
+  xpm_string_t* lQ_map;
+  unsigned char* lQ_pic;
+
+  xpm_image_t lR_info;
+  xpm_string_t* lR_map;
+  unsigned char* lR_pic;
+
+  xpm_image_t lS_info;
+  xpm_string_t* lS_map;
+  unsigned char* lS_pic;
+
+  xpm_image_t lT_info;
+  xpm_string_t* lT_map;
+  unsigned char* lT_pic;
+
+  xpm_image_t lU_info;
+  xpm_string_t* lU_map;
+  unsigned char* lU_pic;
+
+  xpm_image_t lV_info;
+  xpm_string_t* lV_map;
+  unsigned char* lV_pic;
+
+  xpm_image_t lW_info;
+  xpm_string_t* lW_map;
+  unsigned char* lW_pic;
+
+  xpm_image_t lX_info;
+  xpm_string_t* lX_map;
+  unsigned char* lX_pic;
+
+  xpm_image_t lY_info;
+  xpm_string_t* lY_map;
+  unsigned char* lY_pic;
+
+  xpm_image_t lZ_info;
+  xpm_string_t* lZ_map;
+  unsigned char* lZ_pic;
+
   //Alien* aliens[3];
 } Jogo;
 

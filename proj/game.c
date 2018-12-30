@@ -105,6 +105,84 @@ Jogo* inicio(){
 	jogo->num9_map = n9_xpm;
 	jogo->num9_pic = xpm_load(jogo->num9_map, XPM_5_6_5, &jogo->num9_info);
 
+	jogo->lA_map = A_xpm;
+	jogo->lA_pic = xpm_load(jogo->lA_map, XPM_5_6_5, &jogo->lA_info);
+
+	jogo->lB_map = B_xpm;
+	jogo->lB_pic = xpm_load(jogo->lB_map, XPM_5_6_5, &jogo->lB_info);
+
+	jogo->lC_map = C_xpm;
+	jogo->lC_pic = xpm_load(jogo->lC_map, XPM_5_6_5, &jogo->lC_info);
+
+	jogo->lD_map = D_xpm;
+	jogo->lD_pic = xpm_load(jogo->lD_map, XPM_5_6_5, &jogo->lD_info);
+
+	jogo->lE_map = E_xpm;
+	jogo->lE_pic = xpm_load(jogo->lE_map, XPM_5_6_5, &jogo->lE_info);
+
+	jogo->lF_map = F_xpm;
+	jogo->lF_pic = xpm_load(jogo->lF_map, XPM_5_6_5, &jogo->lF_info);
+
+	jogo->lG_map = G_xpm;
+	jogo->lG_pic = xpm_load(jogo->lG_map, XPM_5_6_5, &jogo->lG_info);
+
+	jogo->lH_map = H_xpm;
+	jogo->lH_pic = xpm_load(jogo->lH_map, XPM_5_6_5, &jogo->lH_info);
+
+	jogo->lI_map = I_xpm;
+	jogo->lI_pic = xpm_load(jogo->lI_map, XPM_5_6_5, &jogo->lI_info);
+
+	jogo->lJ_map = J_xpm;
+	jogo->lJ_pic = xpm_load(jogo->lJ_map, XPM_5_6_5, &jogo->lJ_info);
+
+	jogo->lK_map = K_xpm;
+	jogo->lK_pic = xpm_load(jogo->lK_map, XPM_5_6_5, &jogo->lK_info);
+
+	jogo->lL_map = L_xpm;
+	jogo->lL_pic = xpm_load(jogo->lL_map, XPM_5_6_5, &jogo->lL_info);
+
+	jogo->lM_map = M_xpm;
+	jogo->lM_pic = xpm_load(jogo->lM_map, XPM_5_6_5, &jogo->lM_info);
+
+	jogo->lN_map = N_xpm;
+	jogo->lN_pic = xpm_load(jogo->lN_map, XPM_5_6_5, &jogo->lN_info);
+
+	jogo->lO_map = O_xpm;
+	jogo->lO_pic = xpm_load(jogo->lO_map, XPM_5_6_5, &jogo->lO_info);
+
+	jogo->lP_map = P_xpm;
+	jogo->lP_pic = xpm_load(jogo->lP_map, XPM_5_6_5, &jogo->lP_info);
+
+	jogo->lQ_map = Q_xpm;
+	jogo->lQ_pic = xpm_load(jogo->lQ_map, XPM_5_6_5, &jogo->lQ_info);
+
+	jogo->lR_map = R_xpm;
+	jogo->lR_pic = xpm_load(jogo->lR_map, XPM_5_6_5, &jogo->lR_info);
+
+	jogo->lS_map = S_xpm;
+	jogo->lS_pic = xpm_load(jogo->lS_map, XPM_5_6_5, &jogo->lS_info);
+
+	jogo->lT_map = T_xpm;
+	jogo->lT_pic = xpm_load(jogo->lT_map, XPM_5_6_5, &jogo->lT_info);
+
+	jogo->lU_map = U_xpm;
+	jogo->lU_pic = xpm_load(jogo->lU_map, XPM_5_6_5, &jogo->lU_info);
+
+	jogo->lV_map = V_xpm;
+	jogo->lV_pic = xpm_load(jogo->lV_map, XPM_5_6_5, &jogo->lV_info);
+
+	jogo->lW_map = W_xpm;
+	jogo->lW_pic = xpm_load(jogo->lW_map, XPM_5_6_5, &jogo->lW_info);
+
+	jogo->lX_map = X_xpm;
+	jogo->lX_pic = xpm_load(jogo->lX_map, XPM_5_6_5, &jogo->lX_info);
+
+	jogo->lY_map = Y_xpm;
+	jogo->lY_pic = xpm_load(jogo->lY_map, XPM_5_6_5, &jogo->lY_info);
+
+	jogo->lZ_map = Z_xpm;
+	jogo->lZ_pic = xpm_load(jogo->lZ_map, XPM_5_6_5, &jogo->lZ_info);
+
 	return jogo;
 }
 
@@ -569,19 +647,19 @@ void drawMenu(Jogo* jogo, Mouse* mouse){
 }
 
 void drawPause(Jogo* jogo){
-	vg_draw_xpm(jogo->pause_pic, &jogo->pause_info, 128, 128);
+	vg_draw_xpm(jogo->pause_pic, &jogo->pause_info, 0, 0);
 }
 
 void drawGameOver(Jogo* jogo){
-	vg_draw_xpm(jogo->gameOver_pic, &jogo->gameOver_info, 128, 128);
+	vg_draw_xpm(jogo->gameOver_pic, &jogo->gameOver_info, 0, 0);
 }
 
 void drawWon(Jogo* jogo){
-	vg_draw_xpm(jogo->gameWon_pic, &jogo->gameWon_info, 128, 128);
+	vg_draw_xpm(jogo->gameWon_pic, &jogo->gameWon_info, 0, 0);
 }
 
 void drawInstructions(Jogo* jogo){
-	vg_draw_xpm(jogo->instructions_pic, &jogo->instructions_info, 128, 128);
+	vg_draw_xpm(jogo->instructions_pic, &jogo->instructions_info, 0, 0);
 }
 
 void menu_kb_ih(){
@@ -593,7 +671,7 @@ void menu_kb_ih(){
 			game_state = INSTRUCTIONS;
 			break;
 		default:
-		break;
+			break;
 	}
 }
 
