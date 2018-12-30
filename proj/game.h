@@ -33,6 +33,14 @@ typedef struct {
   xpm_string_t* menu_map;
   unsigned char* menu_pic;
 
+  xpm_image_t menuS_info;
+  xpm_string_t* menuS_map;
+  unsigned char* menuS_pic;
+
+  xpm_image_t menuH_info;
+  xpm_string_t* menuH_map;
+  unsigned char* menuH_pic;
+
   xpm_image_t menuE_info;
   xpm_string_t* menuE_map;
   unsigned char* menuE_pic;

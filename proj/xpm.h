@@ -8,6 +8,8 @@
 #include "explosion100.xpm"
 #include "menuExit.xpm"
 #include "menuStart.xpm"
+#include "menu.xpm"
+#include "menuscore.xpm"
 #include "rato.xpm"
 #include "pause.xpm"
 #include "instructions.xpm"
