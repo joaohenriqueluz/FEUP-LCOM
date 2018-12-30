@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+// Any header files included below this line should have been created by you
 #include "i8254.h"
 #include "i8042.h"
 #include "vbe_macros.h"
@@ -12,8 +13,8 @@
 #include "mouse.h"
 #include "menu.h"
 #include "file.h"
+#include "RTC.h"
 
-// Any header files included below this line should have been created by you
 
 
 bool explosion= false;
@@ -131,7 +132,7 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                if(game_state == GAME)
+                if(game_state == GAME || game_state == PAUSE)
                   {
                     kbd_read();
                     move_ship(jogo, player);
@@ -243,6 +244,10 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
+              if(globalCounter % sys_hz() == 0)
+              {
+                printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(),get_Seconds(), get_Day(), get_Month(), get_Year());
+              }
               if (game_state == MAIN_MENU)
               {
                 drawMenu(jogo, mouse);
@@ -287,7 +292,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
 }
 
 
-
+/*
 int (proj_main_loop)(){
 
   Users users = usersInit();
@@ -318,48 +323,48 @@ int (proj_main_loop)(){
   write_to_file(users2);
 
   return 0;
+}*/
+
+int (proj_main_loop)(){
+
+  vg_init(0x11a);
+
+  Jogo* jogo = (Jogo*) inicio();
+  Player* player = (Player*) playerInit(jogo);
+  Alien* alien = (Alien*) alienInit(jogo);
+  Mouse* mouse = (Mouse*) mouseInit();
+
+  while(1){
+    switch(game_state){
+    case MAIN_MENU:
+      printf("state menu\n");
+      reset_mouse(mouse);
+      menu_interrupt_loop(jogo,mouse);
+      break;
+    case GAME:
+      printf("state game\n");
+      reset_player(jogo, player);
+      reset_alien(jogo, alien);
+      interrupt_loop(jogo, player, alien);
+      game_state = MAIN_MENU;
+      break;
+    case COMP:
+      printf("state end\n");
+      vg_exit();
+      playerDelete(player);
+      fim(jogo);
+      return 0;
+
+    default:
+      break;
+    }
+  }
+
+  vg_exit();
+  playerDelete(player);
+  fim(jogo);
+  return 0;
 }
-
-// int (proj_main_loop)(){
-
-//   vg_init(0x11a);
-
-//   Jogo* jogo = (Jogo*) inicio();
-//   Player* player = (Player*) playerInit(jogo);
-//   Alien* alien = (Alien*) alienInit(jogo);
-//   Mouse* mouse = (Mouse*) mouseInit();
-
-//   while(1){
-//     switch(game_state){
-//     case MAIN_MENU:
-//       printf("state menu\n");
-//       reset_mouse(mouse);
-//       menu_interrupt_loop(jogo,mouse);
-//       break;
-//     case GAME:
-//       printf("state game\n");
-//       reset_player(jogo, player);
-//       reset_alien(jogo, alien);
-//       interrupt_loop(jogo, player, alien);
-//       game_state = MAIN_MENU;
-//       break;
-//     case COMP:
-//       printf("state end\n");
-//       vg_exit();
-//       playerDelete(player);
-//       fim(jogo);
-//       return 0;
-
-//     default:
-//       break;
-//     }
-//   }
-
-//   vg_exit();
-//   playerDelete(player);
-//   fim(jogo);
-//   return 0;
-// }
 
 
 

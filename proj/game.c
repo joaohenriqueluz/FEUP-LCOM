@@ -179,7 +179,7 @@ Alien* alienInit(Jogo* jogo){
 	alien->y = 60;
 	alien->shot = 0;
 	alien->speed = 0;
-	alien->lives = 6;
+	alien->lives = 3;
 	alien->alive = true;
 	alien->right = true;
 	alien->left = false;
@@ -192,7 +192,7 @@ void reset_alien(Jogo* jogo, Alien* alien){
 	alien->y = 60;
 	alien->shot = 0;
 	alien->speed = 0;
-	alien->lives = 6;
+	alien->lives = 3;
 	alien->alive = true;
 	alien->right = true;
 	alien->left = false;
@@ -448,6 +448,9 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 					{
 						alien->alive = false;
 						player->score+= 100;
+						
+						game_state = WON;
+						is_over = true;
 					}
 
 				player->score += 50;
@@ -544,23 +547,23 @@ void drawMenu(Jogo* jogo, Mouse* mouse){
 		vg_draw_xpm(jogo->menu_pic, &jogo->menu_info, 0, 0);
 	}
 	vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
-	printf("X = %d  Y= %d  \n", mouse->x, mouse->y);
+	
 }
 
 void drawPause(Jogo* jogo){
-	vg_draw_xpm(jogo->pause_pic, &jogo->pause_info, 0, 0);
+	vg_draw_xpm(jogo->pause_pic, &jogo->pause_info, 128, 128);
 }
 
 void drawGameOver(Jogo* jogo){
-	vg_draw_xpm(jogo->gameOver_pic, &jogo->gameOver_info, 0, 0);
+	vg_draw_xpm(jogo->gameOver_pic, &jogo->gameOver_info, 128, 128);
 }
 
 void drawWon(Jogo* jogo){
-	vg_draw_xpm(jogo->gameWon_pic, &jogo->gameWon_info, 0, 0);
+	vg_draw_xpm(jogo->gameWon_pic, &jogo->gameWon_info, 128, 128);
 }
 
 void drawInstructions(Jogo* jogo){
-	vg_draw_xpm(jogo->instructions_pic, &jogo->instructions_info, 0, 0);
+	vg_draw_xpm(jogo->instructions_pic, &jogo->instructions_info, 128, 128);
 }
 
 void menu_kb_ih(){
