@@ -2,6 +2,7 @@
 #include "rocket3.xpm"
 #include "shot.xpm"
 #include "space.xpm"
+#include "background.xpm"
 #include "alien.xpm"
 #include "explosion.xpm"
 #include "shield.xpm"

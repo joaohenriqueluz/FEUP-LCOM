@@ -23,12 +23,18 @@ void reset_mouse(Mouse* mouse){
 	mouse->y = v_res/2;
 
 	mouse->click = false;
+	mouse->play = false;
+	mouse->score = false;
 	mouse->exit = false;
 }
 
 void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	mouse->x += delta_x;
 	mouse->y -= delta_y;
+
+	mouse->play = false;
+	mouse->score = false;
+	mouse->exit = false;
 
 	if (mouse->x + 50 > h_res)
 	{
@@ -46,19 +52,28 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 	{
 		mouse->y = 0;
 	}
-	if (mouse->y >= 642)
+	if (mouse->x >= 371 && mouse->x <= 612 && mouse->y >= 223 && mouse->y <= 303)
+	{
+		mouse->play = true;
+		if (mouse->click)
+		{
+			game_state = GAME;
+		}
+	}
+	else if (mouse->x >= 224 && mouse->x <= 737 && mouse->y >= 361 && mouse->y <= 435)
+	{
+		mouse->score = true;
+		if (mouse->click)
+		{
+			game_state = SCORE;
+		}
+	}
+	else if (mouse->x >= 412 && mouse->x <= 581 && mouse->y >= 510 && mouse->y <= 585)
 	{
 		mouse->exit = true;
 		if (mouse->click)
 		{
 			game_state = COMP;
-		}
-	}
-	else{
-		mouse->exit = false;
-		if (mouse->click)
-		{
-			game_state = GAME;
 		}
 	}
 }

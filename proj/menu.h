@@ -3,7 +3,7 @@
 
 typedef struct {
      int x, y;
-     bool click, exit;
+     bool click, play, score, exit;
 } Mouse;
 
 Mouse* mouseInit();
@@ -15,7 +15,7 @@ void deleteMouse(Mouse* mouse);
 void reset_mouse(Mouse* mouse);
 
 typedef enum {
-	MAIN_MENU, GAME,GAME2,GAME3, PAUSE, OPTIONS, GAME_OVER, WON, INSTRUCTIONS, COMP
+	MAIN_MENU, SCORE, GAME, GAME2, GAME3, PAUSE, OPTIONS, GAME_OVER, WON, INSTRUCTIONS, COMP
 } game_st;
 
 // typedef enum{

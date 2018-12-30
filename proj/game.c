@@ -24,7 +24,7 @@ extern bool protected;
 Jogo* inicio(){
 	Jogo* jogo = (Jogo*) malloc(sizeof(Jogo));
 
-	jogo->background_map =  space_xpm;
+	jogo->background_map =  background_xpm;
 	jogo->background_pic = xpm_load(jogo->background_map, XPM_5_6_5, &jogo->background_info);
 
 	jogo->ship_map =  rocket2_xpm;
@@ -57,7 +57,7 @@ Jogo* inicio(){
 	jogo->menuE_map =  menuexit_xpm;
 	jogo->menuE_pic = xpm_load(jogo->menuE_map, XPM_5_6_5, &jogo->menuE_info);
 
-	jogo->menuH_map =  menustart_xpm;
+	jogo->menuH_map =  menuscore_xpm;
 	jogo->menuH_pic = xpm_load(jogo->menuH_map, XPM_5_6_5, &jogo->menuH_info);
 
 	jogo->pause_map = pause_xpm;
@@ -549,7 +549,15 @@ void display_number(Jogo* jogo,int x, int y, int number)
 }
 
 void drawMenu(Jogo* jogo, Mouse* mouse){
-	if (mouse->exit)
+	if (mouse->play)
+	{
+		vg_draw_xpm(jogo->menuS_pic, &jogo->menuS_info, 0, 0);
+	}
+	else if (mouse->score)
+	{
+		vg_draw_xpm(jogo->menuH_pic, &jogo->menuH_info, 0, 0);
+	}
+	else if (mouse->exit)
 	{
 		vg_draw_xpm(jogo->menuE_pic, &jogo->menuE_info, 0, 0);
 	}
