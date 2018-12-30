@@ -17,7 +17,7 @@ void wait_valid_rtc()
 
 uint32_t read_reg(int reg)
 {
-	uint32_t value = 0;
+	uint32_t value;
 
 	//wait_valid_rtc();
 

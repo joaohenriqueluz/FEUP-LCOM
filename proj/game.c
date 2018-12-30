@@ -128,6 +128,7 @@ void reset_player(Jogo* jogo, Player* player){
 	player->lives = 200;
 	player->score = 123;
 	player->alive=true;
+	ship_explosion = false;
 }
 
 void move_ship(Jogo* jogo, Player* player){
@@ -155,11 +156,13 @@ if(player->alive == false)
 			player->x -= player->speed;
 		}
 	}
-	else if (byte ==KEY_P)
+	else if (byte == KEY_P)
 	{
+		printf("Pressed P\n");
 		if (game_state == GAME)
 		{
 			game_state = PAUSE;
+
 		}
 		else if (game_state == PAUSE)
 		{
@@ -179,7 +182,7 @@ Alien* alienInit(Jogo* jogo){
 	alien->y = 60;
 	alien->shot = 0;
 	alien->speed = 0;
-	alien->lives = 3;
+	alien->lives = 6;
 	alien->alive = true;
 	alien->right = true;
 	alien->left = false;
@@ -192,10 +195,11 @@ void reset_alien(Jogo* jogo, Alien* alien){
 	alien->y = 60;
 	alien->shot = 0;
 	alien->speed = 0;
-	alien->lives = 3;
+	alien->lives = 6;
 	alien->alive = true;
 	alien->right = true;
 	alien->left = false;
+	explosion = false;
 }
 
 void alienDelete(Alien* alien){
@@ -375,7 +379,7 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 			}
 
 
-		if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height) && !explosion)
+		if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height))
 		{	
 				printf("boom\n");
 		
@@ -441,7 +445,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		}
 		
 
-			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) && !explosion)
+			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) || explosion)
 			{	printf("lives %d\n", alien->lives );
 				alien->lives--;
 				if(alien->lives == 0)
@@ -450,7 +454,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 						player->score+= 100;
 						
 						game_state = WON;
-						is_over = true;
+						
 					}
 
 				player->score += 50;
@@ -571,11 +575,11 @@ void menu_kb_ih(){
 		case ESC_BREAK:
 			game_state = MAIN_MENU;
 			break;
-		case KEY_P:
+		case KEY_H:
 			game_state = INSTRUCTIONS;
 			break;
 		default:
-			break;
+		break;
 	}
 }
 
