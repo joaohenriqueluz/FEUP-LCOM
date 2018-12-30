@@ -320,7 +320,7 @@ int (proj_main_loop)(){
 
 int (proj_main_loop)(){
 
-  vg_init(0x11a);
+  vg_init(0x117);
 
   Jogo* jogo = (Jogo*) inicio();
   Player* player = (Player*) playerInit(jogo);

@@ -48,11 +48,17 @@ Jogo* inicio(){
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
 
-	jogo->menu_map =  menuStart_xpm;
+	jogo->menu_map =  menu_xpm;
 	jogo->menu_pic = xpm_load(jogo->menu_map, XPM_5_6_5, &jogo->menu_info);
 
-	jogo->menuE_map =  menuExit_xpm;
+	jogo->menuS_map =  menustart_xpm;
+	jogo->menuS_pic = xpm_load(jogo->menuS_map, XPM_5_6_5, &jogo->menuS_info);
+
+	jogo->menuE_map =  menuexit_xpm;
 	jogo->menuE_pic = xpm_load(jogo->menuE_map, XPM_5_6_5, &jogo->menuE_info);
+
+	jogo->menuH_map =  menustart_xpm;
+	jogo->menuH_pic = xpm_load(jogo->menuH_map, XPM_5_6_5, &jogo->menuH_info);
 
 	jogo->pause_map = pause_xpm;
 	jogo->pause_pic = xpm_load(jogo->pause_map, XPM_5_6_5, &jogo->pause_info);

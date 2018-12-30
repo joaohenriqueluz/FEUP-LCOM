@@ -29,7 +29,7 @@ void addUser(Users users, char* name, char* date, char* score){
 		users = ant;
 	}
 	else{
-		while( l->next != NULL && scoreToInt(l->next->score) < scoreToInt(score)){
+		while( l->next != NULL && scoreToInt(l->next->score) > scoreToInt(score)){
 			l = l->next;
 		}
 		l->next = ant;
@@ -115,7 +115,7 @@ void read_from_file(Users users){
 
 int scoreToInt(char* score){
 
-	int valor = score[0] + score[1] + score[2];
+	int valor = score[0]*100 + score[1]*10 + score[2];
 
 	return valor;
 }
