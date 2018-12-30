@@ -28,7 +28,6 @@
 #include "n1.xpm"
 #include "n0.xpm"
 #include "A.xpm"
-#include "A.xpm"
 #include "B.xpm"
 #include "C.xpm"
 #include "D.xpm"
@@ -52,6 +51,7 @@
 #include "V.xpm"
 #include "W.xpm"
 #include "Y.xpm"
+#include "X.xpm"
 #include "Z.xpm"
 
 

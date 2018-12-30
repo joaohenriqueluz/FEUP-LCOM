@@ -206,6 +206,8 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
   message msg;
   unsigned int r;
   uint8_t bit_no, bit_no_timer, bit_no_mouse;
+  int letterCounter = 0;
+  char name[3];// date[8];
 
   enable_cmd_int();
 
@@ -220,7 +222,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
  uint32_t irq_set_timer = BIT(bit_no_timer);
  uint32_t irq_set_mouse = BIT(bit_no_mouse);
 
-  while(game_state == MAIN_MENU || game_state == INSTRUCTIONS)
+  while(game_state == MAIN_MENU || game_state == INSTRUCTIONS || game_state == NAME)
    {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
@@ -237,10 +239,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              if(globalCounter % sys_hz() == 0)
-              {
-                //printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
-              }
+              
               if (game_state == MAIN_MENU)
               {
                 drawMenu(jogo, mouse);
@@ -251,11 +250,40 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
                 drawInstructions(jogo);
                 double_buffering();
               }
+              else if (game_state == NAME)
+              {
+                vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
+                int n = 0;
+                while(n <= letterCounter){
+                  printf("n = %d  LC = %d \n", n, letterCounter);
+                  show_letter_file(jogo,name[n],n);
+                  n++;
+                }
+                double_buffering();
+
+
+              }
 
             } 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
                   kbd_read();
+                  if (game_state == NAME)
+                  {
+                    if(byte != 0x1c)
+                    {
+                      show_letter_byte(name,letterCounter);
+
+                    }
+                    else
+                    {
+                      game_state = MAIN_MENU;
+                    }
+                    if (letterCounter < 3 && make)
+                    {
+                      letterCounter++;
+                    }
+                  }
                   menu_kb_ih();
               }
             if (msg.m_notify.interrupts & irq_set_mouse)
@@ -283,7 +311,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
 
   return 0;
 }
-
 
 /*
 int (proj_main_loop)(){
@@ -329,7 +356,7 @@ int (proj_main_loop)(){
 
   while(1){
     switch(game_state){
-    case MAIN_MENU:
+   case NAME:
       printf("state menu\n");
       reset_mouse(mouse);
       menu_interrupt_loop(jogo,mouse);
@@ -337,7 +364,7 @@ int (proj_main_loop)(){
     case GAME:
       printf("state game\n");
       reset_player(jogo, player);
-      reset_alien(jogo, alien);
+      reset_alien(jogo, alien, 1,6, 0);
       interrupt_loop(jogo, player, alien);
       game_state = MAIN_MENU;
       break;
@@ -347,6 +374,8 @@ int (proj_main_loop)(){
       playerDelete(player);
       fim(jogo);
       return 0;
+
+
 
     default:
       break;
