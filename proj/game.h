@@ -9,7 +9,7 @@
 
 
 typedef struct {
-     int x, y, speed, shot, lives;
+     int x, y, speed, shot, lives, level;
      bool alive,right, left, colision;
 } Alien;
 
@@ -261,7 +261,7 @@ void playerDelete(Player* player);
 
 Alien* alienInit(Jogo* jogo);
 
-void reset_alien(Jogo* jogo, Alien* alien);
+void reset_alien(Jogo* jogo, Alien* alien,int level, int lives, int speed);
 
 void alienDelete(Alien* alien);
 
@@ -292,6 +292,10 @@ void drawGameOver(Jogo* jogo);
 void drawWon(Jogo* jogo);
 
 void drawInstructions(Jogo* jogo);
+
+void show_letter_byte(char* name, int i);
+
+void show_letter_file(Jogo* jogo, char letter, int i);
 
 
 extern int mouseX,mouseY;

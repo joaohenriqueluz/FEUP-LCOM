@@ -11,7 +11,7 @@
 int shotX, shotY, alien_shotX, alien_shotY;
 extern int h_res, v_res;
 
-game_st game_state = MAIN_MENU;
+game_st game_state = NAME;
 
 extern bool explosion;
 extern bool ship_explosion;
@@ -194,7 +194,7 @@ Player* playerInit(Jogo* jogo){
 	Player* player = (Player*) malloc(sizeof(Player));
 
 	player->x = h_res/2 - (jogo->ship_info.width)/2;
-	player->y = v_res-(jogo->ship_info.height)*3.5;
+	player->y = v_res-(jogo->ship_info.height)*2;
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 200;
@@ -206,7 +206,7 @@ Player* playerInit(Jogo* jogo){
 
 void reset_player(Jogo* jogo, Player* player){
 	player->x = h_res/2 - (jogo->ship_info.width)/2;
-	player->y = v_res-(jogo->ship_info.height)*3.5;
+	player->y = v_res-(jogo->ship_info.height)*2;
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 200;
@@ -274,15 +274,16 @@ Alien* alienInit(Jogo* jogo){
 	return alien;
 }
 
-void reset_alien(Jogo* jogo, Alien* alien){
+void reset_alien(Jogo* jogo, Alien* alien, int level, int lives, int speed){
 	alien->x = h_res/2 - (jogo->alien_info.width)/2;
 	alien->y = 60;
 	alien->shot = 0;
-	alien->speed = 0;
-	alien->lives = 6;
+	alien->speed = speed;
+	alien->lives = lives;
 	alien->alive = true;
 	alien->right = true;
 	alien->left = false;
+	alien->level = level;
 	explosion = false;
 }
 
@@ -465,19 +466,19 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 
 		if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height))
 		{	
-				printf("boom\n");
+				
 		
 				if(!protected)
 				{
-					player->lives--;
+					
 					ship_explosion = true;
-					if(player->score - 25 <= 0)
+					if(player->score - 10 <= 0)
 					{
 						player-> score = 0;
 					}
 					else
 					{
-					player->score -= 25;
+					player->score -= 10;
 					}
 				}
 
@@ -518,13 +519,13 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		else
 		{
 				player->shot = 0;
-				if(player->score -10 <= 0)
+				if(player->score -5 <= 0)
 				{
 					player->score = 0;
 				}
 				else
 				{
-					player->score -=10;
+					player->score -=5;
 				}
 		}
 		
@@ -535,13 +536,26 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 				if(alien->lives == 0)
 					{
 						alien->alive = false;
-						player->score+= 100;
-						
-						game_state = WON;
+						player->score+= 50;
+						if(alien->level == 1)
+						{
+
+							reset_alien(jogo, alien,2,10, 0);
+						}
+
+						else if(alien->level == 2)
+						{
+							
+							reset_alien(jogo, alien,3, 10, 0);
+						}
+						else if(alien->level == 3)
+						{
+							game_state = WON;
+						}
 						
 					}
 
-				player->score += 50;
+				player->score += 20;
 				player->shot = 0;
 				explosion = true;
 				
@@ -663,6 +677,8 @@ void drawInstructions(Jogo* jogo){
 }
 
 void menu_kb_ih(){
+	if (game_state == MAIN_MENU)
+	{
 	switch(byte){
 		case ESC_BREAK:
 			game_state = MAIN_MENU;
@@ -673,6 +689,232 @@ void menu_kb_ih(){
 		default:
 			break;
 	}
+	}
 }
 
 
+void show_letter_byte(char* name, int i)
+{
+	switch(byte)
+	{
+		case 0x1e:   //A
+		name[i] = 'A';
+			break;
+
+		case 0x30:  
+		name[i] = 'B';
+		break;
+
+		case 0x2e:  
+		name[i] = 'C';
+		break;
+
+		case 0x20:  
+		name[i] = 'D';
+		break;
+
+		case 0x12:  
+		name[i] = 'E';
+		break;
+
+		case 0x21:  
+		name[i] = 'F';
+			break;
+
+		case 0x22:  
+		name[i] = 'G';
+			break;
+
+		case 0x23:  
+		name[i] = 'H';
+			break;
+
+		case 0x17:	
+		name[i] = 'I';
+			break;  
+
+		case 0x24:	
+		name[i] = 'J';
+			break;
+
+		case 0x25:	
+		name[i] = 'K';
+			break;
+
+		case 0x26:	
+		name[i] = 'L';
+		break;
+
+		case 0x32:	
+		name[i] = 'M';
+		break;
+
+		case 0x31:	
+		name[i] = 'N';
+		break;	
+
+		case 0x18:	
+		name[i] = 'O';
+		break;  
+
+		case 0x19:	
+		name[i] = 'P';
+		break;
+
+		case 0x10:	
+		name[i] = 'Q';
+		break;
+
+		case 0x13:	
+		name[i] = 'R';
+		break;
+
+		case 0x1F:	
+		name[i] = 'S';
+		break;
+
+		case 0x14:	
+		name[i] = 'T';
+		break;	
+
+		case 0x16:	
+		name[i] = 'U';
+		break;  
+
+		case 0x11:	
+		name[i] = 'W';
+		break;
+
+		case 0x2F:	
+		name[i] = 'V';
+		break;
+
+		case 0x2D:	
+		name[i] = 'X';
+		break;
+
+		case 0x15:	
+		name[i] = 'Y';
+		break;
+
+		case 0x2C:	
+		name[i] = 'Z';
+		break;
+		default:
+		break;	
+	}
+
+}
+
+void show_letter_file(Jogo* jogo, char letter, int i)
+{
+	switch(letter)
+	{
+		case 'A':   
+		vg_draw_xpm(jogo->lA_pic, &jogo->lA_info, i * jogo->lA_info.width, 500);
+		break;
+
+		case 'B':  //B
+		vg_draw_xpm(jogo->lB_pic, &jogo->lB_info, i * jogo->lB_info.width, 500);
+		break;
+
+		case 'C':  //C
+		vg_draw_xpm(jogo->lC_pic, &jogo->lC_info, i * jogo->lC_info.width, 500);
+		break;
+
+		case 'D':  //D
+		vg_draw_xpm(jogo->lD_pic, &jogo->lD_info, i * jogo->lD_info.width, 500);
+		break;
+
+		case 'E':  //E
+		vg_draw_xpm(jogo->lE_pic, &jogo->lE_info, i * jogo->lE_info.width, 500);
+		break;
+
+		case 'F':  //F
+		vg_draw_xpm(jogo->lF_pic, &jogo->lF_info, i * jogo->lF_info.width, 500);
+			break;
+
+		case 'G':  //G
+		vg_draw_xpm(jogo->lG_pic, &jogo->lG_info, i * jogo->lG_info.width, 500);
+			break;
+
+		case 'H':  //H
+		vg_draw_xpm(jogo->lH_pic, &jogo->lH_info, i * jogo->lH_info.width, 500);
+			break;
+
+		case 'I':	//I
+		vg_draw_xpm(jogo->lI_pic, &jogo->lI_info, i * jogo->lI_info.width, 500);
+			break;  
+
+		case 'J':	//J	
+		vg_draw_xpm(jogo->lJ_pic, &jogo->lJ_info, i * jogo->lJ_info.width, 500);
+			break;
+
+		case 'K':	//K
+		vg_draw_xpm(jogo->lK_pic, &jogo->lK_info, i * jogo->lK_info.width, 500);
+			break;
+
+		case 'L':	//L
+		vg_draw_xpm(jogo->lL_pic, &jogo->lL_info, i * jogo->lL_info.width, 500);
+		break;
+
+		case 'M':	//M
+		vg_draw_xpm(jogo->lM_pic, &jogo->lM_info, i * jogo->lM_info.width, 500);
+		break;
+
+		case 'N':	//N
+		vg_draw_xpm(jogo->lN_pic, &jogo->lN_info, i * jogo->lN_info.width, 500);
+		break;	
+
+		case 'O':	//O
+		vg_draw_xpm(jogo->lO_pic, &jogo->lO_info, i * jogo->lO_info.width, 500);
+		break;  
+
+		case 'P':	//P
+		vg_draw_xpm(jogo->lP_pic, &jogo->lP_info, i * jogo->lP_info.width, 500);
+		break;
+
+		case 'Q':	//Q
+		vg_draw_xpm(jogo->lQ_pic, &jogo->lQ_info, i * jogo->lQ_info.width, 500);
+		break;
+
+		case 'R':	//R
+		vg_draw_xpm(jogo->lR_pic, &jogo->lR_info, i * jogo->lR_info.width, 500);
+		break;
+
+		case 'S':	//S
+		vg_draw_xpm(jogo->lS_pic, &jogo->lS_info, i * jogo->lS_info.width, 500);
+		break;
+
+		case 'T':	//T
+		vg_draw_xpm(jogo->lT_pic, &jogo->lT_info, i * jogo->lT_info.width, 500);
+		break;	
+
+		case 'U':	//U
+		vg_draw_xpm(jogo->lU_pic, &jogo->lU_info, i * jogo->lU_info.width, 500);
+		break;  
+
+		case 'W':	//W	
+		vg_draw_xpm(jogo->lW_pic, &jogo->lW_info, i * jogo->lW_info.width, 500);
+		break;
+
+		case 'V':	//V
+		vg_draw_xpm(jogo->lV_pic, &jogo->lV_info, i * jogo->lV_info.width, 500);
+		break;
+
+		case 'X':	//X
+		vg_draw_xpm(jogo->lX_pic, &jogo->lX_info, i * jogo->lX_info.width, 500);
+		break;
+
+		case 'Y':	//Y
+		vg_draw_xpm(jogo->lY_pic, &jogo->lY_info, i * jogo->lY_info.width, 500);
+		break;
+
+		case 'Z':	//Z
+		vg_draw_xpm(jogo->lZ_pic, &jogo->lZ_info, i * jogo->lZ_info.width, 500);
+		break;	
+		default:
+			break;
+	}
+
+}
