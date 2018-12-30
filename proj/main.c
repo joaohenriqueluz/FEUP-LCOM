@@ -101,13 +101,14 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
             {
               timer_int_handler();
               if (game_state == GAME)
-              {
+              {game_state = GAME;
                 check_player_fire(jogo,player);
                 drawJogo(jogo,player,alien);
                 double_buffering();
               }
               else if (game_state == PAUSE)
               {
+                
                 drawPause(jogo);
                 double_buffering();
               }
@@ -115,28 +116,20 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
               {
                 drawGameOver(jogo);
                 double_buffering();
-                sleep(3);
-                is_over = true;
-                game_state = MAIN_MENU;
               }
               else if (game_state == WON)
               {
                 drawWon(jogo);
                 double_buffering();
-                sleep(3);
-                is_over = true;
-                game_state = MAIN_MENU;
+                
               }
 
             }
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                if(game_state == GAME || game_state == PAUSE)
-                  {
                     kbd_read();
                     move_ship(jogo, player);
-                  }
               }
             
             if (msg.m_notify.interrupts & irq_set_mouse)
@@ -246,7 +239,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
               timer_int_handler();
               if(globalCounter % sys_hz() == 0)
               {
-                printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(),get_Seconds(), get_Day(), get_Month(), get_Year());
+                printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
               }
               if (game_state == MAIN_MENU)
               {

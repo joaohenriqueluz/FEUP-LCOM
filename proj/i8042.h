@@ -39,6 +39,7 @@ int sys_inb_cnt(port_t port, uint32_t *byte);
 #define RIGHT_ARROW       0x1e
 #define SPACE_BAR         0x39
 #define KEY_P             0x19
+#define KEY_H             0x23
 
 
 #define WRITE_TO_MOUSE     0xd4

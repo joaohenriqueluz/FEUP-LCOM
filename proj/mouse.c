@@ -161,6 +161,11 @@ void printPacket(){
       else
         pp.delta_y = (packet[2] | 0xff00);
 
+
+if(pp.lb == 1)
+{
+	allowed_to_fire = true;
+}
       //mouse_print_packet(&pp);
     	set_mouse_events();
     	check_line(gesture);
@@ -200,6 +205,7 @@ void checkMenuPacket(Mouse* mouse){
     if (pp.lb == 1)
     {
     	mouse->click = true;
+
     }
     else
     {
