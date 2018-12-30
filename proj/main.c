@@ -239,7 +239,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
               timer_int_handler();
               if(globalCounter % sys_hz() == 0)
               {
-                printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
+                //printf("%d:%d:%d %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
               }
               if (game_state == MAIN_MENU)
               {
