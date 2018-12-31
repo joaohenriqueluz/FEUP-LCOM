@@ -4,6 +4,7 @@
 #include "spacedef.h"
 #include "xpm.h"
 #include "menu.h"
+#include "file.h"
 
 
 typedef struct {
@@ -285,6 +286,8 @@ void show_score(Jogo* jogo, Player* player);
 
 void display_number(Jogo* jogo,int x, int y, int number);
 
+void display_char_number(Jogo* jogo, char number, int x, int y);
+
 void drawMenu(Jogo* jogo, Mouse* mouse);
 
 void menu_kb_ih();
@@ -299,13 +302,14 @@ void drawInstructions(Jogo* jogo);
 
 void show_letter_byte(char* name, int i);
 
-void show_letter_file(Jogo* jogo, char letter, int i);
-
+void show_letter_file(Jogo* jogo, char letter, int x, int y);
 
 Asteroid* asteroidInit(Player* player, int x);
+
 void level_transition(Jogo* jogo, Alien* alien, Asteroid* rock,Player* player);
 
-extern int mouseX,mouseY;
+void display_score(Jogo* jogo, Users users);
 
+extern int mouseX,mouseY;
 
 #endif

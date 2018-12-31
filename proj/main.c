@@ -202,7 +202,7 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 }
 
 
-int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, char* name, char* date){
+int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char* date){
   int ipc_status;
   message msg;
   unsigned int r;
@@ -232,7 +232,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, char* name, char* date){
  uint32_t irq_set_timer = BIT(bit_no_timer);
  uint32_t irq_set_mouse = BIT(bit_no_mouse);
 
-  while(game_state == MAIN_MENU || game_state == INSTRUCTIONS || game_state == NAME)
+  while(game_state == MAIN_MENU || game_state == INSTRUCTIONS || game_state == NAME || game_state == SCORE)
    {
 
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
@@ -249,10 +249,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, char* name, char* date){
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
-              if(globalCounter % sys_hz()==0)
-              {
-                //printf("%d::%d::%d  %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
-              }
               
               if (game_state == MAIN_MENU)
               {
@@ -270,12 +266,16 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, char* name, char* date){
                 int n = 0;
                 while(n <= letterCounter){
                   //printf("n = %d  LC = %d \n", n, letterCounter);
-                  show_letter_file(jogo,name[n],n);
+                  show_letter_file(jogo,name[n],300*n,350);
                   n++;
                 }
                 double_buffering();
-
-
+              }
+              else if (game_state == SCORE)
+              {
+                vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
+                display_score(jogo,users);
+                double_buffering();
               }
 
             } 
@@ -411,7 +411,6 @@ int (proj_main_loop)(){
 
   printf("Antes users\n");
   Users users = usersInit();
-  write_to_file(users);
   printf("Depois users\n");
   read_from_file(users);
   printf("Depois read_from_file\n");
@@ -424,11 +423,11 @@ int (proj_main_loop)(){
    case NAME:
       printf("state menu\n");
       reset_mouse(mouse);
-      menu_interrupt_loop(jogo,mouse,name,date);
+      menu_interrupt_loop(jogo,mouse,users,name,date);
       break;
     case MAIN_MENU:
        reset_mouse(mouse);
-       menu_interrupt_loop(jogo,mouse,name,date);
+       menu_interrupt_loop(jogo,mouse,users,name,date);
        break;
     case GAME:
       printf("state game\n");
