@@ -13,6 +13,8 @@ Mouse* mouseInit(){
 	mouse->y = v_res/2;
 
 	mouse->click = false;
+	mouse->play = false;
+	mouse->score = false;
 	mouse->exit = false;
 
 	return mouse;
