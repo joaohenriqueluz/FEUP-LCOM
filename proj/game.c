@@ -19,6 +19,8 @@ extern int counterExplosion;
 extern int ship_counterExplosion;
 extern bool allowed_to_fire;
 extern bool protected;
+Asteroid* rock;
+Asteroid* rock2;
 
 
 Jogo* inicio(){
@@ -201,6 +203,9 @@ Player* playerInit(Jogo* jogo){
 	player->score = 123;
 	player->alive=true;
 
+	rock = (Asteroid*) asteroidInit(player, -1);
+	rock2 = (Asteroid*) asteroidInit(player, 900);
+	
 	return player;
 }
 
@@ -319,6 +324,11 @@ if(player->alive)
 		vg_draw_xpm(jogo->ship_pic, &jogo->ship_info, player->x, player->y);
 }
 
+if(!alien->alive)
+	{
+		level_transition(jogo,alien, rock,player);
+		level_transition(jogo, alien, rock2, player);
+	}
 
 alien_fire(jogo,alien,player);								//Provoca disparo do alien
 
@@ -342,6 +352,8 @@ player_fire(jogo,alien,player);									//provoca disparo do Jogador
 			alien->shot = 0;
 			
 	}
+
+	
 	
 	
 }
@@ -537,21 +549,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 					{
 						alien->alive = false;
 						player->score+= 50;
-						if(alien->level == 1)
-						{
-
-							reset_alien(jogo, alien,2,10, 0);
-						}
-
-						else if(alien->level == 2)
-						{
-							
-							reset_alien(jogo, alien,3, 10, 0);
-						}
-						else if(alien->level == 3)
-						{
-							game_state = WON;
-						}
+						
 						
 					}
 
@@ -566,6 +564,105 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		}
 		
 }
+
+Asteroid* asteroidInit(Player* player, int x){
+	Asteroid* rock = (Asteroid*) malloc(sizeof(Asteroid));
+	rock->x =x;
+	rock->y= 10;
+	rock->speedX = (player->x - rock->x)/ 100;
+	rock->speedY = (player->y - rock->y)/ 100;
+	return rock;
+
+}
+
+void level_transition(Jogo* jogo, Alien* alien, Asteroid* rock, Player* player)
+{
+	
+	if((rock->y + rock->speedY) < (v_res- jogo->bang_info.height)  && (rock->x + rock->speedX) < (h_res  - jogo->bang_info.width))
+	{
+			rock->x += rock->speedX;
+			rock->y += rock->speedY;
+			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, rock->x, rock->y);
+
+			if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height))
+		{
+			if(!protected)
+				{
+					
+					ship_explosion = true;
+					if(player->score - 10 <= 0)
+					{
+						player-> score = 0;
+					}
+					else
+					{
+					player->score -= 10;
+					}
+				}
+
+				protected = false;
+				
+		
+			if(player->score == 0)
+				{
+					player->alive = false;
+					game_state = GAME_OVER;
+				}
+			if(alien->level == 1)
+			{
+				reset_alien(jogo, alien,2,5, 5);
+				rock->x =-1;
+				rock->y= 10;
+				rock2->x = 900;
+				rock2->y = 10;
+				rock->speedX = (player->x - rock->x)/ 100;
+				rock->speedY = (player->y - rock->y)/ 100;
+				rock2->speedX = (player->x - rock2->x)/ 100;
+				rock2->speedY = (player->y - rock2->y)/ 100;
+
+			}
+			else if(alien->level == 2)
+			{
+				
+				reset_alien(jogo, alien,3, 5, 7);
+			}
+			else if(alien->level == 3)
+			{
+				game_state = WON;
+			}
+		}
+			
+	}
+	else
+	{
+		if(alien->level == 1)
+		{
+			reset_alien(jogo, alien,2,5, 5);
+			rock->x =-1;
+			rock->y= 10;
+			rock2->x = 900;
+			rock2->y = 10;
+			rock->speedX = (player->x - rock->x)/ 100;
+			rock->speedY = (player->y - rock->y)/ 100;
+
+		}
+		else if(alien->level == 2)
+		{
+		
+		reset_alien(jogo, alien,3, 5, 7);
+		}
+		else if(alien->level == 3)
+		{
+			game_state = WON;
+		}
+	}
+	
+	
+}
+
+
+
+
 
 
 void draw_background(Jogo * jogo,Player* player)

@@ -239,6 +239,10 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
           if (msg.m_notify.interrupts & irq_set_timer)
             {
               timer_int_handler();
+              if(globalCounter % sys_hz()==0)
+              {
+                printf("%d::%d::%d  %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
+              }
               
               if (game_state == MAIN_MENU)
               {
@@ -255,7 +259,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
                 vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
                 int n = 0;
                 while(n <= letterCounter){
-                  printf("n = %d  LC = %d \n", n, letterCounter);
+                  //printf("n = %d  LC = %d \n", n, letterCounter);
                   show_letter_file(jogo,name[n],n);
                   n++;
                 }
@@ -353,6 +357,7 @@ int (proj_main_loop)(){
   Player* player = (Player*) playerInit(jogo);
   Alien* alien = (Alien*) alienInit(jogo);
   Mouse* mouse = (Mouse*) mouseInit();
+  
 
   while(1){
     switch(game_state){

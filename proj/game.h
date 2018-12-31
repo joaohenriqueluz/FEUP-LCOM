@@ -6,7 +6,11 @@
 #include "menu.h"
 
 
-
+typedef struct {
+     int x, y, speedX, speedY;
+     bool hit;
+    
+} Asteroid;
 
 typedef struct {
      int x, y, speed, shot, lives, level;
@@ -297,6 +301,9 @@ void show_letter_byte(char* name, int i);
 
 void show_letter_file(Jogo* jogo, char letter, int i);
 
+
+Asteroid* asteroidInit(Player* player, int x);
+void level_transition(Jogo* jogo, Alien* alien, Asteroid* rock,Player* player);
 
 extern int mouseX,mouseY;
 
