@@ -1,11 +1,12 @@
 #include <lcom/lcf.h>
 #include <machine/int86.h> // /usr/src/include/arch/i386
+#include <stdio.h>
 #include "i8042.h"
 #include "game.h"
 #include "spacedef.h"
 #include "keyboard.h"
-#include <stdio.h>
 #include "menu.h"
+#include "file.h"
 
 
 int shotX, shotY, alien_shotX, alien_shotY;
@@ -375,7 +376,6 @@ void kbd_read(){
 
   if (byte == ESC_BREAK)
   {
-  	printf("ESC_BREAK\n");
       is_over = true;
       make = false;
       return;
@@ -738,6 +738,53 @@ void display_number(Jogo* jogo,int x, int y, int number)
 	}
 }
 
+void display_char_number(Jogo* jogo, char number, int x, int y)
+{
+	switch(number)
+	{
+
+	case '1':
+		vg_draw_xpm(jogo->num1_pic, &jogo->num1_info, x,y);
+		break;
+
+	case '2':
+		vg_draw_xpm(jogo->num2_pic, &jogo->num2_info, x,y);
+		break;
+
+	case '3':
+		vg_draw_xpm(jogo->num3_pic, &jogo->num3_info, x,y);
+		break;
+
+	case '4':
+		vg_draw_xpm(jogo->num4_pic, &jogo->num4_info, x,y);
+		break;
+
+	case '5':
+		vg_draw_xpm(jogo->num5_pic, &jogo->num5_info, x,y);
+		break;
+
+	case '6':
+		vg_draw_xpm(jogo->num6_pic, &jogo->num6_info, x,y);
+		break;
+
+	case '7':
+		vg_draw_xpm(jogo->num7_pic, &jogo->num7_info, x,y);
+		break;
+
+	case '8':
+		vg_draw_xpm(jogo->num8_pic, &jogo->num8_info, x,y);
+		break;
+
+	case '9':
+		vg_draw_xpm(jogo->num9_pic, &jogo->num9_info, x,y);
+		break;
+
+	case '0':
+		vg_draw_xpm(jogo->num0_pic, &jogo->num0_info, x,y);
+		break;
+	}
+}
+
 void drawMenu(Jogo* jogo, Mouse* mouse){
 	if (mouse->play)
 	{
@@ -775,7 +822,7 @@ void drawInstructions(Jogo* jogo){
 }
 
 void menu_kb_ih(){
-	if (game_state == MAIN_MENU)
+	if (game_state != NAME)
 	{
 	switch(byte){
 		case ESC_BREAK:
@@ -904,115 +951,166 @@ void show_letter_byte(char* name, int i)
 
 }
 
-void show_letter_file(Jogo* jogo, char letter, int i)
+void show_letter_file(Jogo* jogo, char letter, int x, int y)
 {
 	switch(letter)
 	{
 		case 'A':   
-		vg_draw_xpm(jogo->lA_pic, &jogo->lA_info, i * jogo->lA_info.width, 500);
+		vg_draw_xpm(jogo->lA_pic, &jogo->lA_info, x, y);
 		break;
 
 		case 'B':  //B
-		vg_draw_xpm(jogo->lB_pic, &jogo->lB_info, i * jogo->lB_info.width, 500);
+		vg_draw_xpm(jogo->lB_pic, &jogo->lB_info, x, y);
 		break;
 
 		case 'C':  //C
-		vg_draw_xpm(jogo->lC_pic, &jogo->lC_info, i * jogo->lC_info.width, 500);
+		vg_draw_xpm(jogo->lC_pic, &jogo->lC_info, x, y);
 		break;
 
 		case 'D':  //D
-		vg_draw_xpm(jogo->lD_pic, &jogo->lD_info, i * jogo->lD_info.width, 500);
+		vg_draw_xpm(jogo->lD_pic, &jogo->lD_info, x, y);
 		break;
 
 		case 'E':  //E
-		vg_draw_xpm(jogo->lE_pic, &jogo->lE_info, i * jogo->lE_info.width, 500);
+		vg_draw_xpm(jogo->lE_pic, &jogo->lE_info, x, y);
 		break;
 
 		case 'F':  //F
-		vg_draw_xpm(jogo->lF_pic, &jogo->lF_info, i * jogo->lF_info.width, 500);
+		vg_draw_xpm(jogo->lF_pic, &jogo->lF_info, x, y);
 			break;
 
 		case 'G':  //G
-		vg_draw_xpm(jogo->lG_pic, &jogo->lG_info, i * jogo->lG_info.width, 500);
+		vg_draw_xpm(jogo->lG_pic, &jogo->lG_info, x, y);
 			break;
 
 		case 'H':  //H
-		vg_draw_xpm(jogo->lH_pic, &jogo->lH_info, i * jogo->lH_info.width, 500);
+		vg_draw_xpm(jogo->lH_pic, &jogo->lH_info, x, y);
 			break;
 
 		case 'I':	//I
-		vg_draw_xpm(jogo->lI_pic, &jogo->lI_info, i * jogo->lI_info.width, 500);
+		vg_draw_xpm(jogo->lI_pic, &jogo->lI_info, x, y);
 			break;  
 
 		case 'J':	//J	
-		vg_draw_xpm(jogo->lJ_pic, &jogo->lJ_info, i * jogo->lJ_info.width, 500);
+		vg_draw_xpm(jogo->lJ_pic, &jogo->lJ_info, x, y);
 			break;
 
 		case 'K':	//K
-		vg_draw_xpm(jogo->lK_pic, &jogo->lK_info, i * jogo->lK_info.width, 500);
+		vg_draw_xpm(jogo->lK_pic, &jogo->lK_info, x, y);
 			break;
 
 		case 'L':	//L
-		vg_draw_xpm(jogo->lL_pic, &jogo->lL_info, i * jogo->lL_info.width, 500);
+		vg_draw_xpm(jogo->lL_pic, &jogo->lL_info, x, y);
 		break;
 
 		case 'M':	//M
-		vg_draw_xpm(jogo->lM_pic, &jogo->lM_info, i * jogo->lM_info.width, 500);
+		vg_draw_xpm(jogo->lM_pic, &jogo->lM_info, x, y);
 		break;
 
 		case 'N':	//N
-		vg_draw_xpm(jogo->lN_pic, &jogo->lN_info, i * jogo->lN_info.width, 500);
+		vg_draw_xpm(jogo->lN_pic, &jogo->lN_info, x, y);
 		break;	
 
 		case 'O':	//O
-		vg_draw_xpm(jogo->lO_pic, &jogo->lO_info, i * jogo->lO_info.width, 500);
+		vg_draw_xpm(jogo->lO_pic, &jogo->lO_info, x, y);
 		break;  
 
 		case 'P':	//P
-		vg_draw_xpm(jogo->lP_pic, &jogo->lP_info, i * jogo->lP_info.width, 500);
+		vg_draw_xpm(jogo->lP_pic, &jogo->lP_info, x, y);
 		break;
 
 		case 'Q':	//Q
-		vg_draw_xpm(jogo->lQ_pic, &jogo->lQ_info, i * jogo->lQ_info.width, 500);
+		vg_draw_xpm(jogo->lQ_pic, &jogo->lQ_info, x, y);
 		break;
 
 		case 'R':	//R
-		vg_draw_xpm(jogo->lR_pic, &jogo->lR_info, i * jogo->lR_info.width, 500);
+		vg_draw_xpm(jogo->lR_pic, &jogo->lR_info, x, y);
 		break;
 
 		case 'S':	//S
-		vg_draw_xpm(jogo->lS_pic, &jogo->lS_info, i * jogo->lS_info.width, 500);
+		vg_draw_xpm(jogo->lS_pic, &jogo->lS_info, x, y);
 		break;
 
 		case 'T':	//T
-		vg_draw_xpm(jogo->lT_pic, &jogo->lT_info, i * jogo->lT_info.width, 500);
+		vg_draw_xpm(jogo->lT_pic, &jogo->lT_info, x, y);
 		break;	
 
 		case 'U':	//U
-		vg_draw_xpm(jogo->lU_pic, &jogo->lU_info, i * jogo->lU_info.width, 500);
+		vg_draw_xpm(jogo->lU_pic, &jogo->lU_info, x, y);
 		break;  
 
 		case 'W':	//W	
-		vg_draw_xpm(jogo->lW_pic, &jogo->lW_info, i * jogo->lW_info.width, 500);
+		vg_draw_xpm(jogo->lW_pic, &jogo->lW_info, x, y);
 		break;
 
 		case 'V':	//V
-		vg_draw_xpm(jogo->lV_pic, &jogo->lV_info, i * jogo->lV_info.width, 500);
+		vg_draw_xpm(jogo->lV_pic, &jogo->lV_info, x, y);
 		break;
 
 		case 'X':	//X
-		vg_draw_xpm(jogo->lX_pic, &jogo->lX_info, i * jogo->lX_info.width, 500);
+		vg_draw_xpm(jogo->lX_pic, &jogo->lX_info, x, y);
 		break;
 
 		case 'Y':	//Y
-		vg_draw_xpm(jogo->lY_pic, &jogo->lY_info, i * jogo->lY_info.width, 500);
+		vg_draw_xpm(jogo->lY_pic, &jogo->lY_info, x, y);
 		break;
 
 		case 'Z':	//Z
-		vg_draw_xpm(jogo->lZ_pic, &jogo->lZ_info, i * jogo->lZ_info.width, 500);
+		vg_draw_xpm(jogo->lZ_pic, &jogo->lZ_info, x, y);
 		break;	
 		default:
-		break;
+			break;
 	}
 
 }
+
+void display_score(Jogo* jogo, Users users){
+	Users l = users;
+
+	if(l == NULL || l->next == NULL) return;
+
+	int counter = 0;
+	int y;
+	l = l->next;
+
+	while(l != NULL || counter < 3){
+		if (counter == 0)
+		{
+			y = (v_res/2)-65;
+		}
+		else if (counter == 1)
+		{
+			y = v_res/2;
+		}
+		else if (counter == 2)
+		{
+			y = (v_res/2)+65;
+		}
+		show_letter_file(jogo,l->name[0],50,y);
+		show_letter_file(jogo,l->name[1],100,y);
+		show_letter_file(jogo,l->name[2],150,y);
+
+		display_char_number(jogo,l->score[0],200,y);
+		display_char_number(jogo,l->score[1],250,y);
+		display_char_number(jogo,l->score[2],300,y);
+
+		display_char_number(jogo,l->date[0],400,y);
+		display_char_number(jogo,l->date[1],450,y);
+		//display_char_number(jogo,l->date[2],500,y);
+		display_char_number(jogo,l->date[3],550,y);
+		display_char_number(jogo,l->date[4],600,y);
+		//display_char_number(jogo,l->date[5],650,y);
+		display_char_number(jogo,l->date[6],700,y);
+		display_char_number(jogo,l->date[7],750,y);
+
+		counter++;
+		l = l->next;
+	}
+	
+}
+
+
+
+
+
+

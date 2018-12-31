@@ -27,15 +27,6 @@ Users usersInit(){
 	return users;
 }
 
-void printUsers(Users users){
-	Users l = users;
-
-	while(l != NULL){
-		printf("User %c%c%c\n", l->name[0],l->name[1],l->name[2]);
-		l = l->next;
-	}
-}
-
 void addUser(Users users, char* name, char* date, char* score){
 	Users l = users;
 	Users pt, ant;
@@ -187,6 +178,3 @@ void dateIntToString(char* date, int dia, int mes, int ano){
 	date[6] = adezenas + '0';
 	date[7] = aunidades + '0';
 }
-
-
-
