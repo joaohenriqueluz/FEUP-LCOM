@@ -202,13 +202,22 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 }
 
 
-int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
+int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, char* name, char* date){
   int ipc_status;
   message msg;
   unsigned int r;
   uint8_t bit_no, bit_no_timer, bit_no_mouse;
   int letterCounter = 0;
-  char name[3];// date[8];
+  int dia, mes, ano;
+
+  if (game_state == NAME)
+  {
+    dia = get_Day();
+    mes = get_Month();
+    ano = get_Year();
+
+    dateIntToString(date, dia, mes, ano);
+  }
 
   enable_cmd_int();
 
@@ -278,7 +287,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
                     if(byte != 0x1c)
                     {
                       show_letter_byte(name,letterCounter);
-
                     }
                     else
                     {
@@ -313,42 +321,84 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
 
   disable_cmd_int();
 
-
   return 0;
 }
 
-/*
-int (proj_main_loop)(){
 
-  Users users = usersInit();
+// int (proj_main_loop)(){
 
-  users->name[0] = 'A';
-  users->name[1] = 'B';
-  users->name[2] = 'C';
-  users->score[0] = '1';
-  users->score[1] = '2';
-  users->score[2] = '3';
-  users->date[0] = '1';
-  users->date[1] = '0';
-  users->date[2] = '/';
-  users->date[3] = '1';
-  users->date[4] = '0';
-  users->date[5] = '/';
-  users->date[6] = '1';
-  users->date[7] = '8';
+//   Users users = usersInit();
 
-  //write_to_file(users);
+//   char name[3], score[3], date[8];
 
-  freeUsers(users);
+//   name[0] = 'A';
+//   name[1] = 'B';
+//   name[2] = 'C';
+//   score[0] = '1';
+//   score[1] = '2';
+//   score[2] = '3';
+//   date[0] = '1';
+//   date[1] = '0';
+//   date[2] = '/';
+//   date[3] = '1';
+//   date[4] = '0';
+//   date[5] = '/';
+//   date[6] = '1';
+//   date[7] = '8';
 
-  Users users2 = usersInit();
+//   printUsers(users);
 
-  read_from_file(users2);
+//   addUser(users,name,date,score);
 
-  write_to_file(users2);
+//   name[0] = 'F';
+//   name[1] = 'R';
+//   name[2] = 'C';
+//   score[0] = '2';
+//   score[1] = '2';
+//   score[2] = '3';
+//   date[0] = '1';
+//   date[1] = '0';
+//   date[2] = '/';
+//   date[3] = '1';
+//   date[4] = '0';
+//   date[5] = '/';
+//   date[6] = '1';
+//   date[7] = '8';
 
-  return 0;
-}*/
+//   addUser(users,name,date,score);
+
+//   name[0] = 'J';
+//   name[1] = 'H';
+//   name[2] = 'R';
+//   score[0] = '0';
+//   score[1] = '2';
+//   score[2] = '3';
+//   date[0] = '1';
+//   date[1] = '0';
+//   date[2] = '/';
+//   date[3] = '1';
+//   date[4] = '0';
+//   date[5] = '/';
+//   date[6] = '1';
+//   date[7] = '8';
+
+//   addUser(users,name,date,score);
+
+//   printf("2 print\n");
+//   printUsers(users);
+
+//    write_to_file(users);
+
+//    freeUsers(users);
+
+//   // Users users2 = usersInit();
+
+//   // read_from_file(users2);
+
+//   // write_to_file(users2);
+
+//   return 0;
+// }
 
 int (proj_main_loop)(){
 
@@ -358,6 +408,15 @@ int (proj_main_loop)(){
   Player* player = (Player*) playerInit(jogo);
   Alien* alien = (Alien*) alienInit(jogo);
   Mouse* mouse = (Mouse*) mouseInit();
+
+  printf("Antes users\n");
+  Users users = usersInit();
+  write_to_file(users);
+  printf("Depois users\n");
+  read_from_file(users);
+  printf("Depois read_from_file\n");
+
+  char name[3], score[3], date[8];
   
 
   while(1){
@@ -365,11 +424,11 @@ int (proj_main_loop)(){
    case NAME:
       printf("state menu\n");
       reset_mouse(mouse);
-      menu_interrupt_loop(jogo,mouse);
+      menu_interrupt_loop(jogo,mouse,name,date);
       break;
     case MAIN_MENU:
        reset_mouse(mouse);
-       menu_interrupt_loop(jogo,mouse);
+       menu_interrupt_loop(jogo,mouse,name,date);
        break;
     case GAME:
       printf("state game\n");
@@ -381,16 +440,24 @@ int (proj_main_loop)(){
     case COMP:
       printf("state end\n");
       vg_exit();
+      scoreIntToString(score,player->score);
+      addUser(users,name,date,score);
+      write_to_file(users);
+      freeUsers(users);
       playerDelete(player);
       fim(jogo);
       return 0;
-      
+
     default:
       break;
     }
   }
 
   vg_exit();
+  scoreIntToString(score, player->score);
+  addUser(users,name,date,score);
+  write_to_file(users);
+  freeUsers(users);
   playerDelete(player);
   fim(jogo);
   return 0;
