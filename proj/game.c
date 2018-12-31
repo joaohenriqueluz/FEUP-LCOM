@@ -375,6 +375,7 @@ void kbd_read(){
 
   if (byte == ESC_BREAK)
   {
+  	printf("ESC_BREAK\n");
       is_over = true;
       make = false;
       return;

@@ -101,14 +101,13 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
             {
               timer_int_handler();
               if (game_state == GAME)
-              {game_state = GAME;
+              {
                 check_player_fire(jogo,player);
                 drawJogo(jogo,player,alien);
                 double_buffering();
               }
               else if (game_state == PAUSE)
               {
-                
                 drawPause(jogo);
                 double_buffering();
               }
@@ -194,6 +193,8 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 
   disable_cmd_int();
 
+  printf("Sai loop\n");
+
   game_state = MAIN_MENU;
   is_over = false;
 
@@ -241,7 +242,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse){
               timer_int_handler();
               if(globalCounter % sys_hz()==0)
               {
-                printf("%d::%d::%d  %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
+                //printf("%d::%d::%d  %d/%d/%d\n", get_Hour(), get_Minute(), get_Seconds(), get_Day(), get_Month(), get_Year());
               }
               
               if (game_state == MAIN_MENU)
@@ -366,6 +367,10 @@ int (proj_main_loop)(){
       reset_mouse(mouse);
       menu_interrupt_loop(jogo,mouse);
       break;
+    case MAIN_MENU:
+       reset_mouse(mouse);
+       menu_interrupt_loop(jogo,mouse);
+       break;
     case GAME:
       printf("state game\n");
       reset_player(jogo, player);
@@ -379,9 +384,7 @@ int (proj_main_loop)(){
       playerDelete(player);
       fim(jogo);
       return 0;
-
-
-
+      
     default:
       break;
     }
