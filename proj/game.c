@@ -1012,7 +1012,7 @@ void show_letter_file(Jogo* jogo, char letter, int i)
 		vg_draw_xpm(jogo->lZ_pic, &jogo->lZ_info, i * jogo->lZ_info.width, 500);
 		break;	
 		default:
-			break;
+		break;
 	}
 
 }

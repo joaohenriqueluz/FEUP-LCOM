@@ -10,6 +10,8 @@ typedef struct lligada {
 
 Users usersInit();
 
+void printUsers(Users users);
+
 void addUser(Users users, char* name, char* date, char* score);
 
 void freeUsers(Users users);
@@ -21,5 +23,9 @@ void read_from_file(Users users);
 int scoreToInt(char* score);
 
 char* scoreToChar(int valor);
+
+void scoreIntToString(char* score, int valor);
+
+void dateIntToString(char* date, int dia, int mes, int ano);
 
 #endif
