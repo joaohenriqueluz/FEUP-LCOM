@@ -34,6 +34,10 @@ typedef struct {
   xpm_string_t* ship_explosion_map;
   unsigned char* ship_explosion_pic;
 
+  xpm_image_t name_info;
+  xpm_string_t* name_map;
+  unsigned char* name_pic;
+
   xpm_image_t menu_info;
   xpm_string_t* menu_map;
   unsigned char* menu_pic;

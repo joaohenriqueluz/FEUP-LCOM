@@ -68,7 +68,6 @@ void updatePosition(Mouse* mouse, int delta_x, int delta_y){
 		if (mouse->click)
 		{
 			game_state = SCORE;
-			printf("SCORE\n");
 		}
 	}
 	else if (mouse->x >= 412 && mouse->x <= 581 && mouse->y >= 510 && mouse->y <= 585)

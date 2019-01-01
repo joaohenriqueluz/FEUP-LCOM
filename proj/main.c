@@ -31,6 +31,8 @@ bool ship_explosion= false;
 
 extern game_st game_state;
 
+extern bool is_over;
+
 
 
 
@@ -127,8 +129,12 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
+                    printf("KBD interrupts GAME\n");
                     kbd_read();
-                    move_ship(jogo, player);
+                    if (game_state == GAME)
+                    {
+                      move_ship(jogo, player);
+                    }
               }
             
             if (msg.m_notify.interrupts & irq_set_mouse)
@@ -209,6 +215,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
   uint8_t bit_no, bit_no_timer, bit_no_mouse;
   int letterCounter = 0;
   int dia, mes, ano;
+  int kbd_count = 0;
 
   if (game_state == NAME)
   {
@@ -234,7 +241,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
 
   while(game_state == MAIN_MENU || game_state == INSTRUCTIONS || game_state == NAME || game_state == SCORE)
    {
-
     if ( (r = driver_receive(ANY, &msg, &ipc_status)) != 0 )
       { 
         printf("driver_receive failed with: %d", r);
@@ -262,11 +268,11 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
               }
               else if (game_state == NAME)
               {
-                vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
+                vg_draw_xpm(jogo->name_pic, &jogo->name_info, 0, 0); // Desenha o background;
                 int n = 0;
                 while(n <= letterCounter){
                   //printf("n = %d  LC = %d \n", n, letterCounter);
-                  show_letter_file(jogo,name[n],300*n,350);
+                  show_letter_file(jogo,name[n],50*n+50,375);
                   n++;
                 }
                 double_buffering();
@@ -281,9 +287,11 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
             } 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
+                  printf("KBD interrupt %d\n", ++kbd_count);
                   kbd_read();
                   if (game_state == NAME)
                   {
+                    printf("name\n");
                     if(byte != 0x1c)
                     {
                       show_letter_byte(name,letterCounter);
@@ -297,7 +305,10 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
                       letterCounter++;
                     }
                   }
-                  menu_kb_ih();
+                  else{
+                    printf("Else\n");
+                    menu_kb_ih();
+                  }
               }
             if (msg.m_notify.interrupts & irq_set_mouse)
             {
