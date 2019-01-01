@@ -269,10 +269,31 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
               else if (game_state == NAME)
               {
                 vg_draw_xpm(jogo->name_pic, &jogo->name_info, 0, 0); // Desenha o background;
-                int n = 0;
-                while(n <= letterCounter){
+                vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
+                
+                //printf("X = %d Y = %d \n",mouse->x, mouse->y );
+                int n = 0, letterX;
+               
+
+                while(n < letterCounter){
                   //printf("n = %d  LC = %d \n", n, letterCounter);
-                  show_letter_file(jogo,name[n],50*n+50,375);
+                   switch(n)
+                {
+                  case 0:
+                  letterX = 319;
+                  break;
+                  case 1:
+                  letterX= 472;
+                  break;
+
+                  case 2:
+                   letterX= 626;
+                   break;
+
+                   default:
+                    break;
+                }
+                  show_letter_file(jogo,name[n],letterX, 465);
                   n++;
                 }
                 double_buffering();
@@ -289,33 +310,40 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
               {
                   printf("KBD interrupt %d\n", ++kbd_count);
                   kbd_read();
-                  if (game_state == NAME)
+                  printf("letterCounter = %d \n", letterCounter);
+                  if (game_state == NAME && make)
                   {
                     printf("name\n");
                     if(byte != 0x1c)
                     {
+                      if(byte == 0x0e && letterCounter != 0)
+                      {
+                        letterCounter-= 2;
+                      }
                       show_letter_byte(name,letterCounter);
+                      if (letterCounter < 3 && make)
+                    {
+                      letterCounter++;
+                      make = false;
                     }
+
+                  }
                     else
                     {
                       game_state = MAIN_MENU;
                     }
-                    if (letterCounter < 3 && make)
-                    {
-                      letterCounter++;
-                    }
+                    
                   }
                   else{
                     printf("Else\n");
                     menu_kb_ih();
                   }
               }
-            if (msg.m_notify.interrupts & irq_set_mouse)
+            if (msg.m_notify.interrupts & irq_set_mouse)//&& game_state == MAIN_MENU
             {
-              if (game_state == MAIN_MENU)
-              {
+          
                 mouse_menu_ih(mouse);
-              }
+              
             }
          }
      }

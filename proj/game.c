@@ -330,8 +330,7 @@ if(player->alive)
 
 if(!alien->alive)
 	{
-		level_transition(jogo,alien, rock,player);
-		level_transition(jogo, alien, rock2, player);
+		level_transition(jogo,alien,player);
 	}
 
 alien_fire(jogo,alien,player);								//Provoca disparo do alien
@@ -547,7 +546,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		}
 		
 
-			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) || explosion)
+			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) && !explosion)
 			{	printf("lives %d\n", alien->lives );
 				alien->lives--;
 				if(alien->lives == 0)
@@ -580,14 +579,17 @@ Asteroid* asteroidInit(Player* player, int x){
 
 }
 
-void level_transition(Jogo* jogo, Alien* alien, Asteroid* rock, Player* player)
+void level_transition(Jogo* jogo, Alien* alien, Player* player)
 {
 	
 	if((rock->y + rock->speedY) < (v_res- jogo->bang_info.height)  && (rock->x + rock->speedX) < (h_res  - jogo->bang_info.width))
 	{
 			rock->x += rock->speedX;
 			rock->y += rock->speedY;
+			rock2->x += rock2->speedX;
+			rock2->y += rock2->speedY;
 			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, rock->x, rock->y);
+			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, rock2->x, rock2->y);
 
 			if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height))
 		{
