@@ -51,6 +51,9 @@ Jogo* inicio(){
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
 
+	jogo->name_map =  name_xpm;
+	jogo->name_pic = xpm_load(jogo->name_map, XPM_5_6_5, &jogo->name_info);
+
 	jogo->menu_map =  menu_xpm;
 	jogo->menu_pic = xpm_load(jogo->menu_map, XPM_5_6_5, &jogo->menu_info);
 
@@ -378,6 +381,7 @@ void kbd_read(){
   {
       is_over = true;
       make = false;
+      printf("Is over\n");
       return;
   }
  if (byte == TWO_BYTE_SCAN)
@@ -782,6 +786,8 @@ void display_char_number(Jogo* jogo, char number, int x, int y)
 	case '0':
 		vg_draw_xpm(jogo->num0_pic, &jogo->num0_info, x,y);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -822,8 +828,6 @@ void drawInstructions(Jogo* jogo){
 }
 
 void menu_kb_ih(){
-	if (game_state != NAME)
-	{
 	switch(byte){
 		case ESC_BREAK:
 			game_state = MAIN_MENU;
@@ -833,7 +837,6 @@ void menu_kb_ih(){
 			break;
 		default:
 			break;
-	}
 	}
 }
 
@@ -1073,7 +1076,8 @@ void display_score(Jogo* jogo, Users users){
 	int y;
 	l = l->next;
 
-	while(l != NULL || counter < 3){
+	while(l != NULL && counter < 3
+		){
 		if (counter == 0)
 		{
 			y = (v_res/2)-65;
