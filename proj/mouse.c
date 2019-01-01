@@ -212,7 +212,7 @@ void checkMenuPacket(Mouse* mouse){
     	mouse->click = false;
     }
 
-    	if (game_state == MAIN_MENU)
+    	if (game_state == MAIN_MENU || game_state == NAME)
     	{
 			updatePosition(mouse, pp.delta_x, pp.delta_y);
     	}

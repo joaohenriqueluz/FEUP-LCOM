@@ -310,7 +310,7 @@ void show_letter_file(Jogo* jogo, char letter, int x, int y);
 
 Asteroid* asteroidInit(Player* player, int x);
 
-void level_transition(Jogo* jogo, Alien* alien, Asteroid* rock,Player* player);
+void level_transition(Jogo* jogo, Alien* alien,Player* player);
 
 void display_score(Jogo* jogo, Users users);
 
