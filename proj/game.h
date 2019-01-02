@@ -29,6 +29,9 @@ typedef struct {
   xpm_string_t* ship_map;
   unsigned char* ship_pic;
 
+  xpm_image_t asteroid_info;
+  xpm_string_t* asteroid_map;
+  unsigned char* asteroid_pic;
 
   xpm_image_t ship_explosion_info;
   xpm_string_t* ship_explosion_map;

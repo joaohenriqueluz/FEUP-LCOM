@@ -36,6 +36,9 @@ Jogo* inicio(){
 	jogo->shield_map =  shield_xpm;
 	jogo->shield_pic = xpm_load(jogo->shield_map, XPM_5_6_5, &jogo->shield_info);
 
+	jogo->asteroid_map =  asteroid_xpm;
+	jogo->asteroid_pic = xpm_load(jogo->asteroid_map, XPM_5_6_5, &jogo->asteroid_info);
+
 	jogo->SCORE_map =  SCORE_xpm;
 	jogo->SCORE_pic = xpm_load(jogo->SCORE_map, XPM_5_6_5, &jogo->SCORE_info);
 
@@ -588,8 +591,8 @@ void level_transition(Jogo* jogo, Alien* alien, Player* player)
 			rock->y += rock->speedY;
 			rock2->x += rock2->speedX;
 			rock2->y += rock2->speedY;
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, rock->x, rock->y);
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, rock2->x, rock2->y);
+			vg_draw_xpm(jogo->asteroid_pic, &jogo->asteroid_info, rock->x, rock->y);
+			vg_draw_xpm(jogo->asteroid_pic, &jogo->asteroid_info, rock2->x, rock2->y);
 
 			if (check_colision(jogo->ship_pic,player->x,player->y,jogo->ship_info.width,jogo->ship_info.height))
 		{

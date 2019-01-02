@@ -215,7 +215,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
   uint8_t bit_no, bit_no_timer, bit_no_mouse;
   int letterCounter = 0;
   int dia, mes, ano;
-  int kbd_count = 0;
 
   if (game_state == NAME)
   {
@@ -268,9 +267,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
               }
               else if (game_state == NAME)
               {
-                vg_draw_xpm(jogo->name_pic, &jogo->name_info, 0, 0); // Desenha o background;
-                vg_draw_xpm(jogo->rato_pic, &jogo->rato_info, mouse->x, mouse->y);
-                
+                vg_draw_xpm(jogo->name_pic, &jogo->name_info, 0, 0); // Desenha o background;                
                 //printf("X = %d Y = %d \n",mouse->x, mouse->y );
                 int n = 0, letterX;
                
@@ -308,12 +305,9 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
             } 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                  printf("KBD interrupt %d\n", ++kbd_count);
                   kbd_read();
-                  printf("letterCounter = %d \n", letterCounter);
                   if (game_state == NAME && make)
                   {
-                    printf("name\n");
                     if(byte != 0x1c)
                     {
                       if(byte == 0x0e && letterCounter != 0)
@@ -335,7 +329,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
                     
                   }
                   else{
-                    printf("Else\n");
                     menu_kb_ih();
                   }
               }
