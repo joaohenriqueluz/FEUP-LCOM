@@ -131,7 +131,7 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
               {
                     printf("KBD interrupts GAME\n");
                     kbd_read();
-                    if (game_state == GAME)
+                    if (game_state == GAME || game_state == PAUSE)
                     {
                       move_ship(jogo, player);
                     }
