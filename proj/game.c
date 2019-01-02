@@ -251,7 +251,7 @@ if(player->alive == false)
 	}
 	else if (byte == KEY_P)
 	{
-		printf("Pressed P\n");
+		
 		if (game_state == GAME)
 		{
 			game_state = PAUSE;
