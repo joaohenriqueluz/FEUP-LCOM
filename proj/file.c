@@ -79,9 +79,9 @@ void freeUsers(Users users){
 }
 
 void write_to_file(Users users){
-	if (users == NULL) return;
+	if (users == NULL || users->next == NULL) return;
 
-	Users l = users;
+	Users l = users->next;
 
 	FILE *ptr;
 	char* file = "/home/lcom/labs/proj/users.txt";
