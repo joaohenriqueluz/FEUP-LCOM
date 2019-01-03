@@ -391,6 +391,7 @@ void kbd_read(){
       is_over = true;
       make = false;
       printf("Is over\n");
+      
       return;
   }
  if (byte == TWO_BYTE_SCAN)
