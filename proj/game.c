@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "i8042.h"
 #include "game.h"
-#include "spacedef.h"
+#include "graphics.h"
 #include "keyboard.h"
 #include "menu.h"
 #include "file.h"

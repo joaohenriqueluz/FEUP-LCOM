@@ -7,7 +7,7 @@
 #include "i8254.h"
 #include "i8042.h"
 #include "vbe_macros.h"
-#include "spacedef.h"
+#include "graphics.h"
 #include "keyboard.h"
 #include "game.h"
 #include "mouse.h"
