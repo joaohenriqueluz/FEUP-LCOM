@@ -45,6 +45,9 @@ Jogo* inicio(){
 	jogo->shot_map =  shot_xpm;
 	jogo->shot_pic = xpm_load(jogo->shot_map, XPM_5_6_5, &jogo->shot_info);
 
+	jogo->shot2_map =  shot_inverso_xpm;
+	jogo->shot2_pic = xpm_load(jogo->shot2_map, XPM_5_6_5, &jogo->shot2_info);
+
 	jogo->alien_map =  alien_xpm;
 	jogo->alien_pic = xpm_load(jogo->alien_map, XPM_5_6_5, &jogo->alien_info);
 
@@ -192,6 +195,9 @@ Jogo* inicio(){
 	jogo->lZ_map = Z_xpm;
 	jogo->lZ_pic = xpm_load(jogo->lZ_map, XPM_5_6_5, &jogo->lZ_info);
 
+	jogo->barra_map = barra_xpm;
+	jogo->barra_pic = xpm_load(jogo->barra_map, XPM_5_6_5, &jogo->barra_info);
+
 	return jogo;
 }
 
@@ -225,6 +231,9 @@ void reset_player(Jogo* jogo, Player* player){
 	player->score = 123;
 	player->alive=true;
 	ship_explosion = false;
+	
+	rock = (Asteroid*) asteroidInit(player, -1);
+	rock2 = (Asteroid*) asteroidInit(player, 900);
 }
 
 void move_ship(Jogo* jogo, Player* player){
@@ -472,7 +481,7 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 		{
 			alien_shotY += 20;
 
-			vg_draw_xpm(jogo->shot_pic, &jogo->shot_info, alien_shotX, alien_shotY);
+			vg_draw_xpm(jogo->shot2_pic, &jogo->shot2_info, alien_shotX, alien_shotY);
 			
 		}
 
@@ -549,7 +558,7 @@ void player_fire(Jogo* jogo, Alien* alien, Player* player)
 		}
 		
 
-			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height) && !explosion)
+			if (check_colision(jogo->alien_pic,alien->x,alien->y,jogo->alien_info.width,jogo->alien_info.height))
 			{	printf("lives %d\n", alien->lives );
 				alien->lives--;
 				if(alien->lives == 0)
@@ -790,6 +799,9 @@ void display_char_number(Jogo* jogo, char number, int x, int y)
 
 	case '0':
 		vg_draw_xpm(jogo->num0_pic, &jogo->num0_info, x,y);
+		break;
+	case '/':
+		vg_draw_xpm(jogo->barra_pic, &jogo->barra_info, x,y);
 		break;
 	default:
 		break;
@@ -1105,10 +1117,10 @@ void display_score(Jogo* jogo, Users users){
 
 		display_char_number(jogo,l->date[0],400,y);
 		display_char_number(jogo,l->date[1],450,y);
-		//display_char_number(jogo,l->date[2],500,y);
+		display_char_number(jogo,l->date[2],500,y);
 		display_char_number(jogo,l->date[3],550,y);
 		display_char_number(jogo,l->date[4],600,y);
-		//display_char_number(jogo,l->date[5],650,y);
+		display_char_number(jogo,l->date[5],650,y);
 		display_char_number(jogo,l->date[6],700,y);
 		display_char_number(jogo,l->date[7],750,y);
 
