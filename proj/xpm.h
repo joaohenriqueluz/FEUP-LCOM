@@ -1,6 +1,7 @@
 #include "rocket2.xpm"
 #include "rocket3.xpm"
 #include "shot.xpm"
+#include "shot_inverso.xpm"
 #include "space.xpm"
 #include "background.xpm"
 #include "alien.xpm"
@@ -55,5 +56,6 @@
 #include "Y.xpm"
 #include "X.xpm"
 #include "Z.xpm"
+#include "barra.xpm"
 
 

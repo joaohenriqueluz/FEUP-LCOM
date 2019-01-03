@@ -93,6 +93,10 @@ typedef struct {
   xpm_string_t* shot_map;
   unsigned char* shot_pic;
 
+  xpm_image_t shot2_info;
+  xpm_string_t* shot2_map;
+  unsigned char* shot2_pic;
+
   xpm_image_t bang_info;
   xpm_string_t* bang_map;
   unsigned char* bang_pic;
@@ -240,6 +244,10 @@ typedef struct {
   xpm_image_t lZ_info;
   xpm_string_t* lZ_map;
   unsigned char* lZ_pic;
+
+  xpm_image_t barra_info;
+  xpm_string_t* barra_map;
+  unsigned char* barra_pic;
 
   //Alien* aliens[3];
 } Jogo;
