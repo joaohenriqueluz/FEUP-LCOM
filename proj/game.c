@@ -213,7 +213,7 @@ Player* playerInit(Jogo* jogo){
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 200;
-	player->score = 123;
+	player->score = 20;
 	player->alive=true;
 
 	rock = (Asteroid*) asteroidInit(player, -1);
@@ -228,7 +228,7 @@ void reset_player(Jogo* jogo, Player* player){
 	player->speed = 20;
 	player->shot = 0;
 	player->lives = 200;
-	player->score = 123;
+	player->score = 20;
 	player->alive=true;
 	ship_explosion = false;
 	
@@ -320,36 +320,34 @@ void drawJogo(Jogo* jogo, Player* player, Alien* alien){
 
 	move_alien(jogo, alien);											//Altera posiçao do alien;
 
-//vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, mouseX, mouseY);
 
+	if (alien->alive)
+		{
+			vg_draw_xpm(jogo->alien_pic, &jogo->alien_info, alien->x, alien->y);
+		}
+		
 
-if (alien->alive)
-	{
-		vg_draw_xpm(jogo->alien_pic, &jogo->alien_info, alien->x, alien->y);
-	}
-	
-
-if(player->alive)
-{ 
-	if(protected)
-	{
-		printf("protected\n");
-		vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, player->x, player->y);
-	}
-	else
-		vg_draw_xpm(jogo->ship_pic, &jogo->ship_info, player->x, player->y);
-}
-
-if(!alien->alive)
-	{
-		level_transition(jogo,alien,player);
+	if(player->alive)											// Desenha 
+	{ 
+		if(protected)
+		{
+			printf("protected\n");
+			vg_draw_xpm(jogo->shield_pic, &jogo->shield_info, player->x, player->y);
+		}
+		else
+			vg_draw_xpm(jogo->ship_pic, &jogo->ship_info, player->x, player->y);
 	}
 
-alien_fire(jogo,alien,player);								//Provoca disparo do alien
+	if(!alien->alive)
+		{
+			level_transition(jogo,alien,player);				//Transicao entre niveis quando necessarrio
+		}
+
+	alien_fire(jogo,alien,player);								//Provoca disparo do alien
 
 
 
-player_fire(jogo,alien,player);									//provoca disparo do Jogador
+	player_fire(jogo,alien,player);									//provoca disparo do Jogador
 
 
 
@@ -668,7 +666,13 @@ void level_transition(Jogo* jogo, Alien* alien, Player* player)
 		else if(alien->level == 2)
 		{
 		
-		reset_alien(jogo, alien,3, 5, 7);
+			reset_alien(jogo, alien,3, 5, 7);
+			rock->x =-1;
+			rock->y= 10;
+			rock2->x = 900;
+			rock2->y = 10;
+			rock->speedX = (player->x - rock->x)/ 100;
+			rock->speedY = (player->y - rock->y)/ 100;
 		}
 		else if(alien->level == 3)
 		{
