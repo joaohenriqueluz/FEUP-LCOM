@@ -1,7 +1,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include "spacedef.h"
+#include "graphics.h"
 #include "xpm.h"
 #include "menu.h"
 #include "file.h"

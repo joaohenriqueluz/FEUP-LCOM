@@ -1,6 +1,6 @@
 #include <lcom/lcf.h>
 #include <machine/int86.h> // /usr/src/include/arch/i386
-#include "spacedef.h"
+#include "graphics.h"
 #include "menu.h"
 
 extern int h_res, v_res;

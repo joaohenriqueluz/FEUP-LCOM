@@ -164,6 +164,30 @@ void double_buffering()
 }
 
 
+/*
+bool check_colision(unsigned char* pic, int x, int y,int width, int height)
+{
+  int p = 0;
+  uint16_t old_x = x;
+  for (int i = 0; i < height; ++i,y++)
+  {
+   x=old_x;
+   for (int j = 0; j < width; ++j,x++)
+  {
+    //char *temp = video_mem;
+    int temp = (h_res*y+x)*num_bytes_mode;
+    if(pic[p] != *(doubleBuff +temp) && pic[p+1] != *(doubleBuff + temp+1))
+      { 
+        return true;
+      }
+    p += 2;
+  }
+}
+
+return false;
+
+}*/
+
 
 
 bool check_colision(unsigned char* pic,int x, int y,int width, int height)
