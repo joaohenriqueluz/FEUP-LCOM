@@ -19,14 +19,52 @@
 #define BCD_MODE		(0x01 << 2)
 
 
-
+/**
+ * @brief Espera que RTC_UIP tenha o valor 0
+ */
 void wait_valid_rtc();
+
+/**
+ * @brief Devolve o valor do registo fornecido por argumento
+ * @param reg - registo a ser verificado
+ * @return Valor contido em reg
+ */
 uint32_t read_reg(int reg);
+
+/**
+ * @brief Devolve o valor contido em RTC_SECONDS
+ * @return Segundos
+ */
 uint32_t get_Seconds();
+
+/**
+ * @brief Devolve o valor contido em RTC_MINUTES
+ * @return Minutos
+ */
 uint32_t get_Minute();
+
+/**
+ * @brief Devolve o valor contido em RTC_HOURS
+ * @return Horas
+ */
 uint32_t get_Hour();
+
+/**
+ * @brief Devolve o valor contido em RTC_DAYS
+ * @return Dia do mes
+ */
 uint32_t get_Day();
+
+/**
+ * @brief Devolve o valor contido em RTC_MONTH
+ * @return Mes
+ */
 uint32_t get_Month();
+
+/**
+ * @brief Devolve o valor contido em RTC_YEAR
+ * @return Ano
+ */
 uint32_t get_Year();
 
 #endif
