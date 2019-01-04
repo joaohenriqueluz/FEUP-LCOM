@@ -5,7 +5,7 @@
 #include <minix/sysutil.h>
 #include <stdbool.h>
 #include "vbe_macros.h"
-#include "spacedef.h"
+#include "graphics.h"
 #include "game.h"
 
 
