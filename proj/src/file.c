@@ -84,7 +84,7 @@ void write_to_file(Users users){
 	Users l = users->next;
 
 	FILE *ptr;
-	char* file = "/home/lcom/labs/proj/users.txt";
+	char* file = "/home/lcom/labs/proj/src/users.txt";
 	ptr = fopen(file, "w");
 	
 	while(l != NULL){
@@ -109,7 +109,7 @@ void write_to_file(Users users){
 
 void read_from_file(Users users){
 	FILE *ptr;
-	char* file = "/home/lcom/labs/proj/users.txt";
+	char* file = "/home/lcom/labs/proj/src/users.txt";
 	ptr = fopen(file, "r");
 	int count = 0;
 	char c = fgetc(ptr);
