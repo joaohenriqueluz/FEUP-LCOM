@@ -1104,15 +1104,15 @@ void display_score(Jogo* jogo, Users users){
 	while(l != NULL && counter < 3){
 		if (counter == 0)
 		{
-			y = (v_res/2)-60;
+			y = (v_res/2)-73;
 		}
 		else if (counter == 1)
 		{
-			y = (v_res/2)+47;
+			y = (v_res/2)+57;
 		}
 		else if (counter == 2)
 		{
-			y = (v_res/2)+180;
+			y = (v_res/2)+200;
 		}
 		show_letter_file(jogo,l->name[0],50,y);
 		show_letter_file(jogo,l->name[1],100,y);
