@@ -57,6 +57,9 @@ Jogo* inicio(){
 	jogo->ship_explosion_map =  explosion100_xpm;
 	jogo->ship_explosion_pic = xpm_load(jogo->ship_explosion_map, XPM_5_6_5, &jogo->ship_explosion_info);
 
+	jogo->highscores_map =  highscores_xpm;
+	jogo->highscores_pic = xpm_load(jogo->highscores_map, XPM_5_6_5, &jogo->highscores_info);
+
 	jogo->name_map =  name_xpm;
 	jogo->name_pic = xpm_load(jogo->name_map, XPM_5_6_5, &jogo->name_info);
 
@@ -1102,15 +1105,15 @@ void display_score(Jogo* jogo, Users users){
 		){
 		if (counter == 0)
 		{
-			y = (v_res/2)-65;
+			y = (v_res/2)-767;
 		}
 		else if (counter == 1)
 		{
-			y = v_res/2;
+			y = (v_res/2)+100;
 		}
 		else if (counter == 2)
 		{
-			y = (v_res/2)+65;
+			y = (v_res/2)+200;
 		}
 		show_letter_file(jogo,l->name[0],50,y);
 		show_letter_file(jogo,l->name[1],100,y);
