@@ -6,19 +6,30 @@
 #include "menu.h"
 #include "file.h"
 
-
+/**
+ * @brief Struct usada para definir o objeto Asteroid
+ * @param x - coordenada x do Asteroid
+ * @param y - coordenada y do Asteroid
+ * @param speedX - velocidade no eixo dos x
+ * @param speedY - velocidade no eixo dos y
+ */
 typedef struct {
      int x, y, speedX, speedY;
-     bool hit;
     
 } Asteroid;
 
+/**
+ * @brief Struct usada para definir o objeto Alien
+ */
 typedef struct {
      int x, y, speed, shot, lives, level;
      bool alive,right, left, colision;
 } Alien;
 
-
+/**
+ * @brief Struct usada para definir o objeto Jogo.
+ * É nesta struct que é guardada a informação de todas as imagens usadas no jogo.
+ */
 typedef struct {
 
   xpm_image_t background_info;
@@ -256,77 +267,231 @@ typedef struct {
   //Alien* aliens[3];
 } Jogo;
 
+/**
+ * @brief Struct usada para definir o objeto Player
+ */
 typedef struct {
     int x, y, speed, shot, lives, score;
     bool right,left, alive, colision;
 } Player;
 
 
-
+/**
+ * @brief Inicia o jogo fazendo load de todas as imagens necessárias
+ */
 Jogo* inicio();
 
+/**
+ * @brief Desenha o estado atual do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do jogador
+ * @param alien - struct com a informação relativa ao estado atual do jogador
+ */
 void drawJogo(Jogo* jogo, Player* player, Alien* alien);
 
+/**
+ * @brief Desenha o background do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do jogador
+ */
 void draw_background(Jogo * jogo, Player* player);
 
+/**
+ * @brief Liberta o espaço de memória préviamnete ocupado pela struct Jogo
+ * @param jogo - apontador para a struct
+ */
 void fim(Jogo* jogo);
 
+/**
+ * @brief Inicia a struct Player alocando a memória necessária e atribuindo valores a todos os parametros
+ * @return Devolve o apontador para a struct Player
+ */
 Player* playerInit();
 
+/**
+ * @brief Dá aos parametros da struct Player os seus valores iniciais
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do jogador
+ */
 void reset_player(Jogo* jogo, Player* player);
 
+/**
+ * @brief Altera o estado atual do jogo com base no scan code do keyboard
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do jogador
+ */
 void move_ship(Jogo* jogo, Player* player);
 
+/**
+ * @brief Altera o estado atual do jogo com base nos parametros da struct Alien
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ */
 void move_alien(Jogo* jogo, Alien* alien);
 
+/**
+ * @brief Verifica se o jogador pode disparar e altera o parametro da struct Player responsável pelo disparo do jogador
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do jogador
+ */
 void check_player_fire(Jogo* jogo,Player* player);
 
+/**
+ * @brief Liberta o espaço de memória préviamnete ocupado pela struct player
+ * @param player - apontador para a struct
+ */
 void playerDelete(Player* player);
 
+/**
+ * @brief Inicia a struct Alien alocando a memória necessária e atribuindo valores a todos os parametros
+ * @return Devolve o apontador para a struct Alien
+ */
 Alien* alienInit(Jogo* jogo);
 
+/**
+ * @brief Dá aos parametros da struct alien os seus valores iniciais
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ * @param level - nivel atual do jogo
+ * @param lives - vidas do alien para o nivel atual do jogo
+ * @param speed - velocidade do alien para o nibel atual
+ */
 void reset_alien(Jogo* jogo, Alien* alien,int level, int lives, int speed);
 
+/**
+ * @brief Liberta o espaço de memória préviamnete ocupado pela struct alien
+ * @param alien - apontador para a struct
+ */
 void alienDelete(Alien* alien);
 
+/**
+ * @brief Inicializa as variáveis que guardam as coordenadas do tiro disparado pelo alien
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ */
 void alien_shot_init(Jogo* jogo, Alien* alien);
 
+/**
+ * @brief Verifica se há colisão entre o tiro do alien e a nave do jogador
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ * @param player - struct com a informação relativa ao estado atual do player
+ */
 void alien_fire(Jogo* jogo, Alien* alien, Player* player);
 
+/**
+ * @brief Verifica se há colisão entre o tiro do jogador e o alien
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ * @param player - struct com a informação relativa ao estado atual do player
+ */
 void player_fire(Jogo* jogo, Alien* alien, Player* player);
 
+/**
+ * @brief Toma uma determinda ação com base numa interrupção do keyboard ou do mouse
+ * @return 0 em caso de sucesso e outro valor caso contrário
+ */
 void kbd_read();
 
-bool shot_player(int x, int y, Player* player);
+//bool shot_player(int x, int y, Player* player);
 
-void set_mouse_events();
+//void set_mouse_events();
 
+/**
+ * @brief Desenha a pontuação do jogador durante o jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param player - struct com a informação relativa ao estado atual do player
+ */
 void show_score(Jogo* jogo, Player* player);
 
+/**
+ * @brief Desenha o número passado como parametro
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param x - coordenada do eixo horizontal onde desenhar o número
+ * @param x - coordenada do eixo horizontal onde desenhar o número
+ * @paran number - número a ser desenhado
+ */
 void display_number(Jogo* jogo,int x, int y, int number);
 
+/**
+ * @brief Desenha o número passado como parametro
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param x - coordenada do eixo horizontal onde desenhar o número
+ * @param x - coordenada do eixo horizontal onde desenhar o número
+ * @paran number - número a ser desenhado
+ */
 void display_char_number(Jogo* jogo, char number, int x, int y);
 
+/**
+ * @brief Desenha o menu do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @paran mouse - struct com a informação relativa ao estado atual do mouse
+ */
 void drawMenu(Jogo* jogo, Mouse* mouse);
 
+/**
+ * @brief Toma uma determinda ação com base numa interrupção do keyboard ou do mouse podendo alternar entre difeentes estados do jogo
+ */
 void menu_kb_ih();
 
+/**
+ * @brief Desenha o menu de pausa do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ */
 void drawPause(Jogo* jogo);
 
+/**
+ * @brief Desenha o menu de Game Over do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ */
 void drawGameOver(Jogo* jogo);
 
+/**
+ * @brief Desenha o menu de You Won do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ */
 void drawWon(Jogo* jogo);
 
+/**
+ * @brief Desenha o menu de instruções do jogo
+ * @param jogo - struct com a informação de todas as imagens usadas
+ */
 void drawInstructions(Jogo* jogo);
 
+/**
+ * @brief Associa um scancode do keyboard a um caracter
+ * @param name - string na qual é guardado o caracter
+ * @param i - indice do array no qual é guardado o caracter
+ */
 void show_letter_byte(char* name, int i);
 
+/**
+ * @brief Desenha uma letra passada como argumento
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param letter - letra a ser desenhada pela função
+ * @param x - coordenada do eixo horizontal onde deve ser denhada a letra
+ * @param y - coordenada do eixo vertical onde deve ser denhada a letra
+ */
 void show_letter_file(Jogo* jogo, char letter, int x, int y);
 
+/**
+ * @brief Inicia a struct Asteroid alocando a memória necessária e atribuindo valores a todos os parametros
+ * @return Devolve o apontador para a struct Asteroid
+ */
 Asteroid* asteroidInit(Player* player, int x);
 
+/**
+ * @brief Responsável pela transição entre niveis ajustando as posições e velocidade dos asteroides confirmando a colisão
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @param alien - struct com a informação relativa ao estado atual do alien
+ * @param player - struct com a informação relativa ao estado atual do player
+ */
 void level_transition(Jogo* jogo, Alien* alien,Player* player);
 
+/**
+ * @brief Desenha o score dos três melhores jogadores no menu de highscores
+ * @param jogo - struct com a informação de todas as imagens usadas
+ * @paran users - lista ligada com a informação de todos os users do jogo incluindo os seus scores
+ */
 void display_score(Jogo* jogo, Users users);
 
 extern int mouseX,mouseY;
