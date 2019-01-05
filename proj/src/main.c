@@ -297,7 +297,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
               }
               else if (game_state == SCORE)
               {
-                vg_draw_xpm(jogo->background_pic, &jogo->background_info, 0, 0); // Desenha o background;
+                vg_draw_xpm(jogo->highscores_pic, &jogo->highscores_info, 0, 0); // Desenha o background;
                 display_score(jogo,users);
                 double_buffering();
               }

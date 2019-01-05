@@ -19,6 +19,7 @@
 #include "imagens/won.xpm"
 #include "imagens/gameover.xpm"
 #include "imagens/SCORE.xpm"
+#include "imagens/highscores.xpm"
 #include "imagens/n9.xpm"
 #include "imagens/n8.xpm"
 #include "imagens/n7.xpm"
