@@ -38,13 +38,13 @@ void freeUsers(Users users);
  * @brief Escreve num ficheiro a informação guardada na struct users
  * @param users - struct que guarda a informação sobre os varios users
  */
-void write_to_file(Users users);
+void write_to_file(Users users, char* file);
 
 /**
  * @brief Lê de um ficheiro a informação guardada na struct users
  * @param users - struct que guarda a informação sobre os varios users
  */
-void read_from_file(Users users);
+void read_from_file(Users users, char* file);
 
 /**
  * @brief Passa o score do user que e guardado no ficheiro como uma string para um numero inteiro

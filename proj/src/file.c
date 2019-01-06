@@ -78,13 +78,14 @@ void freeUsers(Users users){
 	}
 }
 
-void write_to_file(Users users){
+void write_to_file(Users users, char* file){
 	if (users == NULL || users->next == NULL) return;
 
 	Users l = users->next;
 
 	FILE *ptr;
-	char* file = "/home/lcom/labs/proj/src/users.txt";
+	// printf("Insira o path para o ficheiro\n");
+	// char file[128];//"/home/lcom/labs/proj/src/users.txt"ile);
 	ptr = fopen(file, "w");
 	
 	while(l != NULL){
@@ -107,10 +108,14 @@ void write_to_file(Users users){
 	}
 }
 
-void read_from_file(Users users){
+void read_from_file(Users users, char* file){
+
 	FILE *ptr;
-	char* file = "/home/lcom/labs/proj/src/users.txt";
+	// printf("Insira o path para o ficheiro\n");
+	// char file[128];//"/home/lcom/labs/proj/src/users.txt";
+	// scanf("%123s",file);
 	ptr = fopen(file, "r");
+
 	int count = 0;
 	char c = fgetc(ptr);
 

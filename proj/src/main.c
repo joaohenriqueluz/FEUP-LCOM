@@ -36,7 +36,9 @@ extern bool is_over;
 
 
 
+
 int main(int argc, char *argv[]) {
+
   // sets the language of LCF messages (can be either EN-US or PT-PT)
   lcf_set_language("EN-US");
 
@@ -129,7 +131,6 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
 
             if (msg.m_notify.interrupts & irq_set_kb)
               {
-                    printf("KBD interrupts GAME\n");
                     kbd_read();
                     if (game_state == GAME || game_state == PAUSE)
                     {
@@ -198,8 +199,6 @@ int (interrupt_loop)(Jogo* jogo, Player* player, Alien* alien) {
     printf("Erro na funcao mouse_unsubscribe\n");
 
   disable_cmd_int();
-
-  printf("Sai loop\n");
 
   game_state = MAIN_MENU;
   is_over = false;
@@ -432,7 +431,7 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
 //   return 0;
 // }
 
-int (proj_main_loop)(){
+int (proj_main_loop)(int argc, char *argv[]){
 
   vg_init(0x117);
 
@@ -441,11 +440,15 @@ int (proj_main_loop)(){
   Alien* alien = (Alien*) alienInit(jogo);
   Mouse* mouse = (Mouse*) mouseInit();
 
-  printf("Antes users\n");
+  char file[50];
+
+  if (argc != 0)
+  {
+    strcpy(file,*argv);
+  }
+
   Users users = usersInit();
-  printf("Depois users\n");
-  read_from_file(users);
-  printf("Depois read_from_file\n");
+  read_from_file(users, file);
 
   char name[3], score[3], date[8];
   
@@ -453,7 +456,6 @@ int (proj_main_loop)(){
   while(1){
     switch(game_state){
    case NAME:
-      printf("state menu\n");
       reset_mouse(mouse);
       menu_interrupt_loop(jogo,mouse,users,name,date);
       break;
@@ -462,18 +464,16 @@ int (proj_main_loop)(){
        menu_interrupt_loop(jogo,mouse,users,name,date);
        break;
     case GAME:
-      printf("state game\n");
       reset_player(jogo, player);
       reset_alien(jogo, alien, 1,6, 0);
       interrupt_loop(jogo, player, alien);
       game_state = MAIN_MENU;
       break;
     case COMP:
-      printf("state end\n");
       vg_exit();
       scoreIntToString(score,player->score);
       addUser(users,name,date,score);
-      write_to_file(users);
+      write_to_file(users, file);
       freeUsers(users);
       playerDelete(player);
       fim(jogo);
@@ -487,7 +487,7 @@ int (proj_main_loop)(){
   vg_exit();
   scoreIntToString(score, player->score);
   addUser(users,name,date,score);
-  write_to_file(users);
+  write_to_file(users, file);
   freeUsers(users);
   playerDelete(player);
   fim(jogo);

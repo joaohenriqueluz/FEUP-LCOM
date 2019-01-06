@@ -392,9 +392,7 @@ void kbd_read(){
   if (byte == ESC_BREAK)
   {
       is_over = true;
-      make = false;
-      printf("Is over\n");
-      
+      make = false;      
       return;
   }
  if (byte == TWO_BYTE_SCAN)
