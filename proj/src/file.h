@@ -1,5 +1,10 @@
 #ifndef _FILE_H_
 #define _FILE_H_
+/** @defgroup File File
+ * @{
+ *
+ * Funções para analisar e escrever nos ficheiros.
+ */
 
 /**
  * @brief Lista ligada usada para guardar a informação sobre os varios users

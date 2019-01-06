@@ -1,6 +1,12 @@
 #ifndef _RTC_H_
 #define _RTC_H_
 
+/** @defgroup RTC RTC
+ * @{
+ *
+ * Funções para programar o RTC.
+ */
+
 #define RTC_ADDR_REG	0X70
 #define RTC_DATA_REG	0X71
 #define RTC_REG_A		0x0A
@@ -66,5 +72,7 @@ uint32_t get_Month();
  * @return Ano
  */
 uint32_t get_Year();
+
+/**@}*/
 
 #endif
