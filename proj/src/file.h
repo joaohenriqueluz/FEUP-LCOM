@@ -78,4 +78,5 @@ void scoreIntToString(char* score, int valor);
  */
 void dateIntToString(char* date, int dia, int mes, int ano);
 
+/**@}*/
 #endif
