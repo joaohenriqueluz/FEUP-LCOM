@@ -474,7 +474,21 @@ void move_alien(Jogo* jogo, Alien* alien)
 
 void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 {
-	
+	int impact;
+	switch(alien->level)
+	{
+		case 1: 
+		impact = 10;
+		break;
+
+		case 2:
+		impact = 20;
+		break;
+
+		case 3:
+		impact = 30;
+		break;
+	}
 	if(alien->shot && alien->alive)
 	{		
 		if (alien_shotY + 70 <= v_res && !ship_explosion)
@@ -500,13 +514,13 @@ void alien_fire(Jogo* jogo, Alien* alien, Player* player)
 				{
 					
 					ship_explosion = true;
-					if(player->score - 10 <= 0)
+					if(player->score - impact <= 0)
 					{
 						player-> score = 0;
 					}
 					else
 					{
-					player->score -= 10;
+					player->score -= impact;
 					}
 				}
 
@@ -644,6 +658,14 @@ void level_transition(Jogo* jogo, Alien* alien, Player* player)
 			{
 				
 				reset_alien(jogo, alien,3, 5, 7);
+				rock->x =-1;
+				rock->y= 10;
+				rock2->x = 900;
+				rock2->y = 10;
+				rock->speedX = (player->x - rock->x)/ 100;
+				rock->speedY = (player->y - rock->y)/ 100;
+				rock2->speedX = (player->x - rock2->x)/ 100;
+				rock2->speedY = (player->y - rock2->y)/ 100;
 			}
 			else if(alien->level == 3)
 			{
