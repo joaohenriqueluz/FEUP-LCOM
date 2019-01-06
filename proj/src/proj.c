@@ -1,3 +1,4 @@
+
 // IMPORTANT: you must include the following line in all your C files
 #include <lcom/lcf.h>
 #include <stdint.h>
@@ -356,80 +357,6 @@ int menu_interrupt_loop(Jogo* jogo, Mouse* mouse, Users users, char* name, char*
 }
 
 
-// int (proj_main_loop)(){
-
-//   Users users = usersInit();
-
-//   char name[3], score[3], date[8];
-
-//   name[0] = 'A';
-//   name[1] = 'B';
-//   name[2] = 'C';
-//   score[0] = '1';
-//   score[1] = '2';
-//   score[2] = '3';
-//   date[0] = '1';
-//   date[1] = '0';
-//   date[2] = '/';
-//   date[3] = '1';
-//   date[4] = '0';
-//   date[5] = '/';
-//   date[6] = '1';
-//   date[7] = '8';
-
-//   printUsers(users);
-
-//   addUser(users,name,date,score);
-
-//   name[0] = 'F';
-//   name[1] = 'R';
-//   name[2] = 'C';
-//   score[0] = '2';
-//   score[1] = '2';
-//   score[2] = '3';
-//   date[0] = '1';
-//   date[1] = '0';
-//   date[2] = '/';
-//   date[3] = '1';
-//   date[4] = '0';
-//   date[5] = '/';
-//   date[6] = '1';
-//   date[7] = '8';
-
-//   addUser(users,name,date,score);
-
-//   name[0] = 'J';
-//   name[1] = 'H';
-//   name[2] = 'R';
-//   score[0] = '0';
-//   score[1] = '2';
-//   score[2] = '3';
-//   date[0] = '1';
-//   date[1] = '0';
-//   date[2] = '/';
-//   date[3] = '1';
-//   date[4] = '0';
-//   date[5] = '/';
-//   date[6] = '1';
-//   date[7] = '8';
-
-//   addUser(users,name,date,score);
-
-//   printf("2 print\n");
-//   printUsers(users);
-
-//    write_to_file(users);
-
-//    freeUsers(users);
-
-//   // Users users2 = usersInit();
-
-//   // read_from_file(users2);
-
-//   // write_to_file(users2);
-
-//   return 0;
-// }
 
 int (proj_main_loop)(int argc, char *argv[]){
 
@@ -493,7 +420,3 @@ int (proj_main_loop)(int argc, char *argv[]){
   fim(jogo);
   return 0;
 }
-
-
-
-
