@@ -1,3 +1,9 @@
+/** @defgroup XPM XPM
+ * @{
+ *
+ * Imagens em formato xpm
+ */
+
 #include "imagens/rocket2.xpm"
 #include "imagens/shot.xpm"
 #include "imagens/shot_inverso.xpm"
@@ -57,5 +63,5 @@
 #include "imagens/X.xpm"
 #include "imagens/Z.xpm"
 #include "imagens/barra.xpm"
-
+/**@}*/
 

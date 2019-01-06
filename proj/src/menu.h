@@ -1,6 +1,12 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
+/** @defgroup Menu Menu
+ * @{
+ *
+ * Funções para programar o Menu.
+ */
+
 /**
  * @brief Struct usada para guardar a informação do rato
  * @param x - coordenada x do rato
@@ -56,6 +62,6 @@ typedef enum {
 	MAIN_MENU, SCORE, NAME, GAME, PAUSE, GAME_OVER, WON, INSTRUCTIONS, COMP
 } game_st;
 
-
+/**@}*/
 
 #endif

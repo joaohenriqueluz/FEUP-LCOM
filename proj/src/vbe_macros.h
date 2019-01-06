@@ -1,5 +1,10 @@
 #ifndef _VBE_MACROS_H_
 #define _VBE_MACROS_H_
+/** @defgroup VBE_MACROS VBE_MACROS
+ * @{
+ *
+ * Macros importantes para funções da placa gráfica
+ */
 
 #define BIT(n) (0x01<<(n))
 
@@ -14,5 +19,7 @@
 #define DIRECT_COLOR_24    0x115
 #define DIRECT_COLOR_16    0x11a
 #define DIRECT_COLOR_32    0x14c
+
+/**@}*/
 
 #endif

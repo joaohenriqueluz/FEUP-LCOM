@@ -1,6 +1,12 @@
 #ifndef ___MOUSE_H___
 #define ___MOUSE_H___
 
+/** @defgroup Mouse Mouse
+ * @{
+ *
+ * Funções para programar o rato.
+ */
+
 #include "menu.h"
 
 /**
@@ -53,7 +59,7 @@ int (kbc_write_cmd)();
 
 /**
  * @brief Escreve um comando para o mouse para o KBC
- * @param mouse - struct usada para guardar a informação do rato
+ * @param cmd - comando
  */
 void write_command(uint32_t cmd);
 
@@ -105,7 +111,7 @@ bool protect_tolerance();
 
 
 
-
+/**@}*/
 
 
 #endif

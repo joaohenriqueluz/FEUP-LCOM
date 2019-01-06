@@ -1,6 +1,6 @@
 #pragma once
 
-/** @defgroup Keyboard Keyboard
+/** @defgroup Graphics Graphics
  * @{
  *
  * Funções para programar a placa gráfica.

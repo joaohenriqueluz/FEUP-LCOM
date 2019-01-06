@@ -1,10 +1,18 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+/** @defgroup Game Game
+ * @{
+ *
+ * Funções para programar a lógica do jogo.
+ */
+
 #include "graphics.h"
 #include "xpm.h"
 #include "menu.h"
 #include "file.h"
+
+
 
 /**
  * @brief Struct usada para definir o objeto Asteroid
@@ -47,10 +55,6 @@ typedef struct {
   xpm_image_t ship_explosion_info;
   xpm_string_t* ship_explosion_map;
   unsigned char* ship_explosion_pic;
-
-  xpm_image_t highscores_info;
-  xpm_string_t* highscores_map;
-  unsigned char* highscores_pic;
 
   xpm_image_t name_info;
   xpm_string_t* name_map;
@@ -264,6 +268,10 @@ typedef struct {
   xpm_string_t* barra_map;
   unsigned char* barra_pic;
 
+  xpm_image_t highscores_info;
+  xpm_string_t* highscores_map;
+  unsigned char* highscores_pic;
+
   //Alien* aliens[3];
 } Jogo;
 
@@ -344,6 +352,7 @@ void playerDelete(Player* player);
 
 /**
  * @brief Inicia a struct Alien alocando a memória necessária e atribuindo valores a todos os parametros
+ * @param jogo - struct com a informação de todas as imagens usadas
  * @return Devolve o apontador para a struct Alien
  */
 Alien* alienInit(Jogo* jogo);
@@ -367,6 +376,7 @@ void alienDelete(Alien* alien);
 /**
  * @brief Inicializa as variáveis que guardam as coordenadas do tiro disparado pelo alien
  * @param alien - struct com a informação relativa ao estado atual do alien
+ * @param jogo - struct com a informação de todas as imagens usadas
  */
 void alien_shot_init(Jogo* jogo, Alien* alien);
 
@@ -407,8 +417,8 @@ void show_score(Jogo* jogo, Player* player);
  * @brief Desenha o número passado como parametro
  * @param jogo - struct com a informação de todas as imagens usadas
  * @param x - coordenada do eixo horizontal onde desenhar o número
- * @param x - coordenada do eixo horizontal onde desenhar o número
- * @paran number - número a ser desenhado
+ * @param y - coordenada do eixo horizontal onde desenhar o número
+ * @param number - número a ser desenhado
  */
 void display_number(Jogo* jogo,int x, int y, int number);
 
@@ -416,15 +426,15 @@ void display_number(Jogo* jogo,int x, int y, int number);
  * @brief Desenha o número passado como parametro
  * @param jogo - struct com a informação de todas as imagens usadas
  * @param x - coordenada do eixo horizontal onde desenhar o número
- * @param x - coordenada do eixo horizontal onde desenhar o número
- * @paran number - número a ser desenhado
+ * @param y - coordenada do eixo horizontal onde desenhar o número
+ * @param number - número a ser desenhado
  */
 void display_char_number(Jogo* jogo, char number, int x, int y);
 
 /**
  * @brief Desenha o menu do jogo
  * @param jogo - struct com a informação de todas as imagens usadas
- * @paran mouse - struct com a informação relativa ao estado atual do mouse
+ * @param mouse - struct com a informação relativa ao estado atual do mouse
  */
 void drawMenu(Jogo* jogo, Mouse* mouse);
 
@@ -490,10 +500,12 @@ void level_transition(Jogo* jogo, Alien* alien,Player* player);
 /**
  * @brief Desenha o score dos três melhores jogadores no menu de highscores
  * @param jogo - struct com a informação de todas as imagens usadas
- * @paran users - lista ligada com a informação de todos os users do jogo incluindo os seus scores
+ * @param users - lista ligada com a informação de todos os users do jogo incluindo os seus scores
  */
 void display_score(Jogo* jogo, Users users);
 
 extern int mouseX,mouseY;
+
+/**@}*/
 
 #endif
