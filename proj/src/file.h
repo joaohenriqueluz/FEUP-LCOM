@@ -30,6 +30,9 @@ Users usersInit();
 /**
  * @brief Função que inicializa e adiciona um user a lista ligada de users por ordem decrescente dos scores
  * @param users - struct que guarda a informação sobre os varios users
+ * @param name - nome do utilizador
+ * @param date - data da partida
+ * @param score - pontuação do utilizador
  */
 void addUser(Users users, char* name, char* date, char* score);
 
@@ -42,12 +45,14 @@ void freeUsers(Users users);
 /**
  * @brief Escreve num ficheiro a informação guardada na struct users
  * @param users - struct que guarda a informação sobre os varios users
+ * @param file - path para o ficheiro
  */
 void write_to_file(Users users, char* file);
 
 /**
  * @brief Lê de um ficheiro a informação guardada na struct users
  * @param users - struct que guarda a informação sobre os varios users
+ * @param file - path para o ficheiro
  */
 void read_from_file(Users users, char* file);
 
